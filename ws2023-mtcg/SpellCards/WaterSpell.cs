@@ -13,9 +13,20 @@ namespace ws2023_mtcg.SpellCards
 
         }
 
-        public override void Attack()
+        public override Cards Attack(Cards target)
         {
+            // knight always loses against waterspell
+            if (target._name == "Knight")
+            {
+                return this;
+            }
 
+            switch (target._type)
+            {
+                case CardType.monster: return DamageFight(this, target);
+                case CardType.spell: return ElementFight(this, target);
+                default: return null;
+            }
         }
     }
 }

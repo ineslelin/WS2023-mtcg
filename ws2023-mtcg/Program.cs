@@ -1,4 +1,6 @@
 ﻿using System;
+using ws2023_mtcg.MonsterCards;
+using ws2023_mtcg.SpellCards;
 
 namespace ws2023_mtcg
 {
@@ -6,19 +8,16 @@ namespace ws2023_mtcg
     {
         static void Main(string[] args)
         {
-            User PlayerOne = new User("Player 1");
-            User PlayerTwo = new User("Player 2");
+            Cards[] playerOneCards = { new Dragon(), new Elf(), new RegularSpell() };
+            Cards[] playerTwoCards = { new Goblin(), new Kraken(), new WaterSpell() };
 
-            // I EXPECT THE BATTLE ITSELF TO BE DELETED FROM HERE SOON
-            // JUST HERE TO CREATE THE BATTLE LOGIC ITSELF OK?????? DONT EXPECT TOO MUCH
-            int round = 0;
+            User PlayerOne = new User("Player 1", playerOneCards);
+            User PlayerTwo = new User("Player 2", playerTwoCards);
 
-            while(round < 100)
-            {
+            // ooooooh this isnt doen well yet but trust. trust. truuuuust.
+            Battle battle = new Battle(0, PlayerOne, PlayerTwo);
 
-
-                round++;
-            }
+            battle.Fight();
         }
     }
 }

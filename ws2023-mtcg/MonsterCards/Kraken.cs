@@ -13,9 +13,15 @@ namespace ws2023_mtcg.MonsterCards
 
         }
 
-        public override void Attack()
+        public override Cards Attack(Cards target)
         {
+            // the kraken is immune to spells
+            if (target._type == CardType.spell)
+            {
+                return this;
+            }
 
+            return DamageFight(this, target);
         }
     }
 }

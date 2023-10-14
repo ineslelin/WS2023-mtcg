@@ -13,9 +13,20 @@ namespace ws2023_mtcg.MonsterCards
 
         }
 
-        public override void Attack()
+        public override Cards Attack(Cards target)
         {
+            // knights always lose to waterspells
+            if (target._name == "WaterSpell")
+            {
+                return target;
+            }
 
+            switch (target._type)
+            {
+                case CardType.monster: return DamageFight(this, target);
+                case CardType.spell: return ElementFight(this, target);
+                default: return null;
+            }
         }
     }
 }

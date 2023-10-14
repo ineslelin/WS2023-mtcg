@@ -12,13 +12,14 @@ namespace ws2023_mtcg
         private string _password { get; set; }
         private int _coins { get; set; } = 20;
 
-        private Cards[] _stack { get; set; }
-        private Cards[] _deck { get; set; }
+        internal Cards[] _stack { get; set; }
+        internal Cards[] _deck { get; set; }
 
-        public User(string username/*, string password,*/)
+        public User(string username/*, string password, Cards[] _stack*/, Cards[] deck)
         {
             _username = username;
             // _password = password;
+            _deck = deck;
         }
     }
 }
