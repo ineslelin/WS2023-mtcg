@@ -8,7 +8,7 @@ namespace ws2023_mtcg.SpellCards
 {
     internal class FireSpell : Cards
     {
-        public FireSpell() : base("FireSpell", ElementType.fire, CardType.spell, 20)
+        public FireSpell() : base("FireSpell", ElementType.fire, CardType.spell)
         {
 
         }
@@ -18,15 +18,26 @@ namespace ws2023_mtcg.SpellCards
             // wizard always loses to firespells (which actually doenst make sense considering wizards are water types but shush)
             if (target._name == "Wizard")
             {
+                Console.WriteLine($"{target._name}'s robes are very flammable! {this._name} defeats {target._name}!");
                 return this;
+            }
+
+            // kraken is immune to spells
+            if (target._name == "Kraken")
+            {
+                Console.WriteLine($"Spells don't affect {target._name}, rendering {this._name} useless! " +
+                    $"{target._name} defeats {this._name}!");
+                return target;
             }
 
             switch (target._type)
             {
                 case CardType.monster: return DamageFight(this, target);
                 case CardType.spell: return ElementFight(this, target);
-                default: return null;
             }
+
+            // ok this is literally only for now, afterwards theres gonna be a catch here okok
+            return this;
         }
     }
 }

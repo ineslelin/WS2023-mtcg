@@ -8,7 +8,7 @@ namespace ws2023_mtcg
 {
     internal class User
     {
-        private string _username { get; set; }
+        internal string _username { get; set; }
         private string _password { get; set; }
         private int _coins { get; set; } = 20;
 

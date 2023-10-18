@@ -50,12 +50,24 @@ namespace ws2023_mtcg
                 }
                 while (!_playerTwo._deck[randomP2Card].IsAlive);
 
+                // when youre in a writing ugly ass code competition and your opponent is me <3
+                Console.WriteLine($"\n=====[ROUND {_round + 1}]=====\n" +
+                    $" {_playerOne._username}: {_playerOne._deck[randomP1Card]._name} ({_playerOne._deck[randomP1Card]._damage} damage) vs " +
+                    $"{_playerTwo._username}: {_playerTwo._deck[randomP2Card]._name} ({_playerTwo._deck[randomP2Card]._damage} damage): ");
+
                 Cards winner = _playerOne._deck[randomP1Card].Attack(_playerTwo._deck[randomP2Card]);
 
-                // UPDATE THIS PART DOESNT WORK, REDO IT
-                (p1WinCount, p2WinCount) = (winner == _playerOne._deck[randomP1Card]) ? (p1WinCount++, p2WinCount) : (p1WinCount, p2WinCount++);
+                if (winner == _playerOne._deck[randomP1Card])
+                    p1WinCount++;
+                else
+                    p2WinCount++;
 
                 _round++;
+
+                //Console.WriteLine("\nPRESS ENTER TO CONTINUE!");
+                //ConsoleKeyInfo key = Console.ReadKey();
+                //if (key.Key == ConsoleKey.Enter)
+                //    continue;
             }
 
             if (p1WinCount > p2WinCount)

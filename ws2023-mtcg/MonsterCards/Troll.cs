@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace ws2023_mtcg.MonsterCards
 {
-    internal class Troll : Cards
+    internal abstract class Troll : Cards
     {
-        public Troll() : base("Troll", ElementType.fire, CardType.monster, 15)
+        public Troll(string _name, ElementType _element, CardType _type) : base(_name, _element, _type)
         {
 
         }
@@ -18,6 +18,7 @@ namespace ws2023_mtcg.MonsterCards
             // trolls always win to normal enemies
             if(target._element == ElementType.normal)
             {
+                Console.WriteLine($"Regular attacks and spell don't affect {this._name}! {this._name} defeats {target._name}!");
                 return this;
             }
 
@@ -25,8 +26,10 @@ namespace ws2023_mtcg.MonsterCards
             {
                 case CardType.monster: return DamageFight(this, target);
                 case CardType.spell: return ElementFight(this, target);
-                default: return null;
             }
+
+            // ok this is literally only for now, afterwards theres gonna be a catch here okok
+            return this;
         }
     }
 }
