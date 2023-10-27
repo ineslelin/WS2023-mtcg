@@ -16,20 +16,20 @@ namespace ws2023_mtcg.MonsterCards
         public override Cards Attack(Cards target)
         {
             // orks always lose to wizards
-            if (target._name == "Wizard")
+            if (target.Name == "Wizard")
             {
-                Console.WriteLine($"{target._name} took control of {this._name}! {target._name} defeats {this._name}!");
+                Console.WriteLine($"{target.Name} took control of {this.Name}! {target.Name} defeats {this.Name}!");
                 return target;
             }
 
             // trolls always win to normal enemies
-            if (target._name == "Troll")
+            if (target.Name == "Troll")
             {
-                Console.WriteLine($"Regular attacks and spell don't affect {target._name}! {target._name} defeats {this._name}!");
+                Console.WriteLine($"Regular attacks and spell don't affect {target.Name}! {target.Name} defeats {this.Name}!");
                 return target;
             }
 
-            switch (target._type)
+            switch (target.Type)
             {
                 case CardType.monster: return DamageFight(this, target);
                 case CardType.spell: return ElementFight(this, target);

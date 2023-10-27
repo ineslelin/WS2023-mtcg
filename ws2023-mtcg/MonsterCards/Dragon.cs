@@ -17,21 +17,21 @@ namespace ws2023_mtcg.MonsterCards
         public override Cards Attack(Cards target)
         {
             // dragon always wins against goblin
-            if (Regex.IsMatch(target._name, @"(Fire|Water|Regular)?Goblin"))
+            if (Regex.IsMatch(target.Name, @"(Fire|Water|Regular)?Goblin"))
             {
-                Console.WriteLine($"{target._name} is too afraid of {this._name} to attack! {this._name} defeats {target._name}!");
+                Console.WriteLine($"{target.Name} is too afraid of {this.Name} to attack! {this.Name} defeats {target.Name}!");
                 return this;
             }
 
             // elf always defeats dragon
-            if (Regex.IsMatch(target._name, @"(Fire|Water|Regular)?Elf"))
+            if (Regex.IsMatch(target.Name, @"(Fire|Water|Regular)?Elf"))
             {
-                Console.WriteLine($"Due to their age-old acquaintace {target._name} knows how to evade all of {this._name}'s attacks! " +
-                    $"{target._name} defeats {this._name}!");
+                Console.WriteLine($"Due to their age-old acquaintace {target.Name} knows how to evade all of {this.Name}'s attacks! " +
+                    $"{target.Name} defeats {this.Name}!");
                 return target;
             }
 
-            switch (target._type)
+            switch (target.Type)
             {
                 case CardType.monster: return DamageFight(this, target);
                 case CardType.spell: return ElementFight(this, target);

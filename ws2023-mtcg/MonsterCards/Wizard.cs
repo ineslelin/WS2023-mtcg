@@ -16,20 +16,20 @@ namespace ws2023_mtcg.MonsterCards
         public override Cards Attack(Cards target)
         {
             // wizards always win against orks
-            if (target._name == "Ork")
+            if (target.Name == "Ork")
             {
-                Console.WriteLine($"{this._name} took control of {target._name}! {this._name} defeats {target._name}!");
+                Console.WriteLine($"{this.Name} took control of {target.Name}! {this.Name} defeats {target.Name}!");
                 return this;
             }
 
             // wizard always loses to firespells (which actually doenst make sense considering wizards are water types but shush)
-            if (target._name == "FireSpell")
+            if (target.Name == "FireSpell")
             {
-                Console.WriteLine($"{this._name}'s robes are very flammable! {target._name} defeats {this._name}!");
+                Console.WriteLine($"{this.Name}'s robes are very flammable! {target.Name} defeats {this.Name}!");
                 return target;
             }
 
-            switch (target._type)
+            switch (target.Type)
             {
                 case CardType.monster: return DamageFight(this, target);
                 case CardType.spell: return ElementFight(this, target);

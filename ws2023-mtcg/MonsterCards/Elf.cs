@@ -16,21 +16,21 @@ namespace ws2023_mtcg.MonsterCards
         public override Cards Attack(Cards target)
         {
             // elves always win agaisnt dragons
-            if (target._name == "Dragon")
+            if (target.Name == "Dragon")
             {
-                Console.WriteLine($"Due to their age-old acquaintace {this._name} knows how to evade all of {target._name}'s attacks! " +
-                    $"{this._name} defeats {target._name}!");
+                Console.WriteLine($"Due to their age-old acquaintace {this.Name} knows how to evade all of {target.Name}'s attacks! " +
+                    $"{this.Name} defeats {target.Name}!");
                 return this;
             }
 
             // trolls always win to normal enemies
-            if (this._element == ElementType.normal && target._name == "Troll")
+            if (this.Element == ElementType.normal && target.Name == "Troll")
             {
-                Console.WriteLine($"Regular attacks and spell don't affect {target._name}! {target._name} defeats {this._name}!");
+                Console.WriteLine($"Regular attacks and spell don't affect {target.Name}! {target.Name} defeats {this.Name}!");
                 return target;
             }
 
-            switch (target._type)
+            switch (target.Type)
             {
                 case CardType.monster: return DamageFight(this, target);
                 case CardType.spell: return ElementFight(this, target);

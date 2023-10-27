@@ -16,13 +16,13 @@ namespace ws2023_mtcg.MonsterCards
         public override Cards Attack(Cards target)
         {
             // trolls always win to normal enemies
-            if(target._element == ElementType.normal)
+            if(target.Element == ElementType.normal)
             {
-                Console.WriteLine($"Regular attacks and spell don't affect {this._name}! {this._name} defeats {target._name}!");
+                Console.WriteLine($"Regular attacks and spell don't affect {this.Name}! {this.Name} defeats {target.Name}!");
                 return this;
             }
 
-            switch (target._type)
+            switch (target.Type)
             {
                 case CardType.monster: return DamageFight(this, target);
                 case CardType.spell: return ElementFight(this, target);

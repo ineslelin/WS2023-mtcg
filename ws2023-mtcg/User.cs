@@ -8,18 +8,18 @@ namespace ws2023_mtcg
 {
     internal class User
     {
-        internal string _username { get; set; }
-        private string _password { get; set; }
-        private int _coins { get; set; } = 20;
+        public string Username { get; private set; }
+        private string _password;
+        public int Coins { get; set; } = 20;
 
-        internal Cards[] _stack { get; set; }
-        internal Cards[] _deck { get; set; }
+        public Cards[] Stack { get; set; }
+        public Cards[] Deck { get; set; }
 
         public User(string username/*, string password, Cards[] _stack*/, Cards[] deck)
         {
-            _username = username;
+            Username = username;
             // _password = password;
-            _deck = deck;
+            Deck = deck;
         }
     }
 }

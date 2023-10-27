@@ -16,20 +16,20 @@ namespace ws2023_mtcg.MonsterCards
         public override Cards Attack(Cards target)
         {
             // knights always lose to waterspells
-            if (target._name == "WaterSpell")
+            if (target.Name == "WaterSpell")
             {
-                Console.WriteLine($"{this._name} drowned from {target._name}'s attack! {target._name} defeats {this._name}!");
+                Console.WriteLine($"{this.Name} drowned from {target.Name}'s attack! {target.Name} defeats {this.Name}!");
                 return target;
             }
 
             // trolls always win to normal enemies
-            if (target._name == "Troll")
+            if (target.Name == "Troll")
             {
-                Console.WriteLine($"Regular attacks and spell don't affect {target._name}! {target._name} defeats {this._name}!");
+                Console.WriteLine($"Regular attacks and spell don't affect {target.Name}! {target.Name} defeats {this.Name}!");
                 return target;
             }
 
-            switch (target._type)
+            switch (target.Type)
             {
                 case CardType.monster: return DamageFight(this, target);
                 case CardType.spell: return ElementFight(this, target);

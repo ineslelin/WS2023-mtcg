@@ -16,21 +16,21 @@ namespace ws2023_mtcg.SpellCards
         public override Cards Attack(Cards target)
         {
             // knight always loses against waterspell
-            if (target._name == "Knight")
+            if (target.Name == "Knight")
             {
-                Console.WriteLine($"{target._name} drowned from {this._name}'s attack! {this._name} defeats {target._name}!");
+                Console.WriteLine($"{target.Name} drowned from {this.Name}'s attack! {this.Name} defeats {target.Name}!");
                 return this;
             }
 
             // kraken is immune to spells
-            if (target._name == "Kraken")
+            if (target.Name == "Kraken")
             {
-                Console.WriteLine($"Spells don't affect {target._name}, rendering {this._name} useless! " +
-                    $"{target._name} defeats {this._name}!");
+                Console.WriteLine($"Spells don't affect {target.Name}, rendering {this.Name} useless! " +
+                    $"{target.Name} defeats {this.Name}!");
                 return target;
             }
 
-            switch (target._type)
+            switch (target.Type)
             {
                 case CardType.monster: return DamageFight(this, target);
                 case CardType.spell: return ElementFight(this, target);

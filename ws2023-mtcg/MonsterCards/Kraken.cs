@@ -16,10 +16,10 @@ namespace ws2023_mtcg.MonsterCards
         public override Cards Attack(Cards target)
         {
             // the kraken is immune to spells
-            if (target._type == CardType.spell)
+            if (target.Type == CardType.spell)
             {
-                Console.WriteLine($"Spells don't affect {this._name}, rendering {target._name} useless! " +
-                    $"{this._name} defeats {target._name}!");
+                Console.WriteLine($"Spells don't affect {this.Name}, rendering {target.Name} useless! " +
+                    $"{this.Name} defeats {target.Name}!");
                 return this;
             }
 

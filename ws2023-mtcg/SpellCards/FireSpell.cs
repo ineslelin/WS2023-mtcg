@@ -16,21 +16,21 @@ namespace ws2023_mtcg.SpellCards
         public override Cards Attack(Cards target)
         {
             // wizard always loses to firespells (which actually doenst make sense considering wizards are water types but shush)
-            if (target._name == "Wizard")
+            if (target.Name == "Wizard")
             {
-                Console.WriteLine($"{target._name}'s robes are very flammable! {this._name} defeats {target._name}!");
+                Console.WriteLine($"{target.Name}'s robes are very flammable! {this.Name} defeats {target.Name}!");
                 return this;
             }
 
             // kraken is immune to spells
-            if (target._name == "Kraken")
+            if (target.Name == "Kraken")
             {
-                Console.WriteLine($"Spells don't affect {target._name}, rendering {this._name} useless! " +
-                    $"{target._name} defeats {this._name}!");
+                Console.WriteLine($"Spells don't affect {target.Name}, rendering {this.Name} useless! " +
+                    $"{target.Name} defeats {this.Name}!");
                 return target;
             }
 
-            switch (target._type)
+            switch (target.Type)
             {
                 case CardType.monster: return DamageFight(this, target);
                 case CardType.spell: return ElementFight(this, target);

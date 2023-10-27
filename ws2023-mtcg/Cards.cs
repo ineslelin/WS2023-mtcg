@@ -8,22 +8,22 @@ namespace ws2023_mtcg
 {
     internal abstract class Cards
     {
-        public string _name { get; set; }
-        public ElementType _element { get; set; }
-        public CardType _type { get; set; }
-        public int _damage { get; set; }
+        public string Name { get; set; }
+        public ElementType Element { get; set; }
+        public CardType Type { get; set; }
+        public int Damage { get; set; }
         public bool IsAlive;
 
         DElementDependency elementDependency = new DElementDependency();
 
-        public Cards(string _name, ElementType _element, CardType _type)
+        public Cards(string name, ElementType element, CardType type)
         {
-            this._name = _name;
-            this._element = _element;
-            this._type = _type;
+            this.Name = name;
+            this.Element = element;
+            this.Type = type;
 
             Random random = new Random();
-            this._damage = random.Next(5, 100);
+            this.Damage = random.Next(5, 100);
 
             IsAlive = true;
         }
@@ -32,7 +32,7 @@ namespace ws2023_mtcg
 
         public Cards DamageFight(Cards source, Cards target)
         {
-            if (source._damage > target._damage)
+            if (source.Damage > target.Damage)
             {
                 target.IsAlive = false;
                 AnnounceWinner(source, target);
@@ -48,7 +48,7 @@ namespace ws2023_mtcg
 
         public Cards ElementFight(Cards source, Cards target)
         {
-            if(source._element == target._element)
+            if(source.Element == target.Element)
             {
                 return DamageFight(source, target);
             }
@@ -56,9 +56,9 @@ namespace ws2023_mtcg
             //if((source._element == ElementType.water && target._element == ElementType.fire) ||
             //   (source._element == ElementType.fire && target._element == ElementType.normal) ||
             //   (source._element == ElementType.normal && target._element == ElementType.water)) 
-            if (target._element == elementDependency.ElementDependencies[Tuple.Create(source._element, target._element)])
+            if (target.Element == elementDependency.ElementDependencies[Tuple.Create(source.Element, target.Element)])
             {
-                if(source._damage / 2 > target._damage * 2)
+                if(source.Damage / 2 > target.Damage * 2)
                 {
                     target.IsAlive = false;
                     AnnounceWinner(source, target);
@@ -72,7 +72,7 @@ namespace ws2023_mtcg
                 return target;
             }
 
-            if (target._damage / 2 > source._damage * 2)
+            if (target.Damage / 2 > source.Damage * 2)
             {
                 source.IsAlive = false;
                 AnnounceWinner(source, target);
@@ -88,33 +88,33 @@ namespace ws2023_mtcg
 
         public void AnnounceWinner(Cards source, Cards target)
         {
-            switch(target._type)
+            switch(target.Type)
             {
-                case CardType.monster when source._type == CardType.monster:
-                    Console.WriteLine(source._damage + " vs " + target._damage + " => " + (source._damage > target._damage ? source._name : target._name)
-                        + " defeats " + (source._damage < target._damage ? source._name : target._name) + "!");
+                case CardType.monster when source.Type == CardType.monster:
+                    Console.WriteLine(source.Damage + " vs " + target.Damage + " => " + (source.Damage > target.Damage ? source.Name : target.Name)
+                        + " defeats " + (source.Damage < target.Damage ? source.Name : target.Name) + "!");
                     break;
 
-                case CardType.monster when source._type == CardType.spell:
-                case CardType.spell when source._type == CardType.monster:
-                case CardType.spell when source._type == CardType.spell:
-                    if(source._element == target._element)
+                case CardType.monster when source.Type == CardType.spell:
+                case CardType.spell when source.Type == CardType.monster:
+                case CardType.spell when source.Type == CardType.spell:
+                    if(source.Element == target.Element)
                     {
-                        Console.WriteLine(source._damage + " vs " + target._damage + " => " + (source._damage > target._damage ? source._name : target._name)
-                        + " defeats " + (source._damage < target._damage ? source._name : target._name) + "!");
+                        Console.WriteLine(source.Damage + " vs " + target.Damage + " => " + (source.Damage > target.Damage ? source.Name : target.Name)
+                        + " defeats " + (source.Damage < target.Damage ? source.Name : target.Name) + "!");
                         break;
                     }
 
-                    Console.Write(source._damage + " vs " + target._damage + " => ");
+                    Console.Write(source.Damage + " vs " + target.Damage + " => ");
 
-                    if (target._element == elementDependency.ElementDependencies[Tuple.Create(source._element, target._element)])
+                    if (target.Element == elementDependency.ElementDependencies[Tuple.Create(source.Element, target.Element)])
                     {
-                        Console.WriteLine(source._damage / 2 + " vs " + target._damage * 2 + " => " + (source._damage / 2 > target._damage * 2 ? source._name : target._name) + " wins!");
+                        Console.WriteLine(source.Damage / 2 + " vs " + target.Damage * 2 + " => " + (source.Damage / 2 > target.Damage * 2 ? source.Name : target.Name) + " wins!");
 
                         break;
                     }
 
-                    Console.WriteLine(source._damage * 2 + " vs " + target._damage / 2 + " => " + (source._damage * 2 > target._damage / 2 ? source._name : target._name) + " wins!");
+                    Console.WriteLine(source.Damage * 2 + " vs " + target.Damage / 2 + " => " + (source.Damage * 2 > target.Damage / 2 ? source.Name : target.Name) + " wins!");
 
                     break;
             }

@@ -16,28 +16,28 @@ namespace ws2023_mtcg.SpellCards
         public override Cards Attack(Cards target)
         {
             // orks are immune to regular spells
-            if (target._name == "Ork")
+            if (target.Name == "Ork")
             {
-                Console.WriteLine($"{target._name} defeats {this._name}!");
+                Console.WriteLine($"{target.Name} defeats {this.Name}!");
                 return target;
             }
 
             // kraken is immune to spells
-            if (target._name == "Kraken")
+            if (target.Name == "Kraken")
             {
-                Console.WriteLine($"Spells don't affect {target._name}, rendering {this._name} useless! " +
-                    $"{target._name} defeats {this._name}!");
+                Console.WriteLine($"Spells don't affect {target.Name}, rendering {this.Name} useless! " +
+                    $"{target.Name} defeats {this.Name}!");
                 return target;
             }
 
             // trolls always win to normal enemies
-            if (this._element == ElementType.normal && target._name == "Troll")
+            if (this.Element == ElementType.normal && target.Name == "Troll")
             {
-                Console.WriteLine($"Regular attacks and spell don't affect {target._name}! {target._name} defeats {this._name}!");
+                Console.WriteLine($"Regular attacks and spell don't affect {target.Name}! {target.Name} defeats {this.Name}!");
                 return target;
             }
 
-            switch (target._type)
+            switch (target.Type)
             {
                 case CardType.monster: return DamageFight(this, target);
                 case CardType.spell: return ElementFight(this, target);
