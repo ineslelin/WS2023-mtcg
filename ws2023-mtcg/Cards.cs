@@ -56,7 +56,7 @@ namespace ws2023_mtcg
             //if((source._element == ElementType.water && target._element == ElementType.fire) ||
             //   (source._element == ElementType.fire && target._element == ElementType.normal) ||
             //   (source._element == ElementType.normal && target._element == ElementType.water)) 
-            if (source._element == elementDependency.ElementDependencies[Tuple.Create(source._element, target._element)])
+            if (target._element == elementDependency.ElementDependencies[Tuple.Create(source._element, target._element)])
             {
                 if(source._damage / 2 > target._damage * 2)
                 {
@@ -105,7 +105,17 @@ namespace ws2023_mtcg
                         break;
                     }
 
-                    Console.WriteLine(source._damage + " vs " + target._damage + " => ");
+                    Console.Write(source._damage + " vs " + target._damage + " => ");
+
+                    if (target._element == elementDependency.ElementDependencies[Tuple.Create(source._element, target._element)])
+                    {
+                        Console.WriteLine(source._damage / 2 + " vs " + target._damage * 2 + " => " + (source._damage / 2 > target._damage * 2 ? source._name : target._name) + " wins!");
+
+                        break;
+                    }
+
+                    Console.WriteLine(source._damage * 2 + " vs " + target._damage / 2 + " => " + (source._damage * 2 > target._damage / 2 ? source._name : target._name) + " wins!");
+
                     break;
             }
         }
