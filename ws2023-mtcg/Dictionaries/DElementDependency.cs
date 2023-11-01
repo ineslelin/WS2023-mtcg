@@ -3,14 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ws2023_mtcg.Enums;
 
-namespace ws2023_mtcg
+namespace ws2023_mtcg.Dictionaries
 {
     public class DElementDependency
     {
         public DElementDependency()
         {
-                
+
         }
 
         public Dictionary<Tuple<ElementType, ElementType>, ElementType> ElementDependencies = new Dictionary<Tuple<ElementType, ElementType>, ElementType>()
@@ -23,5 +24,5 @@ namespace ws2023_mtcg
             { new Tuple<ElementType, ElementType>(ElementType.water, ElementType.fire), ElementType.water },
         };
     }
-  
+
 }

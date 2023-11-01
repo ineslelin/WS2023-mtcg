@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ws2023_mtcg.MonsterCards.TrollTypes
+namespace ws2023_mtcg
 {
-    internal class FireTroll : Troll
+    internal class Server
     {
-        public FireTroll() : base("FireTroll", ElementType.fire, CardType.monster)
+        public Server() 
         {
             
         }

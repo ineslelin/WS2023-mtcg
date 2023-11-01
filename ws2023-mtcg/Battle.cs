@@ -19,10 +19,6 @@ namespace ws2023_mtcg
             _playerTwo = playerTwo;
         }
 
-        // TO DO: make the little "x vs y: y wins" texts and iguess thats it fpr the battle logic???
-        // i mean also ofc fix it so we have a winner, that would be nice
-        // and understand the code lines you dont 100% understand
-        // and if thats done, yk whats next???? server stuff, love myself some server stuff <3 /j
         public void Fight()
         {
             int p1WinCount = 0;

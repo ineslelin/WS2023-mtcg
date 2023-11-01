@@ -8,11 +8,7 @@
 // the two last one fight each other idk idk
 
 using System;
-using ws2023_mtcg.MonsterCards;
-using ws2023_mtcg.MonsterCards.ElfTypes;
-using ws2023_mtcg.MonsterCards.GoblinTypes;
-using ws2023_mtcg.MonsterCards.TrollTypes;
-using ws2023_mtcg.SpellCards;
+using ws2023_mtcg.Enums;
 
 namespace ws2023_mtcg
 {
@@ -20,12 +16,40 @@ namespace ws2023_mtcg
     {
         static void Main(string[] args)
         {
-            Cards[] playerOneCards = { new Dragon(), new WaterElf(), new FireElf(), new RegularElf(), new FireGoblin(), new RegularGoblin(), 
-                                       new WaterGoblin(), new Knight(), new Kraken(), new Ork(), new FireTroll(), new RegularTroll(), 
-                                       new WaterTroll(), new Wizard(), new FireSpell(), new RegularSpell(), new WaterSpell() };
-            Cards[] playerTwoCards = { new Dragon(), new WaterElf(), new FireElf(), new RegularElf(), new FireGoblin(), new RegularGoblin(),
-                                       new WaterGoblin(), new Knight(), new Kraken(), new Ork(), new FireTroll(), new RegularTroll(),
-                                       new WaterTroll(), new Wizard(), new FireSpell(), new RegularSpell(), new WaterSpell() };
+            Cards[] playerOneCards = { new Cards(MonsterType.Dragon),
+                                       new Cards(MonsterType.FireElf),
+                                       new Cards(MonsterType.RegularElf),
+                                       new Cards(MonsterType.WaterElf),
+                                       new Cards(MonsterType.FireGoblin),
+                                       new Cards(MonsterType.RegularGoblin),
+                                       new Cards(MonsterType.WaterGoblin),
+                                       new Cards(MonsterType.FireTroll),
+                                       new Cards(MonsterType.RegularTroll),
+                                       new Cards(MonsterType.WaterTroll),
+                                       new Cards(MonsterType.Knight),
+                                       new Cards(MonsterType.Kraken),
+                                       new Cards(MonsterType.Ork),
+                                       new Cards(MonsterType.Wizard),
+                                       new Cards(SpellType.FireSpell),
+                                       new Cards(SpellType.RegularSpell),
+                                       new Cards(SpellType.WaterSpell), };
+            Cards[] playerTwoCards = { new Cards(MonsterType.Dragon),
+                                       new Cards(MonsterType.FireElf),
+                                       new Cards(MonsterType.RegularElf),
+                                       new Cards(MonsterType.WaterElf),
+                                       new Cards(MonsterType.FireGoblin),
+                                       new Cards(MonsterType.RegularGoblin),
+                                       new Cards(MonsterType.WaterGoblin),
+                                       new Cards(MonsterType.FireTroll),
+                                       new Cards(MonsterType.RegularTroll),
+                                       new Cards(MonsterType.WaterTroll),
+                                       new Cards(MonsterType.Knight),
+                                       new Cards(MonsterType.Kraken),
+                                       new Cards(MonsterType.Ork),
+                                       new Cards(MonsterType.Wizard),
+                                       new Cards(SpellType.FireSpell),
+                                       new Cards(SpellType.RegularSpell),
+                                       new Cards(SpellType.WaterSpell), };
 
             User PlayerOne = new User("Player 1", playerOneCards);
             User PlayerTwo = new User("Player 2", playerTwoCards);
