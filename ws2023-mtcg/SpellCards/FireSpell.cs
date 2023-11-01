@@ -19,6 +19,8 @@ namespace ws2023_mtcg.SpellCards
             if (target.Name == "Wizard")
             {
                 Console.WriteLine($"{target.Name}'s robes are very flammable! {this.Name} defeats {target.Name}!");
+
+                target.IsAlive = false;
                 return this;
             }
 
@@ -27,6 +29,8 @@ namespace ws2023_mtcg.SpellCards
             {
                 Console.WriteLine($"Spells don't affect {target.Name}, rendering {this.Name} useless! " +
                     $"{target.Name} defeats {this.Name}!");
+
+                this.IsAlive = false;
                 return target;
             }
 

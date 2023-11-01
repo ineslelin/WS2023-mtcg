@@ -20,6 +20,8 @@ namespace ws2023_mtcg.MonsterCards
             {
                 Console.WriteLine($"Due to their age-old acquaintace {this.Name} knows how to evade all of {target.Name}'s attacks! " +
                     $"{this.Name} defeats {target.Name}!");
+
+                target.IsAlive = false;
                 return this;
             }
 
@@ -27,6 +29,8 @@ namespace ws2023_mtcg.MonsterCards
             if (this.Element == ElementType.normal && target.Name == "Troll")
             {
                 Console.WriteLine($"Regular attacks and spell don't affect {target.Name}! {target.Name} defeats {this.Name}!");
+
+                this.IsAlive = false;
                 return target;
             }
 

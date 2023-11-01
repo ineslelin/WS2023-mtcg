@@ -20,6 +20,8 @@ namespace ws2023_mtcg.MonsterCards
             if (Regex.IsMatch(target.Name, @"(Fire|Water|Regular)?Goblin"))
             {
                 Console.WriteLine($"{target.Name} is too afraid of {this.Name} to attack! {this.Name} defeats {target.Name}!");
+
+                target.IsAlive = false;
                 return this;
             }
 
@@ -28,6 +30,8 @@ namespace ws2023_mtcg.MonsterCards
             {
                 Console.WriteLine($"Due to their age-old acquaintace {target.Name} knows how to evade all of {this.Name}'s attacks! " +
                     $"{target.Name} defeats {this.Name}!");
+
+                this.IsAlive = false;
                 return target;
             }
 

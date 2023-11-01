@@ -19,6 +19,8 @@ namespace ws2023_mtcg.MonsterCards
             if (target.Name == "Ork")
             {
                 Console.WriteLine($"{this.Name} took control of {target.Name}! {this.Name} defeats {target.Name}!");
+
+                target.IsAlive = false;
                 return this;
             }
 
@@ -26,6 +28,8 @@ namespace ws2023_mtcg.MonsterCards
             if (target.Name == "FireSpell")
             {
                 Console.WriteLine($"{this.Name}'s robes are very flammable! {target.Name} defeats {this.Name}!");
+
+                this.IsAlive = false;
                 return target;
             }
 

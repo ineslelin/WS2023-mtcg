@@ -19,6 +19,8 @@ namespace ws2023_mtcg.MonsterCards
             if(target.Element == ElementType.normal)
             {
                 Console.WriteLine($"Regular attacks and spell don't affect {this.Name}! {this.Name} defeats {target.Name}!");
+
+                target.IsAlive = false;
                 return this;
             }
 

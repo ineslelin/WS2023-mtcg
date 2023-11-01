@@ -19,6 +19,8 @@ namespace ws2023_mtcg.MonsterCards
             if (target.Name == "Wizard")
             {
                 Console.WriteLine($"{target.Name} took control of {this.Name}! {target.Name} defeats {this.Name}!");
+
+                this.IsAlive = false;
                 return target;
             }
 
@@ -26,6 +28,8 @@ namespace ws2023_mtcg.MonsterCards
             if (target.Name == "Troll")
             {
                 Console.WriteLine($"Regular attacks and spell don't affect {target.Name}! {target.Name} defeats {this.Name}!");
+
+                this.IsAlive = false;
                 return target;
             }
 

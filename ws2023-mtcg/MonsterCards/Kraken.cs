@@ -20,6 +20,8 @@ namespace ws2023_mtcg.MonsterCards
             {
                 Console.WriteLine($"Spells don't affect {this.Name}, rendering {target.Name} useless! " +
                     $"{this.Name} defeats {target.Name}!");
+
+                target.IsAlive = false;
                 return this;
             }
 

@@ -19,6 +19,8 @@ namespace ws2023_mtcg.SpellCards
             if (target.Name == "Ork")
             {
                 Console.WriteLine($"{target.Name} defeats {this.Name}!");
+
+                this.IsAlive = false;
                 return target;
             }
 
@@ -27,6 +29,8 @@ namespace ws2023_mtcg.SpellCards
             {
                 Console.WriteLine($"Spells don't affect {target.Name}, rendering {this.Name} useless! " +
                     $"{target.Name} defeats {this.Name}!");
+
+                this.IsAlive = false;
                 return target;
             }
 
@@ -34,6 +38,8 @@ namespace ws2023_mtcg.SpellCards
             if (this.Element == ElementType.normal && target.Name == "Troll")
             {
                 Console.WriteLine($"Regular attacks and spell don't affect {target.Name}! {target.Name} defeats {this.Name}!");
+
+                this.IsAlive = false;
                 return target;
             }
 

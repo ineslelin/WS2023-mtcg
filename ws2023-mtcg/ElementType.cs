@@ -4,7 +4,7 @@ namespace ws2023_mtcg
 {
     public enum ElementType
     {
-        fire = 1,
+        fire,
         water,
         normal
     }
