@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using ws2023_mtcg.Dictionaries;
@@ -27,7 +28,7 @@ namespace ws2023_mtcg
 
         public Cards(MonsterType monster)
         {
-            monster = _monsterType;
+            this._monsterType = monster;
             this.Name = cardName.MonsterName[monster];
             this.Element = cardElement.MonsterCardElement[monster];
             this.Type = CardType.monster;
@@ -40,7 +41,7 @@ namespace ws2023_mtcg
 
         public Cards(SpellType spell)
         {
-            spell = _spellType;
+            this._spellType = spell;
             this.Name = cardName.SpellName[spell];
             this.Element = cardElement.SpellCardElement[spell];
             this.Type = CardType.spell;
@@ -53,36 +54,226 @@ namespace ws2023_mtcg
 
         public Cards Attack(Cards target)
         {
-            // THIS NEEDS TO BE REDONE, IT NEEDS TO JESUS FUCKING CHRIST
-            if(target.Type == CardType.monster)
+            // the collapse of shame pt.2: my push to github is lost :(
+            if(Regex.IsMatch(this.Name, @"(Fire|Regular|Water)?Elf"))
             {
-                switch(this._monsterType)
+                // elves always win agaisnt dragons
+                if (target.Name == "Dragon")
                 {
-                    // elves always win against dragons
-                    case MonsterType.FireElf when target._monsterType == MonsterType.Dragon:
-                    case MonsterType.RegularElf when target._monsterType == MonsterType.Dragon:
-                    case MonsterType.WaterElf when target._monsterType == MonsterType.Dragon:
-                    // dragons always win against goblins
-                    case MonsterType.Dragon when target._monsterType == MonsterType.FireGoblin:
-                    case MonsterType.Dragon when target._monsterType == MonsterType.RegularGoblin:
-                    case MonsterType.Dragon when target._monsterType == MonsterType.WaterGoblin:
-                    // trolls always win against normal type enemies
-                    case MonsterType.FireTroll when target.Element == ElementType.normal:
-                    case MonsterType.RegularTroll when target.Element == ElementType.normal:
-                    case MonsterType.WaterTroll when target.Element == ElementType.normal:
-                        return this;
-                    // dragons always lose against elves
-                    case MonsterType.Dragon when target._monsterType == MonsterType.FireElf:
-                    case MonsterType.Dragon when target._monsterType == MonsterType.RegularElf:
-                    case MonsterType.Dragon when target._monsterType == MonsterType.WaterElf:
-                    // goblins always lose to dragons
-                    case MonsterType.FireGoblin when target._monsterType == MonsterType.Dragon:
-                    case MonsterType.RegularGoblin when target._monsterType == MonsterType.Dragon:
-                    case MonsterType.WaterGoblin when target._monsterType == MonsterType.Dragon:
-                        return target;
+                    Console.WriteLine($"Due to their age-old acquaintace {this.Name} knows how to evade all of {target.Name}'s attacks! " +
+                        $"{this.Name} defeats {target.Name}!");
+
+                    target.IsAlive = false;
+                    return this;
+                }
+
+                // trolls always win to normal enemies
+                if (this.Element == ElementType.normal && target.Name == "Troll")
+                {
+                    Console.WriteLine($"Regular attacks and spell don't affect {target.Name}! {target.Name} defeats {this.Name}!");
+
+                    this.IsAlive = false;
+                    return target;
+                }
+            }
+            if(Regex.IsMatch(this.Name, @"(Fire|Regular|Water)?Goblin"))
+            {
+                // goblins always loose to dragons
+                if (target.Name == "Dragon")
+                {
+                    Console.WriteLine($"{this.Name} is too afraid of {target.Name} to attack! {target.Name} defeats {this.Name}!");
+
+                    this.IsAlive = false;
+                    return target;
+                }
+
+                // trolls always win to normal enemies
+                if (this.Element == ElementType.normal && target.Name == "Troll")
+                {
+                    Console.WriteLine($"Regular attacks and spell don't affect {target.Name}! {target.Name} defeats {this.Name}!");
+
+                    this.IsAlive = false;
+                    return target;
+                }
+            }
+            if(Regex.IsMatch(this.Name, @"(Fire|Regular|Water)?Troll"))
+            {
+                // trolls always win to normal enemies
+                if (target.Element == ElementType.normal)
+                {
+                    Console.WriteLine($"Regular attacks and spell don't affect {this.Name}! {this.Name} defeats {target.Name}!");
+
+                    target.IsAlive = false;
+                    return this;
+                }
+            }
+            if(this._monsterType == MonsterType.Dragon)
+            {
+                // dragon always wins against goblin
+                if (Regex.IsMatch(target.Name, @"(Fire|Water|Regular)?Goblin"))
+                {
+                    Console.WriteLine($"{target.Name} is too afraid of {this.Name} to attack! {this.Name} defeats {target.Name}!");
+
+                    target.IsAlive = false;
+                    return this;
+                }
+
+                // elf always defeats dragon
+                if (Regex.IsMatch(target.Name, @"(Fire|Water|Regular)?Elf"))
+                {
+                    Console.WriteLine($"Due to their age-old acquaintace {target.Name} knows how to evade all of {this.Name}'s attacks! " +
+                        $"{target.Name} defeats {this.Name}!");
+
+                    this.IsAlive = false;
+                    return target;
+                }
+            }
+            if(this._monsterType == MonsterType.Knight)
+            {
+                // knights always lose to waterspells
+                if (target.Name == "WaterSpell")
+                {
+                    Console.WriteLine($"{this.Name} drowned from {target.Name}'s attack! {target.Name} defeats {this.Name}!");
+
+                    this.IsAlive = false;
+                    return target;
+                }
+
+                // trolls always win to normal enemies
+                if (target.Name == "Troll")
+                {
+                    Console.WriteLine($"Regular attacks and spell don't affect {target.Name}! {target.Name} defeats {this.Name}!");
+
+                    this.IsAlive = false;
+                    return target;
+                }
+            }
+            if(this._monsterType == MonsterType.Kraken)
+            {
+                // the kraken is immune to spells
+                if (target.Type == CardType.spell)
+                {
+                    Console.WriteLine($"Spells don't affect {this.Name}, rendering {target.Name} useless! " +
+                        $"{this.Name} defeats {target.Name}!");
+
+                    target.IsAlive = false;
+                    return this;
+                }
+            }
+            if(this._monsterType == MonsterType.Ork)
+            {
+                // orks always lose to wizards
+                if (target.Name == "Wizard")
+                {
+                    Console.WriteLine($"{target.Name} took control of {this.Name}! {target.Name} defeats {this.Name}!");
+
+                    this.IsAlive = false;
+                    return target;
+                }
+
+                // trolls always win to normal enemies
+                if (target.Name == "Troll")
+                {
+                    Console.WriteLine($"Regular attacks and spell don't affect {target.Name}! {target.Name} defeats {this.Name}!");
+
+                    this.IsAlive = false;
+                    return target;
+                }
+            }
+            if(this._monsterType == MonsterType.Wizard)
+            {
+                // wizards always win against orks
+                if (target.Name == "Ork")
+                {
+                    Console.WriteLine($"{this.Name} took control of {target.Name}! {this.Name} defeats {target.Name}!");
+
+                    target.IsAlive = false;
+                    return this;
+                }
+
+                // wizard always loses to firespells (which actually doenst make sense considering wizards are water types but shush)
+                if (target.Name == "FireSpell")
+                {
+                    Console.WriteLine($"{this.Name}'s robes are very flammable! {target.Name} defeats {this.Name}!");
+
+                    this.IsAlive = false;
+                    return target;
+                }
+            }
+            if(this._spellType == SpellType.FireSpell)
+            {
+                // wizard always loses to firespells (which actually doenst make sense considering wizards are water types but shush)
+                if (target.Name == "Wizard")
+                {
+                    Console.WriteLine($"{target.Name}'s robes are very flammable! {this.Name} defeats {target.Name}!");
+
+                    target.IsAlive = false;
+                    return this;
+                }
+
+                // kraken is immune to spells
+                if (target.Name == "Kraken")
+                {
+                    Console.WriteLine($"Spells don't affect {target.Name}, rendering {this.Name} useless! " +
+                        $"{target.Name} defeats {this.Name}!");
+
+                    this.IsAlive = false;
+                    return target;
+                }
+            }
+            if(this._spellType == SpellType.RegularSpell)
+            {
+                // orks are immune to regular spells
+                if (target.Name == "Ork")
+                {
+                    Console.WriteLine($"{target.Name} defeats {this.Name}!");
+
+                    this.IsAlive = false;
+                    return target;
+                }
+
+                // kraken is immune to spells
+                if (target.Name == "Kraken")
+                {
+                    Console.WriteLine($"Spells don't affect {target.Name}, rendering {this.Name} useless! " +
+                        $"{target.Name} defeats {this.Name}!");
+
+                    this.IsAlive = false;
+                    return target;
+                }
+
+                // trolls always win to normal enemies
+                if (this.Element == ElementType.normal && target.Name == "Troll")
+                {
+                    Console.WriteLine($"Regular attacks and spell don't affect {target.Name}! {target.Name} defeats {this.Name}!");
+
+                    this.IsAlive = false;
+                    return target;
+                }
+            }
+            if(this._spellType == SpellType.WaterSpell)
+            {
+                // knight always loses against waterspell
+                if (target.Name == "Knight")
+                {
+                    Console.WriteLine($"{target.Name} drowned from {this.Name}'s attack! {this.Name} defeats {target.Name}!");
+
+                    target.IsAlive = false;
+                    return this;
+                }
+
+                // kraken is immune to spells
+                if (target.Name == "Kraken")
+                {
+                    Console.WriteLine($"Spells don't affect {target.Name}, rendering {this.Name} useless! " +
+                        $"{target.Name} defeats {this.Name}!");
+
+                    this.IsAlive = false;
+                    return target;
                 }
             }
 
+            // non special case battles
             if (this.Type == CardType.monster && target.Type == CardType.monster)
                 return DamageFight(this, target);
                     
