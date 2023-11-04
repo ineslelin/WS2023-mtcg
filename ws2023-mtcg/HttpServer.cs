@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Net;
 using System.IO;
+using Json.Net;
 
 namespace ws2023_mtcg
 {
@@ -47,6 +48,48 @@ namespace ws2023_mtcg
         public void HandleRequest(HttpListenerRequest req, HttpListenerResponse res)
         {
             // handle GET, POST, PUT, DELETE
+            string method = req.HttpMethod.ToString();
+
+            switch(method)
+            {
+                case "GET":
+                    HandleGetRequest(req, res);
+                    break;
+                case "POST":
+                    HandlePostRequest(req, res);
+                    break;
+                case "PUT":
+                    HandlePutRequest(req, res);
+                    break;
+                case "DELETE":
+                    HandleDeleteRequest(req, res);
+                    break;
+                default:
+                    res.StatusCode = (int)HttpStatusCode.MethodNotAllowed;
+                    break;
+            }
+
+            res.Close();
+        }
+
+        private void HandleGetRequest(HttpListenerRequest req, HttpListenerResponse res)
+        {
+            
+        }
+
+        private void HandlePostRequest(HttpListenerRequest req, HttpListenerResponse res) 
+        { 
+
+        }
+
+        private void HandlePutRequest(HttpListenerRequest req, HttpListenerResponse res)
+        { 
+        
+        }
+
+        private void HandleDeleteRequest(HttpListenerRequest req, HttpListenerResponse res)
+        {
+
         }
     }
 }
