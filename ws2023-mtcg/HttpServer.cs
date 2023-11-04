@@ -40,6 +40,7 @@ namespace ws2023_mtcg
         public void Stop()
         {
             _listener.Stop();
+            
             Console.WriteLine("Server stopped");
         }
 

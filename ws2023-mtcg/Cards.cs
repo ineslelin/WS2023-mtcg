@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using ws2023_mtcg.FightLogic.Dictionaries;
 using ws2023_mtcg.FightLogic.Enums;
 
-namespace ws2023_mtcg.FightLogic
+namespace ws2023_mtcg
 {
     internal class Cards
     {

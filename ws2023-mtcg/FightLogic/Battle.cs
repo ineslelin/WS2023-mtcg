@@ -60,10 +60,10 @@ namespace ws2023_mtcg.FightLogic
 
                 _round++;
 
-                //Console.WriteLine("\nPRESS ENTER TO CONTINUE!");
-                //ConsoleKeyInfo key = Console.ReadKey();
-                //if (key.Key == ConsoleKey.Enter)
-                //    continue;
+                Console.WriteLine("\nPRESS ENTER TO CONTINUE!");
+                ConsoleKeyInfo key = Console.ReadKey();
+                if (key.Key == ConsoleKey.Enter)
+                    continue;
             }
 
             if (p1WinCount > p2WinCount)
