@@ -8,7 +8,9 @@
 // the two last one fight each other idk idk
 
 using System;
-using ws2023_mtcg.Enums;
+using ws2023_mtcg.FightLogic;
+using ws2023_mtcg.FightLogic.Enums;
+using ws2023_mtcg.Server;
 
 namespace ws2023_mtcg
 {
@@ -16,6 +18,9 @@ namespace ws2023_mtcg
     {
         static void Main(string[] args)
         {
+            HttpServer server = new HttpServer(8080);
+            server.Start();
+
             Cards[] playerOneCards = { new Cards(MonsterType.Dragon),
                                        new Cards(MonsterType.FireElf),
                                        new Cards(MonsterType.RegularElf),
@@ -58,6 +63,8 @@ namespace ws2023_mtcg
             Battle battle = new Battle(0, PlayerOne, PlayerTwo);
 
             battle.Fight();
+
+            server.Stop();
         }
     }
 }

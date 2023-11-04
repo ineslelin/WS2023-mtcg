@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ws2023_mtcg
+namespace ws2023_mtcg.FightLogic
 {
     internal class Battle
     {
@@ -15,7 +15,7 @@ namespace ws2023_mtcg
         public Battle(int round, User playerOne, User playerTwo)
         {
             _round = round;
-            _playerOne = playerOne; 
+            _playerOne = playerOne;
             _playerTwo = playerTwo;
         }
 
@@ -27,17 +27,17 @@ namespace ws2023_mtcg
             while (_round < 100)
             {
                 // also understand how that works, it works and lowkey it makes sense but UNDERSTAND YOUR CODE BRO
-                if(!_playerOne.Deck.Any(card => card.IsAlive) || !_playerTwo.Deck.Any(card => card.IsAlive))
+                if (!_playerOne.Deck.Any(card => card.IsAlive) || !_playerTwo.Deck.Any(card => card.IsAlive))
                     break;
 
                 Random random = new Random();
 
                 int randomP1Card, randomP2Card;
 
-                do 
+                do
                 {
                     randomP1Card = random.Next(0, _playerOne.Deck.Length);
-                } 
+                }
                 while (!_playerOne.Deck[randomP1Card].IsAlive);
 
                 do

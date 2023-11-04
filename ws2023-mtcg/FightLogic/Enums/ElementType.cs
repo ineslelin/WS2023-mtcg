@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ws2023_mtcg.Enums
+namespace ws2023_mtcg.FightLogic.Enums
 {
     public enum ElementType
     {

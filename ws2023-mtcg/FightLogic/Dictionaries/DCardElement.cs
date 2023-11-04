@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using ws2023_mtcg.Enums;
+using ws2023_mtcg.FightLogic.Enums;
 
-namespace ws2023_mtcg.Dictionaries
+namespace ws2023_mtcg.FightLogic.Dictionaries
 {
     internal class DCardElement
     {

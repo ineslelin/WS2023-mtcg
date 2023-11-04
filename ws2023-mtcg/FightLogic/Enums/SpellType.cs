@@ -4,13 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ws2023_mtcg
+namespace ws2023_mtcg.FightLogic.Enums
 {
-    internal class Server
+    public enum SpellType
     {
-        public Server() 
-        {
-            
-        }
+        FireSpell,
+        RegularSpell,
+        WaterSpell,
     }
 }
