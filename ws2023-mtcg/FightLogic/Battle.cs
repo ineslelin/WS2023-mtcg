@@ -26,6 +26,8 @@ namespace ws2023_mtcg.FightLogic
 
             while (_round < 100)
             {
+                Console.Clear();
+
                 // also understand how that works, it works and lowkey it makes sense but UNDERSTAND YOUR CODE BRO
                 if (!_playerOne.Deck.Any(card => card.IsAlive) || !_playerTwo.Deck.Any(card => card.IsAlive))
                     break;

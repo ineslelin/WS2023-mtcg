@@ -29,13 +29,19 @@ namespace ws2023_mtcg
                     case ConsoleKey.W:
                     case ConsoleKey.UpArrow:
                         if (_index == 0)
+                        {
+                            _index = _menuOptions.Length - 1;
                             continue;
+                        }
                         _index--;
                         break;
                     case ConsoleKey.S:
                     case ConsoleKey.DownArrow:
                         if(_index == _menuOptions.Length - 1)
+                        {
+                            _index = 0;
                             continue;
+                        }
                         _index++;
                         break;
                     default:
@@ -99,6 +105,8 @@ namespace ws2023_mtcg
 
                 case "Exit": return;
             }
+
+            Run();
         }
 
         public void BattleOption()

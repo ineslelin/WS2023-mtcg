@@ -46,7 +46,7 @@ namespace ws2023_mtcg
 
         public void HandleRequest(HttpListenerRequest req, HttpListenerResponse res)
         {
-            
+            // handle GET, POST, PUT, DELETE
         }
     }
 }
