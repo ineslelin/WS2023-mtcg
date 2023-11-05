@@ -62,8 +62,14 @@ namespace ws2023_mtcg.FightLogic
 
                 _round++;
 
-                Console.WriteLine("\nPRESS ENTER TO CONTINUE!");
+                Console.WriteLine("\nPRESS ENTER TO CONTINUE!\nPRESS S TO LOOK AT THE CARD STATS!");
                 ConsoleKeyInfo key = Console.ReadKey();
+
+                if(key.Key == ConsoleKey.S)
+                {
+                    _playerOne.CardStats(_playerOne.Deck);
+                    _playerTwo.CardStats(_playerTwo.Deck);
+                }
                 if (key.Key == ConsoleKey.Enter)
                     continue;
             }
