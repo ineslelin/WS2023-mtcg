@@ -19,8 +19,12 @@ namespace ws2023_mtcg.FightLogic
             _playerTwo = playerTwo;
         }
 
+        // TODO: do the whole giving cards to winner thing, also maybe finally implement elo
         public void Fight()
         {
+            _playerOne.CreateDeck();
+            _playerTwo.CreateDeck();
+
             int p1WinCount = 0;
             int p2WinCount = 0;
 
@@ -32,21 +36,8 @@ namespace ws2023_mtcg.FightLogic
                 if (!_playerOne.Deck.Any(card => card.IsAlive) || !_playerTwo.Deck.Any(card => card.IsAlive))
                     break;
 
-                Random random = new Random();
-
-                int randomP1Card, randomP2Card;
-
-                do
-                {
-                    randomP1Card = random.Next(0, _playerOne.Deck.Length);
-                }
-                while (!_playerOne.Deck[randomP1Card].IsAlive);
-
-                do
-                {
-                    randomP2Card = random.Next(0, _playerTwo.Deck.Length);
-                }
-                while (!_playerTwo.Deck[randomP2Card].IsAlive);
+                int randomP1Card = ChooseRandomCard(_playerOne.Deck);
+                int randomP2Card = ChooseRandomCard(_playerTwo.Deck);
 
                 // when youre in a writing ugly ass code competition and your opponent is me <3
                 Console.WriteLine($"\n=====[ROUND {_round + 1}]=====\n" +
@@ -80,6 +71,20 @@ namespace ws2023_mtcg.FightLogic
                 Console.WriteLine("Player 2 wins!");
             else
                 Console.WriteLine("It's a tie!");
+        }
+
+        private int ChooseRandomCard(List<Cards> deck)
+        {
+            Random random = new Random();
+            int randomCard;
+
+            do
+            {
+                randomCard = random.Next(0, deck.Count);
+            }
+            while (!deck[randomCard].IsAlive);
+
+            return randomCard;
         }
     }
 }

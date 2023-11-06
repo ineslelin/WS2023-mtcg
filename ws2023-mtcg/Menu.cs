@@ -113,40 +113,45 @@ namespace ws2023_mtcg
         {
             Console.Clear();
 
-            Cards[] playerOneCards = { new Cards(MonsterType.Dragon),
-                                       new Cards(MonsterType.FireElf),
-                                       new Cards(MonsterType.RegularElf),
-                                       new Cards(MonsterType.WaterElf),
-                                       new Cards(MonsterType.FireGoblin),
-                                       new Cards(MonsterType.RegularGoblin),
-                                       new Cards(MonsterType.WaterGoblin),
-                                       new Cards(MonsterType.FireTroll),
-                                       new Cards(MonsterType.RegularTroll),
-                                       new Cards(MonsterType.WaterTroll),
-                                       new Cards(MonsterType.Knight),
-                                       new Cards(MonsterType.Kraken),
-                                       new Cards(MonsterType.Ork),
-                                       new Cards(MonsterType.Wizard),
-                                       new Cards(SpellType.FireSpell),
-                                       new Cards(SpellType.RegularSpell),
-                                       new Cards(SpellType.WaterSpell), };
-            Cards[] playerTwoCards = { new Cards(MonsterType.Dragon),
-                                       new Cards(MonsterType.FireElf),
-                                       new Cards(MonsterType.RegularElf),
-                                       new Cards(MonsterType.WaterElf),
-                                       new Cards(MonsterType.FireGoblin),
-                                       new Cards(MonsterType.RegularGoblin),
-                                       new Cards(MonsterType.WaterGoblin),
-                                       new Cards(MonsterType.FireTroll),
-                                       new Cards(MonsterType.RegularTroll),
-                                       new Cards(MonsterType.WaterTroll),
-                                       new Cards(MonsterType.Knight),
-                                       new Cards(MonsterType.Kraken),
-                                       new Cards(MonsterType.Ork),
-                                       new Cards(MonsterType.Wizard),
-                                       new Cards(SpellType.FireSpell),
-                                       new Cards(SpellType.RegularSpell),
-                                       new Cards(SpellType.WaterSpell), };
+            List<Cards> playerOneCards = new List<Cards>();
+            
+            playerOneCards.Add(new Cards(MonsterType.Dragon));
+            playerOneCards.Add(new Cards(MonsterType.FireElf));
+            playerOneCards.Add(new Cards(MonsterType.RegularElf));
+            playerOneCards.Add(new Cards(MonsterType.WaterElf));
+            playerOneCards.Add(new Cards(MonsterType.FireGoblin));
+            playerOneCards.Add(new Cards(MonsterType.RegularGoblin));
+            playerOneCards.Add(new Cards(MonsterType.WaterGoblin));
+            playerOneCards.Add(new Cards(MonsterType.FireTroll));
+            playerOneCards.Add(new Cards(MonsterType.RegularTroll));
+            playerOneCards.Add(new Cards(MonsterType.WaterTroll));
+            playerOneCards.Add(new Cards(MonsterType.Knight));
+            playerOneCards.Add(new Cards(MonsterType.Kraken));
+            playerOneCards.Add(new Cards(MonsterType.Ork));
+            playerOneCards.Add(new Cards(MonsterType.Wizard));
+            playerOneCards.Add(new Cards(SpellType.FireSpell));
+            playerOneCards.Add(new Cards(SpellType.RegularSpell));
+            playerOneCards.Add(new Cards(SpellType.WaterSpell));
+
+            List<Cards> playerTwoCards = new List<Cards>();
+
+            playerTwoCards.Add(new Cards(MonsterType.Dragon));
+            playerTwoCards.Add(new Cards(MonsterType.FireElf));
+            playerTwoCards.Add(new Cards(MonsterType.RegularElf));
+            playerTwoCards.Add(new Cards(MonsterType.WaterElf));
+            playerTwoCards.Add(new Cards(MonsterType.FireGoblin));
+            playerTwoCards.Add(new Cards(MonsterType.RegularGoblin));
+            playerTwoCards.Add(new Cards(MonsterType.WaterGoblin));
+            playerTwoCards.Add(new Cards(MonsterType.FireTroll));
+            playerTwoCards.Add(new Cards(MonsterType.RegularTroll));
+            playerTwoCards.Add(new Cards(MonsterType.WaterTroll));
+            playerTwoCards.Add(new Cards(MonsterType.Knight));
+            playerTwoCards.Add(new Cards(MonsterType.Kraken));
+            playerTwoCards.Add(new Cards(MonsterType.Ork));
+            playerTwoCards.Add(new Cards(MonsterType.Wizard));
+            playerTwoCards.Add(new Cards(SpellType.FireSpell));
+            playerTwoCards.Add(new Cards(SpellType.RegularSpell));
+            playerTwoCards.Add(new Cards(SpellType.WaterSpell));
 
             User PlayerOne = new User("Player 1", playerOneCards);
             User PlayerTwo = new User("Player 2", playerTwoCards);
@@ -155,36 +160,48 @@ namespace ws2023_mtcg
             Battle battle = new Battle(0, PlayerOne, PlayerTwo);
 
             battle.Fight();
+
+            Console.ReadKey();
         }
 
         public void ViewScoreboardOption()
         {
             Console.Clear();
             Console.WriteLine("whoopsies, this hasnt been implemented yet");
+
+            Console.ReadKey();
         }
 
         public void LoginOption()
         {
             Console.Clear();
             Console.WriteLine("whoopsies, this hasnt been implemented yet");
+
+            Console.ReadKey();
         }
 
         public void RegisterOption()
         {
             Console.Clear();
             Console.WriteLine("whoopsies, this hasnt been implemented yet");
+
+            Console.ReadKey();
         }
 
         public void TradeOption()
         {
             Console.Clear();
             Console.WriteLine("whoopsies, this hasnt been implemented yet");
+
+            Console.ReadKey();
         }
 
         public void ViewProfileOption()
         {
             Console.Clear();
             Console.WriteLine("whoopsies, this hasnt been implemented yet");
+
+            Console.ReadKey();
         }
     }
 }
