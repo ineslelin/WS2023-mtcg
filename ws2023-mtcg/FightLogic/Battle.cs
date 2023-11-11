@@ -66,11 +66,28 @@ namespace ws2023_mtcg.FightLogic
             }
 
             if (p1WinCount > p2WinCount)
+            {
                 Console.WriteLine("Player 1 wins!");
+                _playerOne.SetWinningELO();
+                _playerTwo.SetLosingELO();
+
+                _playerOne.AddToStack(_playerTwo.Deck);
+                _playerTwo.RemoveFromStack(_playerTwo.Deck);
+            }
             else if (p1WinCount < p2WinCount)
+            {
                 Console.WriteLine("Player 2 wins!");
+                _playerOne.SetLosingELO();
+                _playerTwo.SetWinningELO();
+
+                _playerOne.RemoveFromStack(_playerOne.Deck);
+                _playerTwo.AddToStack(_playerOne.Deck);
+            }
             else
                 Console.WriteLine("It's a tie!");
+
+            _playerOne.Deck.Clear();
+            _playerTwo.Deck.Clear();
         }
 
         private int ChooseRandomCard(List<Cards> deck)

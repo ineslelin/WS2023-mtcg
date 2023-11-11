@@ -11,6 +11,7 @@ namespace ws2023_mtcg
         public string Username { get; private set; }
         private string _password;
         public int Coins { get; set; } = 20;
+        public int Elo { get; set; } = 100;
 
         public List<Cards> Stack = new List<Cards>();
         public List<Cards> Deck = new List<Cards>();
@@ -85,6 +86,39 @@ namespace ws2023_mtcg
                 
             Deck.Clear();
             return CreateDeck();
+        }
+
+        public void SetWinningELO()
+        {
+            this.Elo += 3;
+        }
+
+        public void SetLosingELO()
+        {
+            this.Elo -= 5;
+        }
+
+        public void AddToStack(List<Cards> wonCards)
+        {
+            foreach(Cards w in wonCards)
+            {
+                if (!w.IsAlive)
+                {
+                    w.IsAlive = true;
+                    Stack.Add(w);
+                }
+            }
+        }
+
+        public void RemoveFromStack(List<Cards> lostCards) 
+        { 
+            foreach(Cards w in lostCards)
+            {
+                if(!w.IsAlive) 
+                {
+                    Stack.Remove(w);
+                }
+            }
         }
     }
 }

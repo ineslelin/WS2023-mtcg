@@ -6,36 +6,58 @@ using System.Threading.Tasks;
 using System.Net;
 using System.IO;
 using Json.Net;
+using System.Net.Sockets;
 
 namespace ws2023_mtcg
 {
     internal class HttpServer
     {
-        public int Port;
-        private HttpListener _listener;
+        private int port;
+        IPAddress host = IPAddress.Loopback;
+        private TcpListener _listener;
 
-        public HttpServer(int port) 
+        bool listening;
+
+        public HttpServer(int clientPort) 
         {
-            Port = port;
+            port = clientPort;
+            listening = true;
         }
 
         public void Start()
         {
-            _listener = new HttpListener();
-
-            _listener.Prefixes.Add($"http://localhost:{Port}/");
+            _listener = new TcpListener(host, port);
             _listener.Start();
 
-            Console.WriteLine("Listening...");
+            Console.WriteLine("Server started...");
 
-            while(true)
+            byte[] buffer = new byte[1024];
+
+            while(listening)
             {
-                HttpListenerContext context = _listener.GetContext();
-                HttpListenerRequest req = context.Request;
-                HttpListenerResponse res = context.Response;
+                Console.WriteLine("Waiting for incoming connections...");
 
-                HandleRequest(req, res);
+                TcpClient client = _listener.AcceptTcpClient();
+                new Thread(() => HandleClient(client, buffer)).Start();
             }
+        }
+
+        public void HandleClient(TcpClient client, byte[] buffer)
+        {
+            Console.WriteLine("Accepted new client connection...");
+
+            using var writer = new StreamWriter(client.GetStream()) { AutoFlush = true };
+            using var reader = new StreamReader(client.GetStream());
+
+            string? req;
+
+            while((req = reader.ReadLine()) != null)
+            {
+                Console.WriteLine(req); 
+                Console.WriteLine("\r\n");
+            }
+
+            Console.WriteLine("Client disconnected");
         }
 
         public void Stop()
@@ -43,53 +65,6 @@ namespace ws2023_mtcg
             _listener.Stop();
             
             Console.WriteLine("Server stopped");
-        }
-
-        public void HandleRequest(HttpListenerRequest req, HttpListenerResponse res)
-        {
-            // handle GET, POST, PUT, DELETE
-            string method = req.HttpMethod.ToString();
-
-            switch(method)
-            {
-                case "GET":
-                    HandleGetRequest(req, res);
-                    break;
-                case "POST":
-                    HandlePostRequest(req, res);
-                    break;
-                case "PUT":
-                    HandlePutRequest(req, res);
-                    break;
-                case "DELETE":
-                    HandleDeleteRequest(req, res);
-                    break;
-                default:
-                    res.StatusCode = (int)HttpStatusCode.MethodNotAllowed;
-                    break;
-            }
-
-            res.Close();
-        }
-
-        private void HandleGetRequest(HttpListenerRequest req, HttpListenerResponse res)
-        {
-            
-        }
-
-        private void HandlePostRequest(HttpListenerRequest req, HttpListenerResponse res) 
-        { 
-
-        }
-
-        private void HandlePutRequest(HttpListenerRequest req, HttpListenerResponse res)
-        { 
-        
-        }
-
-        private void HandleDeleteRequest(HttpListenerRequest req, HttpListenerResponse res)
-        {
-
         }
     }
 }

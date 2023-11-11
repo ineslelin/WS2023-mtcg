@@ -10,12 +10,12 @@ namespace ws2023_mtcg
         {
             // 10001 as port bc they use that in the curl scripts
             HttpServer server = new HttpServer(10001);
-            //server.Start();
+            server.Start();
 
             Menu menu = new Menu();
             menu.Run();
 
-            //server.Stop();
+            server.Stop();
         }
     }
 }
