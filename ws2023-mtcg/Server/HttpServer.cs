@@ -8,7 +8,7 @@ using System.IO;
 using Json.Net;
 using System.Net.Sockets;
 
-namespace ws2023_mtcg
+namespace ws2023_mtcg.Server
 {
     internal class HttpServer
     {
@@ -18,7 +18,7 @@ namespace ws2023_mtcg
 
         bool listening;
 
-        public HttpServer(int clientPort) 
+        public HttpServer(int clientPort)
         {
             port = clientPort;
             listening = true;
@@ -33,7 +33,7 @@ namespace ws2023_mtcg
 
             byte[] buffer = new byte[1024];
 
-            while(listening)
+            while (listening)
             {
                 Console.WriteLine("Waiting for incoming connections...");
 
@@ -49,13 +49,26 @@ namespace ws2023_mtcg
             using var writer = new StreamWriter(client.GetStream()) { AutoFlush = true };
             using var reader = new StreamReader(client.GetStream());
 
-            string? req;
+            string? requestToHandle;
+            string req = "";
 
-            while((req = reader.ReadLine()) != null)
+            while ((requestToHandle = reader.ReadLine()) != null)
             {
-                Console.WriteLine(req); 
+                Console.WriteLine(requestToHandle);
                 Console.WriteLine("\r\n");
+
+                req += requestToHandle + "\n";
+
+                if (string.IsNullOrEmpty(requestToHandle))
+                    break;
             }
+
+            Console.WriteLine("Handling request...");
+
+            RequestHandler requestHandler = new RequestHandler();
+            requestHandler.HandleRequest(client, req);
+
+            client.Close();
 
             Console.WriteLine("Client disconnected");
         }
@@ -63,7 +76,7 @@ namespace ws2023_mtcg
         public void Stop()
         {
             _listener.Stop();
-            
+
             Console.WriteLine("Server stopped");
         }
     }

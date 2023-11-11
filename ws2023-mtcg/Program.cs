@@ -1,6 +1,7 @@
 ﻿using System;
 using ws2023_mtcg.FightLogic;
 using ws2023_mtcg.FightLogic.Enums;
+using ws2023_mtcg.Server;
 
 namespace ws2023_mtcg
 {
