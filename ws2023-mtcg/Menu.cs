@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ws2023_mtcg.FightLogic.Enums;
 using ws2023_mtcg.FightLogic;
+using ws2023_mtcg.Objects;
 
 namespace ws2023_mtcg
 {

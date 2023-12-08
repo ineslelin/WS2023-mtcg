@@ -13,8 +13,8 @@ namespace ws2023_mtcg
             HttpServer server = new HttpServer(10001);
             server.Start();
 
-            Menu menu = new Menu();
-            menu.Run();
+            // Menu menu = new Menu();
+            // menu.Run();
 
             server.Stop();
         }

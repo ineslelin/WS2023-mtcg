@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ws2023_mtcg
+namespace ws2023_mtcg.Objects
 {
     internal class User
     {
@@ -25,7 +25,7 @@ namespace ws2023_mtcg
 
         public void CardStats(List<Cards> Deck)
         {
-            Console.WriteLine($"{this.Username}'s Deck:");
+            Console.WriteLine($"{Username}'s Deck:");
 
             for (int i = 0; i < Deck.Count; i++)
             {
@@ -50,7 +50,7 @@ namespace ws2023_mtcg
         {
             // todo: make errors impossible by returning error messages for wrong input, namely at places hightlighted with !!!
 
-            List<Cards> tempStack = this.Stack;
+            List<Cards> tempStack = Stack;
 
             while (Deck.Count < 4)
             {
@@ -79,28 +79,28 @@ namespace ws2023_mtcg
             }
 
             ConsoleKeyInfo key = Console.ReadKey();
-            if(key.Key == ConsoleKey.Y)
+            if (key.Key == ConsoleKey.Y)
             {
-                return this.Deck;
+                return Deck;
             }
-                
+
             Deck.Clear();
             return CreateDeck();
         }
 
         public void SetWinningELO()
         {
-            this.Elo += 3;
+            Elo += 3;
         }
 
         public void SetLosingELO()
         {
-            this.Elo -= 5;
+            Elo -= 5;
         }
 
         public void AddToStack(List<Cards> wonCards)
         {
-            foreach(Cards w in wonCards)
+            foreach (Cards w in wonCards)
             {
                 if (!w.IsAlive)
                 {
@@ -110,11 +110,11 @@ namespace ws2023_mtcg
             }
         }
 
-        public void RemoveFromStack(List<Cards> lostCards) 
-        { 
-            foreach(Cards w in lostCards)
+        public void RemoveFromStack(List<Cards> lostCards)
+        {
+            foreach (Cards w in lostCards)
             {
-                if(!w.IsAlive) 
+                if (!w.IsAlive)
                 {
                     Stack.Remove(w);
                 }
