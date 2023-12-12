@@ -16,11 +16,11 @@ namespace ws2023_mtcg.Objects
         public List<Cards> Stack = new List<Cards>();
         public List<Cards> Deck = new List<Cards>();
 
-        public User(string username/*, string password, Cards[] _stack*/, List<Cards> stack)
+        public User(string username/*, string password, Cards[] _stack, List<Cards> stack*/)
         {
             Username = username;
             // _password = password;
-            Stack = stack;
+            // Stack = stack;
         }
 
         public void CardStats(List<Cards> Deck)

@@ -13,8 +13,8 @@ namespace ws2023_mtcg.Server
 {
     internal class HttpServer
     {
-        private int port;
-        IPAddress host = IPAddress.Loopback;
+        private readonly int port;
+        private readonly IPAddress host = IPAddress.Loopback;
         private TcpListener _listener;
 
         bool listening;

@@ -15,7 +15,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="Menu.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Json.Net" Version="1.0.33" />
+    <PackageReference Include="Npgsql" Version="8.0.1" />
   </ItemGroup>
 
 </Project>
