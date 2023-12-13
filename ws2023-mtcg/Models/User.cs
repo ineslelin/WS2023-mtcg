@@ -8,19 +8,18 @@ namespace ws2023_mtcg.Objects
 {
     internal class User
     {
-        public string Username { get; private set; }
-        private string _password;
-        public int Coins { get; set; } = 20;
-        public int Elo { get; set; } = 100;
+        public int id;
+        public string Username { get; set; }
+        public string Password;
+        public int Coins { get; set; }
+        public int Elo { get; set; }
 
         public List<Cards> Stack = new List<Cards>();
         public List<Cards> Deck = new List<Cards>();
 
-        public User(string username/*, string password, Cards[] _stack, List<Cards> stack*/)
+        public User()
         {
-            Username = username;
-            // _password = password;
-            // Stack = stack;
+
         }
 
         public void CardStats(List<Cards> Deck)

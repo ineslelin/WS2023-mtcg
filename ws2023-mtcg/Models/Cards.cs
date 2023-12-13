@@ -16,15 +16,15 @@ namespace ws2023_mtcg.Objects
         public ElementType Element { get; set; }
         public CardType Type { get; set; }
 
-        private MonsterType _monsterType;
-        private SpellType _spellType;
+        private readonly MonsterType _monsterType;
+        private readonly SpellType _spellType;
 
         public int Damage { get; set; }
         public bool IsAlive;
 
-        DElementDependency elementDependency = new DElementDependency();
-        DCardName cardName = new DCardName();
-        DCardElement cardElement = new DCardElement();
+        readonly DElementDependency elementDependency = new DElementDependency();
+        readonly DCardName cardName = new DCardName();
+        readonly DCardElement cardElement = new DCardElement();
 
         public Cards(MonsterType monster)
         {
