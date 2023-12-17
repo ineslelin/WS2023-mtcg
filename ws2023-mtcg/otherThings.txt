@@ -1,0 +1,73 @@
+﻿// connection string
+"Host=localhost;Database=mtcgdb;Username=admin;Password=1234"
+
+// starting the docker
+docker start mtcgdb
+
+// open bash
+docker exec -it mtcgdb bash
+
+// run psql
+ psql -U admin
+
+// sql commands
+CREATE TABLE IF NOT EXISTS users (
+	id SERIAL PRIMARY KEY,
+	username VARCHAR(20) UNIQUE NOT NULL,
+	password VARCHAR(255) NOT NULL,
+	coins int,
+	elo int
+);
+
+CREATE TABLE IF NOT EXISTS cards (
+	id SERIAL PRIMARY KEY,
+	name varchar(32) UNIQUE NOT NULL,
+	element int,
+	damage int,
+	cardtype int
+);
+
+// technically the stack table only needs the foreign keys uid and cardid, i added the others for readability tbh
+CREATE TABLE IF NOT EXISTS stack (
+    id SERIAL PRIMARY KEY,
+    f_uid INT NOT NULL REFERENCES users(id),
+    f_cardid INT NOT NULL REFERENCES cards(id),
+);
+
+// again, technically dont need username and cardname, its just in there to make the table as a whole more readable (said the
+	idiot who refused to add the elements in the card name as strings because they're "too lazy to think of a method that doesn't
+	include enums")
+CREATE TABLE IF NOT EXISTS deck (
+    id SERIAL PRIMARY KEY,
+    f_stackid int NOT NULL REFERENCES stack(id),
+    username VARCHAR(20),
+    cardname VARCHAR(32)
+);
+
+// infos on cards
+element is saved as an integer bc the program is using an enum
+	fire = 0
+	water = 1
+	normal = 2
+card type as well
+	monster = 0
+	spell = 1
+
+// commands to fill the cards table in
+INSERT INTO cards (name, element, damage, cardtype) VALUES ('Dragon', 0, 70, 0);
+INSERT INTO cards (name, element, damage, cardtype) VALUES ('FireElf',0, 25, 0);
+INSERT INTO cards (name, element, damage, cardtype) VALUES ('FireGoblin', 0, 45, 0);
+INSERT INTO cards (name, element, damage, cardtype) VALUES ('FireTroll', 0, 85, 0);
+INSERT INTO cards (name, element, damage, cardtype) VALUES ('WaterElf', 1, 60, 0);
+INSERT INTO cards (name, element, damage, cardtype) VALUES ('WaterGoblin', 1, 15, 0);
+INSERT INTO cards (name, element, damage, cardtype) VALUES ('WaterTroll', 1, 35, 0);
+INSERT INTO cards (name, element, damage, cardtype) VALUES ('Kraken', 1, 70, 0);
+INSERT INTO cards (name, element, damage, cardtype) VALUES ('Wizard', 1, 50, 0);
+INSERT INTO cards (name, element, damage, cardtype) VALUES ('RegularElf', 2, 90, 0);
+INSERT INTO cards (name, element, damage, cardtype) VALUES ('RegularGoblin', 2, 25, 0);
+INSERT INTO cards (name, element, damage, cardtype) VALUES ('RegularTroll', 2, 80, 0);
+INSERT INTO cards (name, element, damage, cardtype) VALUES ('Knight', 2, 45, 0);
+INSERT INTO cards (name, element, damage, cardtype) VALUES ('Ork', 2, 55, 0);
+INSERT INTO cards (name, element, damage, cardtype) VALUES ('FireSpell', 0, 75, 1);
+INSERT INTO cards (name, element, damage, cardtype) VALUES ('WaterSpell', 1, 20, 1);
+INSERT INTO cards (name, element, damage, cardtype) VALUES ('RegularSpell', 2, 55, 1);

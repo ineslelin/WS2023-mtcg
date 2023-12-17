@@ -12,45 +12,53 @@ namespace ws2023_mtcg.Objects
 {
     internal class Cards
     {
+        public int stackId;
+        public int OwnerId;
+        public int CardTypeId;
         public string Name { get; set; }
         public ElementType Element { get; set; }
         public CardType Type { get; set; }
 
-        private readonly MonsterType _monsterType;
-        private readonly SpellType _spellType;
-
+        // private readonly MonsterType _monsterType;
+        // private readonly SpellType _spellType;
+        
         public int Damage { get; set; }
         public bool IsAlive;
 
         readonly DElementDependency elementDependency = new DElementDependency();
-        readonly DCardName cardName = new DCardName();
-        readonly DCardElement cardElement = new DCardElement();
+        // readonly DCardName cardName = new DCardName();
+        // readonly DCardElement cardElement = new DCardElement();
 
-        public Cards(MonsterType monster)
+        public Cards()
         {
-            _monsterType = monster;
-            Name = cardName.MonsterName[monster];
-            Element = cardElement.MonsterCardElement[monster];
-            Type = CardType.monster;
-
-            Random random = new Random();
-            Damage = random.Next(5, 100);
-
             IsAlive = true;
         }
 
-        public Cards(SpellType spell)
-        {
-            _spellType = spell;
-            Name = cardName.SpellName[spell];
-            Element = cardElement.SpellCardElement[spell];
-            Type = CardType.spell;
-
-            Random random = new Random();
-            Damage = random.Next(5, 100);
-
-            IsAlive = true;
-        }
+        // public Cards(MonsterType monster)
+        // {
+        //     _monsterType = monster;
+        //     Name = cardName.MonsterName[monster];
+        //     Element = cardElement.MonsterCardElement[monster];
+        //     Type = CardType.monster;
+        // 
+        //     Random random = new Random();
+        //     Damage = random.Next(5, 100);
+        // 
+        //     IsAlive = true;
+        // }
+        // 
+        // public Cards(SpellType spell)
+        // {
+        //     _spellType = spell;
+        //     Name = cardName.SpellName[spell];
+        //     Element = cardElement.SpellCardElement[spell];
+        //     Type = CardType.spell;
+        // 
+        //     Random random = new Random();
+        //     Damage = random.Next(5, 100);
+        // 
+        //     IsAlive = true;
+        // }
 
         public Cards Attack(Cards target)
         {
@@ -107,7 +115,7 @@ namespace ws2023_mtcg.Objects
                     return this;
                 }
             }
-            if (_monsterType == MonsterType.Dragon)
+            if (Name == "Dragon")
             {
                 // dragon always wins against goblin
                 if (Regex.IsMatch(target.Name, @"(Fire|Water|Regular)?Goblin"))
@@ -128,7 +136,7 @@ namespace ws2023_mtcg.Objects
                     return target;
                 }
             }
-            if (_monsterType == MonsterType.Knight)
+            if (Name == "Knight")
             {
                 // knights always lose to waterspells
                 if (target.Name == "WaterSpell")
@@ -148,7 +156,7 @@ namespace ws2023_mtcg.Objects
                     return target;
                 }
             }
-            if (_monsterType == MonsterType.Kraken)
+            if (Name == "Kraken")
             {
                 // the kraken is immune to spells
                 if (target.Type == CardType.spell)
@@ -160,7 +168,7 @@ namespace ws2023_mtcg.Objects
                     return this;
                 }
             }
-            if (_monsterType == MonsterType.Ork)
+            if (Name == "Ork")
             {
                 // orks always lose to wizards
                 if (target.Name == "Wizard")
@@ -180,7 +188,7 @@ namespace ws2023_mtcg.Objects
                     return target;
                 }
             }
-            if (_monsterType == MonsterType.Wizard)
+            if (Name == "Wizard")
             {
                 // wizards always win against orks
                 if (target.Name == "Ork")
@@ -200,7 +208,7 @@ namespace ws2023_mtcg.Objects
                     return target;
                 }
             }
-            if (_spellType == SpellType.FireSpell)
+            if (Name == "FireSpell")
             {
                 // wizard always loses to firespells (which actually doenst make sense considering wizards are water types but shush)
                 if (target.Name == "Wizard")
@@ -221,7 +229,7 @@ namespace ws2023_mtcg.Objects
                     return target;
                 }
             }
-            if (_spellType == SpellType.RegularSpell)
+            if (Name == "RegularSpell")
             {
                 // orks are immune to regular spells
                 if (target.Name == "Ork")
@@ -251,7 +259,7 @@ namespace ws2023_mtcg.Objects
                     return target;
                 }
             }
-            if (_spellType == SpellType.WaterSpell)
+            if (Name == "WaterSpell")
             {
                 // knight always loses against waterspell
                 if (target.Name == "Knight")

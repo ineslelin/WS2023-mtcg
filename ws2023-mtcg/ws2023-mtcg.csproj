@@ -15,6 +15,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="FightLogic\Dictionaries\DCardElement.cs" />
+    <Compile Remove="FightLogic\Dictionaries\DCardName.cs" />
+    <Compile Remove="FightLogic\Enums\MonsterType.cs" />
+    <Compile Remove="FightLogic\Enums\SpellType.cs" />
     <Compile Remove="Menu.cs" />
   </ItemGroup>
 

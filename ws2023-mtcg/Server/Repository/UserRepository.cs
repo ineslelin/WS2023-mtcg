@@ -10,7 +10,7 @@ using System.Linq.Expressions;
 
 namespace ws2023_mtcg.Server.Repository
 {
-    internal class UserRepository : IRepository<User>
+    internal class UserRepository : IRepository<User, User, string>
     {
         private readonly string _connectionString = "Host=localhost;Database=mtcgdb;Username=admin;Password=1234";
 
@@ -91,7 +91,7 @@ namespace ws2023_mtcg.Server.Repository
 
         public void Update(User user)
         {
-            if(user.id == null || user.Username == null)
+            if(user.Username == null)
                 throw new ArgumentException("id can't be null");
 
             try
@@ -118,7 +118,7 @@ namespace ws2023_mtcg.Server.Repository
 
         public void Delete(User user)
         {
-            if (user.id == null || user.Username == null)
+            if (user.Username == null)
                 throw new ArgumentException("id can't be null");
 
             try
