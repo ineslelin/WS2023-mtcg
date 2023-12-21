@@ -51,14 +51,12 @@ namespace ws2023_mtcg.Server
             using var reader = new StreamReader(client.GetStream());
 
             string? requestToHandle;
-            string req = "";
+            StringBuilder req = new StringBuilder();
 
             while ((requestToHandle = reader.ReadLine()) != null)
             {
                 Console.WriteLine(requestToHandle);
-                Console.WriteLine("\r\n");
-
-                req += requestToHandle + "\n";
+                req.AppendLine(requestToHandle);
 
                 if (string.IsNullOrEmpty(requestToHandle))
                     break;
