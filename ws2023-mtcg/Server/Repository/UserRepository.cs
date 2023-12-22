@@ -12,7 +12,7 @@ namespace ws2023_mtcg.Server.Repository
 {
     internal class UserRepository : IRepository<User, User, string>
     {
-        private readonly string _connectionString = "Host=localhost;Database=mtcgdb;Username=admin;Password=1234";
+        private readonly string _connectionString = "Host=localhost;Database=mtcgdb;Username=admin;Password=1234;";
 
         public User Read(string username)
         {
@@ -70,7 +70,7 @@ namespace ws2023_mtcg.Server.Repository
                     {
                         connection.Open();
 
-                        command.CommandText = @"INSERT INTO users (username, password, coins, elo)
+                        command.CommandText = @"INSERT INTO ""users"" (username, password, coins, elo)
                                                 VALUES (@username, @password, @coins, @elo) RETURNING id";
 
                         DbCommands.AddParameterWithValue(command, "username", DbType.String, user.Username);

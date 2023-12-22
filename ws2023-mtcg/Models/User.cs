@@ -19,7 +19,8 @@ namespace ws2023_mtcg.Objects
 
         public User()
         {
-
+            Coins = 20;
+            Elo = 100;
         }
 
         public void CardStats(List<Cards> Deck)
