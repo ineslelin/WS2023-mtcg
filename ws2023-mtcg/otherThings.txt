@@ -10,6 +10,9 @@ docker exec -it mtcgdb bash
 // run psql
  psql -U admin
 
+ // change to the correct database (since im clearly incapable)
+ \c mtcgdb
+
 // sql commands
 CREATE TABLE IF NOT EXISTS users (
 	id SERIAL PRIMARY KEY,
@@ -31,7 +34,7 @@ CREATE TABLE IF NOT EXISTS cards (
 CREATE TABLE IF NOT EXISTS stack (
     id SERIAL PRIMARY KEY,
     f_uid INT NOT NULL REFERENCES users(id),
-    f_cardid INT NOT NULL REFERENCES cards(id),
+    f_cardid INT NOT NULL REFERENCES cards(id)
 );
 
 // again, technically dont need username and cardname, its just in there to make the table as a whole more readable (said the
@@ -39,9 +42,7 @@ CREATE TABLE IF NOT EXISTS stack (
 	include enums")
 CREATE TABLE IF NOT EXISTS deck (
     id SERIAL PRIMARY KEY,
-    f_stackid int NOT NULL REFERENCES stack(id),
-    username VARCHAR(20),
-    cardname VARCHAR(32)
+    f_stackid int NOT NULL REFERENCES stack(id)
 );
 
 // infos on cards

@@ -7,7 +7,7 @@ using System.Net;
 using System.IO;
 using Json.Net;
 using System.Net.Sockets;
-using ws2023_mtcg.Server.Handlers;
+using ws2023_mtcg.Server.RequestHandler;
 
 namespace ws2023_mtcg.Server
 {
@@ -79,6 +79,16 @@ namespace ws2023_mtcg.Server
                 {
                     PostRequestHandler postRequestHandler = new PostRequestHandler(req.ToString(), data);
                 }
+
+                if (req.ToString().Contains("PUT"))
+                {
+                    PutRequestHandler putRequestHandler = new PutRequestHandler();
+                }
+            }
+
+            if (req.ToString().Contains("DELETE"))
+            {
+                DeleteRequestHandler deleteRequestHandler = new DeleteRequestHandler();
             }
 
             client.Close();

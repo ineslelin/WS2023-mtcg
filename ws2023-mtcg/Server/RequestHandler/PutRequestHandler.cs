@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ws2023_mtcg.Server.Handlers
+namespace ws2023_mtcg.Server.RequestHandler
 {
-    internal class DeleteRequestHandler
+    internal class PutRequestHandler
     {
     }
 }

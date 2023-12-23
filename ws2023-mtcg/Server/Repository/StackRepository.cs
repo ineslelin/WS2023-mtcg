@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ws2023_mtcg.FightLogic.Enums;
-using ws2023_mtcg.Objects;
+using ws2023_mtcg.Models;
 
 namespace ws2023_mtcg.Server.Repository
 {

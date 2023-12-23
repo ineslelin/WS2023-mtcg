@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using ws2023_mtcg.Objects;
+using ws2023_mtcg.Models;
 using Newtonsoft.Json;
 using ws2023_mtcg.Server.Repository;
 
-namespace ws2023_mtcg.Server.Handlers
+namespace ws2023_mtcg.Server.RequestHandler
 {
     internal class PostRequestHandler : IRequestHandler
     {
@@ -22,6 +22,9 @@ namespace ws2023_mtcg.Server.Handlers
 
             if (req.Contains("users"))
                 HandleUserRequest();
+
+            if (req.Contains("sessions"))
+                HandleSessionRequest();
         }
 
         public void HandleUserRequest()
@@ -34,8 +37,23 @@ namespace ws2023_mtcg.Server.Handlers
             if (tempUser != null)
             {
                 UserRepository userRepository = new UserRepository();
-                userRepository.Create(tempUser);
+
+                tempUser.Password = PasswordSecurity.EncryptPassword(tempUser.Password);
+
+                try
+                {
+                    userRepository.Create(tempUser);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error: {ex}");
+                }
             }
+        }
+
+        public void HandleSessionRequest()
+        {
+
         }
     }
 }

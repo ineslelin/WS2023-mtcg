@@ -4,7 +4,7 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using ws2023_mtcg.Objects;
+using ws2023_mtcg.Models;
 using Npgsql;
 using System.Linq.Expressions;
 
@@ -12,7 +12,8 @@ namespace ws2023_mtcg.Server.Repository
 {
     internal class UserRepository : IRepository<User, User, string>
     {
-        private readonly string _connectionString = "Host=localhost;Database=mtcgdb;Username=admin;Password=1234;";
+        // idk what i did wrong, i called my database mtcgdb, why is it suddenly called admin
+        private readonly string _connectionString = "Host=localhost;Database=mtcgdb;Username=admin;Password=1234;Include Error Detail=true";
 
         public User Read(string username)
         {
@@ -62,6 +63,11 @@ namespace ws2023_mtcg.Server.Repository
 
         public void Create(User user)
         {
+            if (Read(user.Username) != null)
+            {
+                throw new NpgsqlException("user already exists");
+            }
+
             try
             {
                 using(IDbConnection connection = new NpgsqlConnection(_connectionString))
@@ -70,14 +76,14 @@ namespace ws2023_mtcg.Server.Repository
                     {
                         connection.Open();
 
-                        command.CommandText = @"INSERT INTO ""users"" (username, password, coins, elo)
+                        command.CommandText = @"INSERT INTO users (username, password, coins, elo)
                                                 VALUES (@username, @password, @coins, @elo) RETURNING id";
 
                         DbCommands.AddParameterWithValue(command, "username", DbType.String, user.Username);
                         DbCommands.AddParameterWithValue(command, "password", DbType.String, user.Password);
                         DbCommands.AddParameterWithValue(command, "coins", DbType.Int32, user.Coins);
                         DbCommands.AddParameterWithValue(command, "elo", DbType.Int32, user.Elo);
-                        command.ExecuteNonQuery();
+                        // command.ExecuteNonQuery();
 
                         user.id = Convert.ToInt32(command.ExecuteScalar() ?? 0);
                     }

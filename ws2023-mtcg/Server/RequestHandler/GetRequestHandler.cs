@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ws2023_mtcg.Server.Repository;
 
-namespace ws2023_mtcg.Server.Handlers
+namespace ws2023_mtcg.Server.RequestHandler
 {
     internal class GetRequestHandler : IRequestHandler
     {
