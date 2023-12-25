@@ -12,7 +12,6 @@ namespace ws2023_mtcg.Server.Repository
 {
     internal class UserRepository : IRepository<User, User, string>
     {
-        // idk what i did wrong, i called my database mtcgdb, why is it suddenly called admin
         private readonly string _connectionString = "Host=localhost;Database=mtcgdb;Username=admin;Password=1234;Include Error Detail=true";
 
         public User Read(string username)

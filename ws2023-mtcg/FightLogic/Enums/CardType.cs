@@ -4,7 +4,7 @@ namespace ws2023_mtcg.FightLogic.Enums
 {
     public enum CardType
     {
-        monster,
-        spell
+        monster = 0,
+        spell = 1,
     }
 }

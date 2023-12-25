@@ -12,9 +12,7 @@ namespace ws2023_mtcg.Models
 {
     internal class Cards
     {
-        public int stackId;
-        public int OwnerId;
-        public int CardTypeId;
+        public string Id;
         public string Name { get; set; }
         public ElementType Element { get; set; }
         public CardType Type { get; set; }
@@ -22,12 +20,15 @@ namespace ws2023_mtcg.Models
         // private readonly MonsterType _monsterType;
         // private readonly SpellType _spellType;
         
-        public int Damage { get; set; }
+        public double Damage { get; set; }
         public bool IsAlive;
 
         readonly DElementDependency elementDependency = new DElementDependency();
         // readonly DCardName cardName = new DCardName();
         // readonly DCardElement cardElement = new DCardElement();
+
+        public int stackId;
+        public int OwnerId;
 
         public Cards()
         {

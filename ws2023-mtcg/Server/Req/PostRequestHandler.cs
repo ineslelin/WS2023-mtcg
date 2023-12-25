@@ -12,6 +12,7 @@ namespace ws2023_mtcg.Server.Req
 {
     internal class PostRequestHandler : IRequestHandler
     {
+        string req;
         string data;
         StreamWriter writer;
 
@@ -22,20 +23,33 @@ namespace ws2023_mtcg.Server.Req
 
             this.data = data;
             this.writer = writer;
+            this.req = req;
 
             if (req.Contains("users"))
                 HandleUserRequest();
 
             if (req.Contains("sessions"))
                 HandleSessionRequest();
+
+            if (req.Contains("packages") && !req.Contains("transactions"))
+                HandlePackageRequest();
         }
 
         public void HandleUserRequest()
         {
             User? tempUser = new User();
-            tempUser = JsonConvert.DeserializeObject<User>(data);
 
-            Console.WriteLine($"username {tempUser.Username}, password {tempUser.Password}");
+            try
+            {
+                tempUser = JsonConvert.DeserializeObject<User>(data);
+            }
+            catch (JsonException ex)
+            {
+                Console.WriteLine($"Error: {ex}");
+                ResponseHandler.SendErrorResponse(writer, "Invalid JSON.");
+            }
+
+            // Console.WriteLine($"username {tempUser.Username}, password {tempUser.Password}");
 
             if (tempUser != null)
             {
@@ -60,9 +74,18 @@ namespace ws2023_mtcg.Server.Req
         public void HandleSessionRequest()
         {
             User? tempUser = new User();
-            tempUser = JsonConvert.DeserializeObject<User>(data);
 
-            Console.WriteLine($"username {tempUser.Username}, password {tempUser.Password}");
+            try
+            {
+                tempUser = JsonConvert.DeserializeObject<User>(data);
+            }
+            catch (JsonException ex)
+            {
+                Console.WriteLine($"Error: {ex}");
+                ResponseHandler.SendErrorResponse(writer, "Invalid JSON.");
+            }
+
+            // Console.WriteLine($"username {tempUser.Username}, password {tempUser.Password}");
 
             if (tempUser != null)
             {
@@ -85,6 +108,64 @@ namespace ws2023_mtcg.Server.Req
 
                 ResponseHandler.SendResponse(writer, "User logged in.");
             }
+        }
+
+        public void HandlePackageRequest()
+        {
+            try
+            {
+                TokenValidator.CheckTokenExistence(req);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex}");
+                ResponseHandler.SendErrorResponse(writer, "No token.");
+            }
+
+            try
+            {
+                string authHeader = TokenValidator.GetAuthHeader(req);
+
+                if (!TokenValidator.CheckAdminToken(authHeader))
+                    throw new Exception();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex}");
+                ResponseHandler.SendErrorResponse(writer, "Wrong token.");
+            }
+
+            List<Cards>? cards = new List<Cards>();
+
+            try
+            {
+                cards = JsonConvert.DeserializeObject<List<Cards>>(data);
+            }
+            catch (JsonException ex)
+            {
+                Console.WriteLine($"Error: {ex}");
+                ResponseHandler.SendErrorResponse(writer, "Invalid JSON");
+            }
+
+            CardRepository cardRepository = new CardRepository();
+
+            if(cards != null && cards.Count > 0)
+            {
+                try
+                {
+                    foreach(var c in cards)
+                    {
+                        cardRepository.Create(c);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error: {ex}");
+                    ResponseHandler.SendErrorResponse(writer, "Card with that id already exists.");
+                }
+            }
+
+            ResponseHandler.SendResponse(writer, "Package added.");
         }
     }
 }

@@ -42,7 +42,7 @@ namespace ws2023_mtcg.Server.Repository
                                 {
                                     stackId = reader.GetInt32(0),
                                     OwnerId = reader.GetInt32(1),
-                                    CardTypeId = reader.GetInt32(3), // that should be the id from cards table
+                                    Id = reader.GetString(3), // that should be the id from cards table
                                     Name = reader.GetString(4), 
                                     Element = (ElementType)reader.GetInt32(5),
                                     Damage = reader.GetInt32(6),
@@ -79,7 +79,7 @@ namespace ws2023_mtcg.Server.Repository
                                                 VALUES (@f_uid, @f_cardid) RETURNING id";
 
                         DbCommands.AddParameterWithValue(command, "f_uid", DbType.String, card.OwnerId);
-                        DbCommands.AddParameterWithValue(command, "f_cardid", DbType.String, card.CardTypeId);
+                        DbCommands.AddParameterWithValue(command, "f_cardid", DbType.String, card.Id);
                         command.ExecuteNonQuery();
 
                         card.stackId = Convert.ToInt32(command.ExecuteScalar() ?? 0);

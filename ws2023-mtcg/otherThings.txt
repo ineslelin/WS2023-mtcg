@@ -23,10 +23,10 @@ CREATE TABLE IF NOT EXISTS users (
 );
 
 CREATE TABLE IF NOT EXISTS cards (
-	id SERIAL PRIMARY KEY,
-	name varchar(32) UNIQUE NOT NULL,
+	id varchar(128) UNIQUE PRIMARY KEY,
+	name varchar(32),
+	damage double precision,
 	element int,
-	damage int,
 	cardtype int
 );
 
