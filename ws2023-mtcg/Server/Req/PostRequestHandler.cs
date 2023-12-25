@@ -59,7 +59,32 @@ namespace ws2023_mtcg.Server.Req
 
         public void HandleSessionRequest()
         {
+            User? tempUser = new User();
+            tempUser = JsonConvert.DeserializeObject<User>(data);
 
+            Console.WriteLine($"username {tempUser.Username}, password {tempUser.Password}");
+
+            if (tempUser != null)
+            {
+                UserRepository userRepository = new UserRepository();
+
+                tempUser.Password = PasswordSecurity.EncryptPassword(tempUser.Password);
+
+                try
+                {
+                    User userMatch = userRepository.Read(tempUser.Username);
+
+                    if(userMatch.Password != tempUser.Password)
+                        throw new Exception();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error: {ex}");
+                    ResponseHandler.SendErrorResponse(writer, "Wrong username or password.");
+                }
+
+                ResponseHandler.SendResponse(writer, "User logged in.");
+            }
         }
     }
 }
