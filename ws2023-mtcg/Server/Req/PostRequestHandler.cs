@@ -6,19 +6,22 @@ using System.Threading.Tasks;
 using ws2023_mtcg.Models;
 using Newtonsoft.Json;
 using ws2023_mtcg.Server.Repository;
+using ws2023_mtcg.Server.Res;
 
-namespace ws2023_mtcg.Server.RequestHandler
+namespace ws2023_mtcg.Server.Req
 {
     internal class PostRequestHandler : IRequestHandler
     {
         string data;
+        StreamWriter writer;
 
-        public PostRequestHandler(string req, string data)
+        public PostRequestHandler(StreamWriter writer, string req, string data)
         {
             if (req == null) 
                 throw new ArgumentNullException();
 
             this.data = data;
+            this.writer = writer;
 
             if (req.Contains("users"))
                 HandleUserRequest();
@@ -47,7 +50,10 @@ namespace ws2023_mtcg.Server.RequestHandler
                 catch (Exception ex)
                 {
                     Console.WriteLine($"Error: {ex}");
+                    ResponseHandler.SendErrorResponse(writer, "Username already in use.");
                 }
+
+                ResponseHandler.SendResponse(writer, "User created.");
             }
         }
 

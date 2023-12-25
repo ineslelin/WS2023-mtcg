@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ws2023_mtcg.Server.RequestHandler
+namespace ws2023_mtcg.Server.Req
 {
     internal class PutRequestHandler
     {

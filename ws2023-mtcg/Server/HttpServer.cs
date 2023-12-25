@@ -7,7 +7,8 @@ using System.Net;
 using System.IO;
 using Json.Net;
 using System.Net.Sockets;
-using ws2023_mtcg.Server.RequestHandler;
+using ws2023_mtcg.Server.Req;
+using ws2023_mtcg.Server.Res;
 
 namespace ws2023_mtcg.Server
 {
@@ -64,32 +65,31 @@ namespace ws2023_mtcg.Server
 
             Console.WriteLine("Handling request...");
 
+            char[] clientBuffer = new char[client.ReceiveBufferSize];
+            int bytesRead = reader.Read(clientBuffer, 0, client.ReceiveBufferSize);
+            string data = new string(clientBuffer, 0, bytesRead);
+
             if(req.ToString().Contains("GET"))
             {
-                GetRequestHandler getRequestHandler = new GetRequestHandler(req.ToString());
+                GetRequestHandler getRequestHandler = new GetRequestHandler(writer, req.ToString());
             }
 
-            if(req.ToString().Contains("POST") || req.ToString().Contains("PUT"))
+            if (req.ToString().Contains("POST"))
             {
-                char[] clientBuffer = new char[client.ReceiveBufferSize];
-                int bytesRead = reader.Read(clientBuffer, 0, client.ReceiveBufferSize);
-                string data = new string(clientBuffer, 0, bytesRead);
+                PostRequestHandler postRequestHandler = new PostRequestHandler(writer, req.ToString(), data);
+            }
 
-                if (req.ToString().Contains("POST"))
-                {
-                    PostRequestHandler postRequestHandler = new PostRequestHandler(req.ToString(), data);
-                }
-
-                if (req.ToString().Contains("PUT"))
-                {
-                    PutRequestHandler putRequestHandler = new PutRequestHandler();
-                }
+            if (req.ToString().Contains("PUT"))
+            {
+                PutRequestHandler putRequestHandler = new PutRequestHandler();
             }
 
             if (req.ToString().Contains("DELETE"))
             {
                 DeleteRequestHandler deleteRequestHandler = new DeleteRequestHandler();
             }
+
+            // ResponseHandler.SendResponse(writer, data);
 
             client.Close();
 
