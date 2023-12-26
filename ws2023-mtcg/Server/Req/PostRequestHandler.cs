@@ -151,10 +151,14 @@ namespace ws2023_mtcg.Server.Req
 
             if(cards != null && cards.Count > 0)
             {
+                int packageId = cardRepository.RetrieveHighestId();
+                packageId++;
+
                 try
                 {
                     foreach(var c in cards)
                     {
+                        c.Package = packageId;
                         cardRepository.Create(c);
                     }
                 }

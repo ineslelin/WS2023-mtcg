@@ -17,6 +17,8 @@ namespace ws2023_mtcg.Models
         public ElementType Element { get; set; }
         public CardType Type { get; set; }
 
+        public int Package;
+
         // private readonly MonsterType _monsterType;
         // private readonly SpellType _spellType;
         

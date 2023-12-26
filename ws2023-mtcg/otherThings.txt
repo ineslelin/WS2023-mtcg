@@ -22,6 +22,11 @@ CREATE TABLE IF NOT EXISTS users (
 	elo int
 );
 
+CREATE TABLE IF NOT EXISTS packages (
+	id SERIAL PRIMARY KEY,
+	package varchar(128) ARRAY
+);
+
 CREATE TABLE IF NOT EXISTS cards (
 	id varchar(128) UNIQUE PRIMARY KEY,
 	name varchar(32),

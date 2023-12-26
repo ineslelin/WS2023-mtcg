@@ -69,14 +69,15 @@ namespace ws2023_mtcg.Server.Repository
                     {
                         connection.Open();
 
-                        command.CommandText = @"INSERT INTO cards (id, name, damage, element, cardtype)
-                                                VALUES (@id, @name, @damage, @element, @cardtype)";
+                        command.CommandText = @"INSERT INTO cards (id, name, damage, element, cardtype, package)
+                                                VALUES (@id, @name, @damage, @element, @cardtype, @package)";
 
                         DbCommands.AddParameterWithValue(command, "id", DbType.String, card.Id);
                         DbCommands.AddParameterWithValue(command, "name", DbType.String, card.Name);
                         DbCommands.AddParameterWithValue(command, "damage", DbType.Double, card.Damage);
                         DbCommands.AddParameterWithValue(command, "element", DbType.Int32, (int)card.Element);
                         DbCommands.AddParameterWithValue(command, "cardtype", DbType.Int32, (int)card.Type);
+                        DbCommands.AddParameterWithValue(command, "package", DbType.Int32, card.Package);
                         command.ExecuteNonQuery();
                     }
                 }
@@ -95,6 +96,32 @@ namespace ws2023_mtcg.Server.Repository
         public void Delete(Cards card)
         {
             
+        }
+
+        public int RetrieveHighestId()
+        {
+            int max = 0;
+
+            try
+            {
+                using (IDbConnection connection = new NpgsqlConnection(_connectionString))
+                {
+                    using (IDbCommand command = connection.CreateCommand())
+                    {
+                        connection.Open();
+
+                        command.CommandText = @"SELECT COALESCE(MAX(package), 0) FROM cards";
+
+                        max = Convert.ToInt32(command.ExecuteScalar());
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                Console.WriteLine($"Npgsql Error: {ex.Message}");
+            }
+
+            return max;
         }
     }
 }
