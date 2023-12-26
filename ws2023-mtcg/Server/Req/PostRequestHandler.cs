@@ -7,32 +7,57 @@ using ws2023_mtcg.Models;
 using Newtonsoft.Json;
 using ws2023_mtcg.Server.Repository;
 using ws2023_mtcg.Server.Res;
+using System.Net.Sockets;
 
 namespace ws2023_mtcg.Server.Req
 {
-    internal class PostRequestHandler : IRequestHandler
+    internal class PostRequestHandler
     {
         string req;
         string data;
+
+        TcpClient client;
+        StreamReader reader;
         StreamWriter writer;
 
-        public PostRequestHandler(StreamWriter writer, string req, string data)
+        public PostRequestHandler(TcpClient client, StreamReader reader, StreamWriter writer, string req)
         {
             if (req == null) 
                 throw new ArgumentNullException();
 
-            this.data = data;
+            this.client = client;
+            this.reader = reader;
             this.writer = writer;
+            ServerCommands serverCommands = new ServerCommands(client, writer, reader);
+
             this.req = req;
+            this.data = "";
 
-            if (req.Contains("users"))
+            string[] reqLines = req.Split("\n");
+            string[] route = reqLines[0].Split(" ");
+
+            if (route[1] == "/users")
+            {
+                data = serverCommands.RetrieveData();
                 HandleUserRequest();
+            }
 
-            if (req.Contains("sessions"))
+            if (route[1] == "/sessions")
+            {
+                data = serverCommands.RetrieveData();
                 HandleSessionRequest();
+            }
 
-            if (req.Contains("packages") && !req.Contains("transactions"))
+            if (route[1] == "/packages")
+            {
+                data = serverCommands.RetrieveData();
                 HandlePackageRequest();
+            }
+
+            if (route[1] == "/transactions/packages")
+            {
+                HandleTransactionRequest();
+            }
         }
 
         public void HandleUserRequest()
@@ -170,6 +195,148 @@ namespace ws2023_mtcg.Server.Req
             }
 
             ResponseHandler.SendResponse(writer, "Package added.");
+        }
+
+        public void HandleTransactionRequest()
+        {
+            try
+            {
+                TokenValidator.CheckTokenExistence(req);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex}");
+                ResponseHandler.SendErrorResponse(writer, "No token.");
+            }
+
+            string authHeader = "";
+
+            try
+            {
+                authHeader = TokenValidator.GetAuthHeader(req);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex}");
+                ResponseHandler.SendErrorResponse(writer, "Wrong token.");
+            }
+
+            string username = "";
+
+            try
+            {
+                username = TokenValidator.SplitToken(authHeader);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex}");
+                ResponseHandler.SendErrorResponse(writer, "Wrong token.");
+            }
+
+            User? tempUser = new User();
+
+            UserRepository userRepository = new UserRepository();
+
+            try
+            {
+                tempUser = userRepository.Read(username);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex}");
+                ResponseHandler.SendErrorResponse(writer, "No user with matching token.");
+            }
+
+            try
+            {
+                if(tempUser == null)
+                    throw new Exception();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex}");
+                ResponseHandler.SendErrorResponse(writer, "User is null. (WHY???)");
+            }
+
+            try
+            {
+                if (tempUser.Coins < 5)
+                    throw new Exception();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex}");
+                ResponseHandler.SendErrorResponse(writer, "Not enough money.");
+            }
+
+            CardRepository cardRepository = new CardRepository();
+
+            try
+            {
+                if (!cardRepository.CheckForPackages())
+                    throw new Exception();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex}");
+                ResponseHandler.SendErrorResponse(writer, "No packages available");
+            }
+
+            int packageId = cardRepository.RetrieveSmallestId();
+            Cards[]? package = null;
+
+            try
+            {
+                package = cardRepository.RetrievePackage(packageId);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex}");
+                ResponseHandler.SendErrorResponse(writer, "Couldn't retrieve package.");
+            }
+
+            if (package == null)
+                throw new Exception();
+
+            StackRepository stackRepository = new StackRepository();
+
+            try
+            {
+                foreach (var p in package)
+                {
+                    p.Owner = tempUser.Username;
+                    stackRepository.Create(p);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex}");
+                ResponseHandler.SendErrorResponse(writer, "Coudln't add package to stack");
+            }
+
+            try
+            {
+                cardRepository.Delete(packageId);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex}");
+                ResponseHandler.SendErrorResponse(writer, "Coudln't add package to stack");
+            }
+
+            tempUser.Coins -= 5;
+
+            try
+            {
+                userRepository.Update(tempUser);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex}");
+                ResponseHandler.SendErrorResponse(writer, "Couldn't update user.");
+            }
+
+            ResponseHandler.SendResponse(writer, "Package acquired successfully.");
         }
     }
 }

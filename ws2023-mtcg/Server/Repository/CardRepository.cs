@@ -5,7 +5,7 @@ using ws2023_mtcg.Models;
 
 namespace ws2023_mtcg.Server.Repository
 {
-    internal class CardRepository : IRepository<Cards, Cards, string>
+    internal class CardRepository
     {
         private readonly string _connectionString = "Host=localhost;Database=mtcgdb;Username=admin;Password=1234;Include Error Detail=true";
 
@@ -40,8 +40,6 @@ namespace ws2023_mtcg.Server.Repository
                                     Type = (CardType)reader.GetInt32(4)
                                 };
                             }
-
-                            return null;
                         }
                     }
                 }
@@ -93,9 +91,30 @@ namespace ws2023_mtcg.Server.Repository
             
         }
 
-        public void Delete(Cards card)
+        public void Delete(int package)
         {
-            
+            if (package == 0)
+                throw new ArgumentException("id can't be null");
+
+            try
+            {
+                using (IDbConnection connection = new NpgsqlConnection(_connectionString))
+                {
+                    using (IDbCommand command = connection.CreateCommand())
+                    {
+                        connection.Open();
+
+                        command.CommandText = @"DELETE FROM cards WHERE package=@package";
+
+                        DbCommands.AddParameterWithValue(command, "package", DbType.Int32, package);
+                        command.ExecuteNonQuery();
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                Console.WriteLine($"Npgsql Error: {ex.Message}");
+            }
         }
 
         public int RetrieveHighestId()
@@ -122,6 +141,105 @@ namespace ws2023_mtcg.Server.Repository
             }
 
             return max;
+        }
+
+        public int RetrieveSmallestId()
+        {
+            int min = 0;
+
+            try
+            {
+                using (IDbConnection connection = new NpgsqlConnection(_connectionString))
+                {
+                    using (IDbCommand command = connection.CreateCommand())
+                    {
+                        connection.Open();
+
+                        command.CommandText = @"SELECT COALESCE(MIN(package), 0) FROM cards";
+
+                        min = Convert.ToInt32(command.ExecuteScalar());
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                Console.WriteLine($"Npgsql Error: {ex.Message}");
+            }
+
+            return min;
+        }
+
+        public bool CheckForPackages()
+        {
+            try
+            {
+                using (IDbConnection connection = new NpgsqlConnection(_connectionString))
+                {
+                    using (IDbCommand command = connection.CreateCommand())
+                    {
+                        connection.Open();
+
+                        command.CommandText = @"SELECT count(*) FROM cards";
+
+                        if (Convert.ToInt32(command.ExecuteScalar()) > 0)
+                            return true;
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                Console.WriteLine($"Npgsql Error: {ex.Message}");
+            }
+
+            return false;
+        }
+
+        public Cards[] RetrievePackage(int package)
+        {
+            if (package == 0)
+                throw new ArgumentNullException("username can't be null");
+
+            try
+            {
+                using (IDbConnection connection = new NpgsqlConnection(_connectionString))
+                {
+                    using (IDbCommand command = connection.CreateCommand())
+                    {
+                        connection.Open();
+
+                        command.CommandText = @"SELECT id, name, damage, element, cardtype FROM cards WHERE package=@package";
+
+                        DbCommands.AddParameterWithValue(command, "package", DbType.Int32, package);
+
+                        using (IDataReader reader = command.ExecuteReader())
+                        {
+                            List<Cards> packageList = new List<Cards>();
+
+                            while (reader.Read())
+                            {
+                                Cards card = new Cards()
+                                {
+                                    Id = reader.GetString(0),
+                                    Name = reader.GetString(1),
+                                    Damage = reader.GetDouble(2),
+                                    Element = (ElementType)reader.GetInt32(3),
+                                    Type = (CardType)reader.GetInt32(4)
+                                };
+
+                                packageList.Add(card);
+                            }
+
+                            return packageList.ToArray();
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                Console.WriteLine($"Npgsql Error: {ex.Message}");
+            }
+
+            return null;
         }
     }
 }

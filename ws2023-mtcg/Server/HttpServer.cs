@@ -65,18 +65,16 @@ namespace ws2023_mtcg.Server
 
             Console.WriteLine("Handling request...");
 
-            char[] clientBuffer = new char[client.ReceiveBufferSize];
-            int bytesRead = reader.Read(clientBuffer, 0, client.ReceiveBufferSize);
-            string data = new string(clientBuffer, 0, bytesRead);
+            ServerCommands serverCommands = new ServerCommands(client, writer, reader);
 
-            if(req.ToString().Contains("GET"))
+            if (req.ToString().Contains("GET"))
             {
                 GetRequestHandler getRequestHandler = new GetRequestHandler(writer, req.ToString());
             }
 
             if (req.ToString().Contains("POST"))
             {
-                PostRequestHandler postRequestHandler = new PostRequestHandler(writer, req.ToString(), data);
+                PostRequestHandler postRequestHandler = new PostRequestHandler(client, reader, writer, req.ToString());
             }
 
             if (req.ToString().Contains("PUT"))

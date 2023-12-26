@@ -20,6 +20,7 @@
     <Compile Remove="FightLogic\Enums\MonsterType.cs" />
     <Compile Remove="FightLogic\Enums\SpellType.cs" />
     <Compile Remove="Menu.cs" />
+    <Compile Remove="Server\Repository\IRepository.cs" />
   </ItemGroup>
 
   <ItemGroup>

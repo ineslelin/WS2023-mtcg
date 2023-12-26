@@ -8,7 +8,7 @@ using ws2023_mtcg.Server.Repository;
 
 namespace ws2023_mtcg.Server.Req
 {
-    internal class GetRequestHandler : IRequestHandler
+    internal class GetRequestHandler
     {
         StreamWriter writer;
 

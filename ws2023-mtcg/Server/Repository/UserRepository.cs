@@ -10,7 +10,7 @@ using System.Linq.Expressions;
 
 namespace ws2023_mtcg.Server.Repository
 {
-    internal class UserRepository : IRepository<User, User, string>
+    internal class UserRepository
     {
         private readonly string _connectionString = "Host=localhost;Database=mtcgdb;Username=admin;Password=1234;Include Error Detail=true";
 
@@ -107,8 +107,9 @@ namespace ws2023_mtcg.Server.Repository
                     {
                         connection.Open();
 
-                        command.CommandText = @"UPDATE users SET coins=@coins, elo=@elo WHERE id=@id";
+                        command.CommandText = @"UPDATE users SET coins=@coins, elo=@elo WHERE username=@username";
 
+                        DbCommands.AddParameterWithValue(command, "username", DbType.String, user.Username);
                         DbCommands.AddParameterWithValue(command, "coins", DbType.Int32, user.Coins);
                         DbCommands.AddParameterWithValue(command, "elo", DbType.Int32, user.Elo);
                         command.ExecuteNonQuery();

@@ -35,11 +35,13 @@ CREATE TABLE IF NOT EXISTS cards (
 	cardtype int
 );
 
-// technically the stack table only needs the foreign keys uid and cardid, i added the others for readability tbh
 CREATE TABLE IF NOT EXISTS stack (
-    id SERIAL PRIMARY KEY,
-    f_uid INT NOT NULL REFERENCES users(id),
-    f_cardid INT NOT NULL REFERENCES cards(id)
+    id varchar(128) UNIQUE PRIMARY KEY,
+	name varchar(32),
+	damage double precision,
+	element int,
+	cardtype int,
+	owner varchar(20) REFERENCES users(username)
 );
 
 // again, technically dont need username and cardname, its just in there to make the table as a whole more readable (said the

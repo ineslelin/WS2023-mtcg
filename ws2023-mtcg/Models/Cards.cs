@@ -16,52 +16,18 @@ namespace ws2023_mtcg.Models
         public string Name { get; set; }
         public ElementType Element { get; set; }
         public CardType Type { get; set; }
-
         public int Package;
+        public string Owner;
 
-        // private readonly MonsterType _monsterType;
-        // private readonly SpellType _spellType;
-        
         public double Damage { get; set; }
         public bool IsAlive;
 
         readonly DElementDependency elementDependency = new DElementDependency();
-        // readonly DCardName cardName = new DCardName();
-        // readonly DCardElement cardElement = new DCardElement();
-
-        public int stackId;
-        public int OwnerId;
 
         public Cards()
         {
             IsAlive = true;
         }
-
-        // public Cards(MonsterType monster)
-        // {
-        //     _monsterType = monster;
-        //     Name = cardName.MonsterName[monster];
-        //     Element = cardElement.MonsterCardElement[monster];
-        //     Type = CardType.monster;
-        // 
-        //     Random random = new Random();
-        //     Damage = random.Next(5, 100);
-        // 
-        //     IsAlive = true;
-        // }
-        // 
-        // public Cards(SpellType spell)
-        // {
-        //     _spellType = spell;
-        //     Name = cardName.SpellName[spell];
-        //     Element = cardElement.SpellCardElement[spell];
-        //     Type = CardType.spell;
-        // 
-        //     Random random = new Random();
-        //     Damage = random.Next(5, 100);
-        // 
-        //     IsAlive = true;
-        // }
 
         public Cards Attack(Cards target)
         {
