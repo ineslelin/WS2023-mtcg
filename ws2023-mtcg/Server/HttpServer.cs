@@ -69,7 +69,7 @@ namespace ws2023_mtcg.Server
 
             if (req.ToString().Contains("GET"))
             {
-                GetRequestHandler getRequestHandler = new GetRequestHandler(writer, req.ToString());
+                GetRequestHandler getRequestHandler = new GetRequestHandler(client, reader, writer, req.ToString());
             }
 
             if (req.ToString().Contains("POST"))

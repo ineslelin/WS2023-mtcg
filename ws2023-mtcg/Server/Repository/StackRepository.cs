@@ -29,7 +29,7 @@ namespace ws2023_mtcg.Server.Repository
 
                         command.CommandText = @"SELECT * FROM stack";
 
-                        DbCommands.AddParameterWithValue(command, "owner", DbType.Int32, username);
+                        DbCommands.AddParameterWithValue(command, "owner", DbType.String, username);
                         command.ExecuteNonQuery();
 
                         using (IDataReader reader = command.ExecuteReader())
