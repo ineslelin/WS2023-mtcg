@@ -71,7 +71,7 @@ namespace ws2023_mtcg.Server.Req
             catch (JsonException ex)
             {
                 Console.WriteLine($"Error: {ex}");
-                ResponseHandler.SendErrorResponse(writer, "Invalid JSON.");
+                ResponseHandler.SendErrorResponse(writer, "Invalid JSON.", 400);
 
                 return;
             }
@@ -91,12 +91,12 @@ namespace ws2023_mtcg.Server.Req
                 catch (Exception ex)
                 {
                     Console.WriteLine($"Error: {ex}");
-                    ResponseHandler.SendErrorResponse(writer, "Username already in use.");
+                    ResponseHandler.SendErrorResponse(writer, "Username already in use.", 409);
 
                     return;
                 }
 
-                ResponseHandler.SendResponse(writer, "User created.");
+                ResponseHandler.SendResponse(writer, "User created.", 201);
             }
         }
 
@@ -111,7 +111,7 @@ namespace ws2023_mtcg.Server.Req
             catch (JsonException ex)
             {
                 Console.WriteLine($"Error: {ex}");
-                ResponseHandler.SendErrorResponse(writer, "Invalid JSON.");
+                ResponseHandler.SendErrorResponse(writer, "Invalid JSON.", 400);
 
                 return;
             }
@@ -134,12 +134,12 @@ namespace ws2023_mtcg.Server.Req
                 catch (Exception ex)
                 {
                     Console.WriteLine($"Error: {ex}");
-                    ResponseHandler.SendErrorResponse(writer, "Wrong username or password.");
+                    ResponseHandler.SendErrorResponse(writer, "Wrong username or password.", 401);
 
                     return;
                 }
 
-                ResponseHandler.SendResponse(writer, "User logged in.");
+                ResponseHandler.SendResponse(writer, $"User logged in. Session-Token: {tempUser.Username}-mtcgToken", 200);
             }
         }
 
@@ -152,22 +152,34 @@ namespace ws2023_mtcg.Server.Req
             catch (Exception ex)
             {
                 Console.WriteLine($"Error: {ex}");
-                ResponseHandler.SendErrorResponse(writer, "No token.");
+                ResponseHandler.SendErrorResponse(writer, "No token.", 401);
+
+                return;
+            }
+
+            string authHeader = "";
+
+            try
+            {
+                authHeader = TokenValidator.GetAuthHeader(req);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex}");
+                ResponseHandler.SendErrorResponse(writer, "Invalid token.", 401);
 
                 return;
             }
 
             try
             {
-                string authHeader = TokenValidator.GetAuthHeader(req);
-
                 if (!TokenValidator.CheckAdminToken(authHeader))
                     throw new Exception();
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error: {ex}");
-                ResponseHandler.SendErrorResponse(writer, "Wrong token.");
+                ResponseHandler.SendErrorResponse(writer, "User is not admin.", 403);
 
                 return;
             }
@@ -181,7 +193,7 @@ namespace ws2023_mtcg.Server.Req
             catch (JsonException ex)
             {
                 Console.WriteLine($"Error: {ex}");
-                ResponseHandler.SendErrorResponse(writer, "Invalid JSON");
+                ResponseHandler.SendErrorResponse(writer, "Invalid JSON", 400);
 
                 return;
             }
@@ -204,13 +216,13 @@ namespace ws2023_mtcg.Server.Req
                 catch (Exception ex)
                 {
                     Console.WriteLine($"Error: {ex}");
-                    ResponseHandler.SendErrorResponse(writer, "Card with that id already exists.");
+                    ResponseHandler.SendErrorResponse(writer, "Card with that id already exists.", 409);
 
                     return;
                 }
             }
 
-            ResponseHandler.SendResponse(writer, "Package added.");
+            ResponseHandler.SendResponse(writer, "Package added.", 201);
         }
 
         public void HandleTransactionRequest()
@@ -222,7 +234,7 @@ namespace ws2023_mtcg.Server.Req
             catch (Exception ex)
             {
                 Console.WriteLine($"Error: {ex}");
-                ResponseHandler.SendErrorResponse(writer, "No token.");
+                ResponseHandler.SendErrorResponse(writer, "No token.", 401);
 
                 return;
             }
@@ -236,7 +248,7 @@ namespace ws2023_mtcg.Server.Req
             catch (Exception ex)
             {
                 Console.WriteLine($"Error: {ex}");
-                ResponseHandler.SendErrorResponse(writer, "Wrong token.");
+                ResponseHandler.SendErrorResponse(writer, "Wrong token.", 401);
 
                 return;
             }
@@ -250,7 +262,7 @@ namespace ws2023_mtcg.Server.Req
             catch (Exception ex)
             {
                 Console.WriteLine($"Error: {ex}");
-                ResponseHandler.SendErrorResponse(writer, "Wrong token.");
+                ResponseHandler.SendErrorResponse(writer, "Wrong token.", 401);
 
                 return;
             }
@@ -266,7 +278,7 @@ namespace ws2023_mtcg.Server.Req
             catch (Exception ex)
             {
                 Console.WriteLine($"Error: {ex}");
-                ResponseHandler.SendErrorResponse(writer, "No user with matching token.");
+                ResponseHandler.SendErrorResponse(writer, "No user with matching token.", 401);
 
                 return;
             }
@@ -279,7 +291,7 @@ namespace ws2023_mtcg.Server.Req
             catch (Exception ex)
             {
                 Console.WriteLine($"Error: {ex}");
-                ResponseHandler.SendErrorResponse(writer, "User is null. (WHY???)");
+                ResponseHandler.SendErrorResponse(writer, "User is null. (WHY???)", 400);
 
                 return;
             }
@@ -292,7 +304,7 @@ namespace ws2023_mtcg.Server.Req
             catch (Exception ex)
             {
                 Console.WriteLine($"Error: {ex}");
-                ResponseHandler.SendErrorResponse(writer, "Not enough money.");
+                ResponseHandler.SendErrorResponse(writer, "Not enough money.", 403);
 
                 return;
             }
@@ -307,7 +319,7 @@ namespace ws2023_mtcg.Server.Req
             catch (Exception ex)
             {
                 Console.WriteLine($"Error: {ex}");
-                ResponseHandler.SendErrorResponse(writer, "No packages available");
+                ResponseHandler.SendErrorResponse(writer, "No packages available", 404);
 
                 return;
             }
@@ -322,7 +334,7 @@ namespace ws2023_mtcg.Server.Req
             catch (Exception ex)
             {
                 Console.WriteLine($"Error: {ex}");
-                ResponseHandler.SendErrorResponse(writer, "Couldn't retrieve package.");
+                ResponseHandler.SendErrorResponse(writer, "Couldn't retrieve package.", 400);
 
                 return;
             }
@@ -344,7 +356,7 @@ namespace ws2023_mtcg.Server.Req
             catch (Exception ex)
             {
                 Console.WriteLine($"Error: {ex}");
-                ResponseHandler.SendErrorResponse(writer, "Coudln't add package to stack");
+                ResponseHandler.SendErrorResponse(writer, "Coudln't add package to stack", 400);
 
                 return;
             }
@@ -356,7 +368,7 @@ namespace ws2023_mtcg.Server.Req
             catch (Exception ex)
             {
                 Console.WriteLine($"Error: {ex}");
-                ResponseHandler.SendErrorResponse(writer, "Coudln't delete package from stack");
+                ResponseHandler.SendErrorResponse(writer, "Coudln't delete package from stack", 400);
 
                 return;
             }
@@ -370,12 +382,12 @@ namespace ws2023_mtcg.Server.Req
             catch (Exception ex)
             {
                 Console.WriteLine($"Error: {ex}");
-                ResponseHandler.SendErrorResponse(writer, "Couldn't update user.");
+                ResponseHandler.SendErrorResponse(writer, "Couldn't update user.", 400);
 
                 return;
             }
 
-            ResponseHandler.SendResponse(writer, "Package acquired successfully.");
+            ResponseHandler.SendResponse(writer, "Package acquired successfully.", 200);
         }
     }
 }

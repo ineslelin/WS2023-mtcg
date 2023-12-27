@@ -52,7 +52,7 @@ namespace ws2023_mtcg.Server.Req
             catch (Exception ex)
             {
                 Console.WriteLine($"Error: {ex}");
-                ResponseHandler.SendErrorResponse(writer, "No token.");
+                ResponseHandler.SendErrorResponse(writer, "No token.", 401);
 
                 return;
             }
@@ -66,7 +66,7 @@ namespace ws2023_mtcg.Server.Req
             catch (Exception ex)
             {
                 Console.WriteLine($"Error: {ex}");
-                ResponseHandler.SendErrorResponse(writer, "Wrong token.");
+                ResponseHandler.SendErrorResponse(writer, "Wrong token.", 401);
 
                 return;
             }
@@ -80,7 +80,7 @@ namespace ws2023_mtcg.Server.Req
             catch (Exception ex)
             {
                 Console.WriteLine($"Error: {ex}");
-                ResponseHandler.SendErrorResponse(writer, "Wrong token.");
+                ResponseHandler.SendErrorResponse(writer, "Wrong token.", 401);
 
                 return;
             }
@@ -95,7 +95,7 @@ namespace ws2023_mtcg.Server.Req
             catch (Exception ex)
             {
                 Console.WriteLine($"Error: {ex}");
-                ResponseHandler.SendErrorResponse(writer, "User doesn't have cards.");
+                ResponseHandler.SendErrorResponse(writer, "User doesn't have cards.", 204);
 
                 return;
             }
@@ -111,7 +111,7 @@ namespace ws2023_mtcg.Server.Req
                               $"Type: {(s.Type == CardType.monster ? "Monster" : "Spell")}\n\n";
             }
 
-            ResponseHandler.SendResponse(writer, stackCards);
+            ResponseHandler.SendResponse(writer, stackCards, 200);
         }
     }
 }

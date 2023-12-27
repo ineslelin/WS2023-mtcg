@@ -14,30 +14,26 @@ namespace ws2023_mtcg.Server.Res
            
         }
 
-        public static void SendResponse(StreamWriter writer, string content)
+        public static void SendResponse(StreamWriter writer, string content, int code)
         {
-            string response = $"HTTP/1.1 200 OK\r\n" +
+            string response = $"HTTP/1.1 {code} OK\r\n" +
                           $"Content-Type: text/plain\r\n" +
                           $"Content-Length: {Encoding.UTF8.GetByteCount(content)}\r\n" +
                           "\r\n" +
                           $"{content}";
 
             writer.Write(response);
-
-            // writer.Close();
         }
 
-        public static void SendErrorResponse(StreamWriter writer, string content)
+        public static void SendErrorResponse(StreamWriter writer, string content, int code)
         {
-            string response = $"HTTP/1.1 400 ERR\r\n" +
+            string response = $"HTTP/1.1 {code} ERR\r\n" +
                           $"Content-Type: text/plain\r\n" +
                           $"Content-Length: {Encoding.UTF8.GetByteCount(content)}\r\n" +
                           "\r\n" +
                           $"{content}";
 
             writer.Write(response);
-
-            // writer.Close();
         }
     }
 }
