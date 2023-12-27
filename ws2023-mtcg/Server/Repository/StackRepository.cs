@@ -12,7 +12,7 @@ namespace ws2023_mtcg.Server.Repository
 {
     internal class StackRepository
     {
-        private readonly string _connectionString = "Host=localhost;Database=mtcgdb;Username=admin;Password=1234";
+        private readonly string _connectionString = "Host=localhost;Database=mtcgdb;Username=admin;Password=1234;Include Error Detail=true";
 
         public Cards[] Read(string username)
         {
@@ -101,6 +101,49 @@ namespace ws2023_mtcg.Server.Repository
         public void Delete(Cards card)
         {
             
+        }
+
+        public Cards ReadById(string id)
+        {
+            if (id == null)
+                throw new ArgumentNullException("id can't be null");
+
+            try
+            {
+                using (IDbConnection connection = new NpgsqlConnection(_connectionString))
+                {
+                    using (IDbCommand command = connection.CreateCommand())
+                    {
+                        connection.Open();
+
+                        command.CommandText = @"SELECT * FROM stack WHERE id=@id";
+
+                        DbCommands.AddParameterWithValue(command, "id", DbType.String, id);
+
+                        using (IDataReader reader = command.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                return new Cards
+                                {
+                                    Id = reader.GetString(0),
+                                    Name = reader.GetString(1),
+                                    Damage = reader.GetDouble(2),
+                                    Element = (ElementType)reader.GetInt32(3),
+                                    Type = (CardType)reader.GetInt32(4),
+                                    Owner = reader.GetString(5),
+                                };
+                            }
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                Console.WriteLine($"Npgsql Error: {ex.Message}");
+            }
+
+            return null;
         }
     }
 }

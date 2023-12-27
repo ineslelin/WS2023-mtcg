@@ -79,7 +79,7 @@ namespace ws2023_mtcg.Server
 
             if (req.ToString().Contains("PUT"))
             {
-                PutRequestHandler putRequestHandler = new PutRequestHandler();
+                PutRequestHandler putRequestHandler = new PutRequestHandler(client, reader, writer, req.ToString());
             }
 
             if (req.ToString().Contains("DELETE"))
