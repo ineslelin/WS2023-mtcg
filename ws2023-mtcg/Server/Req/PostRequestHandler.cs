@@ -76,8 +76,6 @@ namespace ws2023_mtcg.Server.Req
                 return;
             }
 
-            // Console.WriteLine($"username {tempUser.Username}, password {tempUser.Password}");
-
             if (tempUser != null)
             {
                 UserRepository userRepository = new UserRepository();
@@ -115,8 +113,6 @@ namespace ws2023_mtcg.Server.Req
 
                 return;
             }
-
-            // Console.WriteLine($"username {tempUser.Username}, password {tempUser.Password}");
 
             if (tempUser != null)
             {

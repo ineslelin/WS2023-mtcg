@@ -22,11 +22,6 @@ CREATE TABLE IF NOT EXISTS users (
 	elo int
 );
 
-CREATE TABLE IF NOT EXISTS packages (
-	id SERIAL PRIMARY KEY,
-	package varchar(128) ARRAY
-);
-
 CREATE TABLE IF NOT EXISTS cards (
 	id varchar(128) UNIQUE PRIMARY KEY,
 	name varchar(32),
@@ -44,12 +39,8 @@ CREATE TABLE IF NOT EXISTS stack (
 	owner varchar(20) REFERENCES users(username)
 );
 
-// again, technically dont need username and cardname, its just in there to make the table as a whole more readable (said the
-	idiot who refused to add the elements in the card name as strings because they're "too lazy to think of a method that doesn't
-	include enums")
 CREATE TABLE IF NOT EXISTS deck (
-    id SERIAL PRIMARY KEY,
-    f_stackid int NOT NULL REFERENCES stack(id)
+    id varchar(128) references stack(id)
 );
 
 // infos on cards

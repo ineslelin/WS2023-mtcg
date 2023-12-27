@@ -41,6 +41,11 @@ namespace ws2023_mtcg.Server.Req
             {
                 HandleCardsRequest();
             }
+
+            if (route[1] == "/deck")
+            {
+                HandleDeckRequest();
+            }
         }
 
         public void HandleCardsRequest()
@@ -95,9 +100,14 @@ namespace ws2023_mtcg.Server.Req
             catch (Exception ex)
             {
                 Console.WriteLine($"Error: {ex}");
-                ResponseHandler.SendErrorResponse(writer, "User doesn't have cards.", 204);
+                ResponseHandler.SendErrorResponse(writer, "Error reading stack.", 400);
 
                 return;
+            }
+
+            if(!stack.Any())
+            {
+                ResponseHandler.SendResponse(writer, "User doesn't have any cards", 204);
             }
 
             string stackCards = "";
@@ -112,6 +122,82 @@ namespace ws2023_mtcg.Server.Req
             }
 
             ResponseHandler.SendResponse(writer, stackCards, 200);
+        }
+
+        public void HandleDeckRequest()
+        {
+            try
+            {
+                TokenValidator.CheckTokenExistence(req);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex}");
+                ResponseHandler.SendErrorResponse(writer, "No token.", 401);
+
+                return;
+            }
+
+            string authHeader = "";
+
+            try
+            {
+                authHeader = TokenValidator.GetAuthHeader(req);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex}");
+                ResponseHandler.SendErrorResponse(writer, "Wrong token.", 401);
+
+                return;
+            }
+
+            string username = "";
+
+            try
+            {
+                username = TokenValidator.SplitToken(authHeader);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex}");
+                ResponseHandler.SendErrorResponse(writer, "Wrong token.", 401);
+
+                return;
+            }
+
+            DeckRepository deckRepository = new DeckRepository();
+            List<Cards> deck = new List<Cards>();
+
+            try
+            {
+                deck = deckRepository.Read(username).ToList();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex}");
+                ResponseHandler.SendErrorResponse(writer, "Error reading deck.", 400);
+
+                return;
+            }
+
+            if (!deck.Any())
+            {
+                ResponseHandler.SendResponse(writer, "User doesn't have a configured deck", 204);
+            }
+
+            string deckCards = "";
+
+            foreach (var d in deck)
+            {
+                deckCards += $"ID: {d.Id}\n" +
+                              $"Name: {d.Name}\n" +
+                              $"Damage: {d.Damage}\n" +
+                              $"Element: {d.Element}\n" +
+                              $"Type: {(d.Type == CardType.monster ? "Monster" : "Spell")}\n\n";
+            }
+
+            ResponseHandler.SendResponse(writer, deckCards, 200);
         }
     }
 }
