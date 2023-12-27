@@ -72,6 +72,8 @@ namespace ws2023_mtcg.Server.Req
             {
                 Console.WriteLine($"Error: {ex}");
                 ResponseHandler.SendErrorResponse(writer, "Invalid JSON.");
+
+                return;
             }
 
             // Console.WriteLine($"username {tempUser.Username}, password {tempUser.Password}");
@@ -90,6 +92,8 @@ namespace ws2023_mtcg.Server.Req
                 {
                     Console.WriteLine($"Error: {ex}");
                     ResponseHandler.SendErrorResponse(writer, "Username already in use.");
+
+                    return;
                 }
 
                 ResponseHandler.SendResponse(writer, "User created.");
@@ -108,6 +112,8 @@ namespace ws2023_mtcg.Server.Req
             {
                 Console.WriteLine($"Error: {ex}");
                 ResponseHandler.SendErrorResponse(writer, "Invalid JSON.");
+
+                return;
             }
 
             // Console.WriteLine($"username {tempUser.Username}, password {tempUser.Password}");
@@ -129,6 +135,8 @@ namespace ws2023_mtcg.Server.Req
                 {
                     Console.WriteLine($"Error: {ex}");
                     ResponseHandler.SendErrorResponse(writer, "Wrong username or password.");
+
+                    return;
                 }
 
                 ResponseHandler.SendResponse(writer, "User logged in.");
@@ -145,6 +153,8 @@ namespace ws2023_mtcg.Server.Req
             {
                 Console.WriteLine($"Error: {ex}");
                 ResponseHandler.SendErrorResponse(writer, "No token.");
+
+                return;
             }
 
             try
@@ -158,6 +168,8 @@ namespace ws2023_mtcg.Server.Req
             {
                 Console.WriteLine($"Error: {ex}");
                 ResponseHandler.SendErrorResponse(writer, "Wrong token.");
+
+                return;
             }
 
             List<Cards>? cards = new List<Cards>();
@@ -170,6 +182,8 @@ namespace ws2023_mtcg.Server.Req
             {
                 Console.WriteLine($"Error: {ex}");
                 ResponseHandler.SendErrorResponse(writer, "Invalid JSON");
+
+                return;
             }
 
             CardRepository cardRepository = new CardRepository();
@@ -191,6 +205,8 @@ namespace ws2023_mtcg.Server.Req
                 {
                     Console.WriteLine($"Error: {ex}");
                     ResponseHandler.SendErrorResponse(writer, "Card with that id already exists.");
+
+                    return;
                 }
             }
 
@@ -207,6 +223,8 @@ namespace ws2023_mtcg.Server.Req
             {
                 Console.WriteLine($"Error: {ex}");
                 ResponseHandler.SendErrorResponse(writer, "No token.");
+
+                return;
             }
 
             string authHeader = "";
@@ -219,6 +237,8 @@ namespace ws2023_mtcg.Server.Req
             {
                 Console.WriteLine($"Error: {ex}");
                 ResponseHandler.SendErrorResponse(writer, "Wrong token.");
+
+                return;
             }
 
             string username = "";
@@ -231,6 +251,8 @@ namespace ws2023_mtcg.Server.Req
             {
                 Console.WriteLine($"Error: {ex}");
                 ResponseHandler.SendErrorResponse(writer, "Wrong token.");
+
+                return;
             }
 
             User? tempUser = new User();
@@ -245,6 +267,8 @@ namespace ws2023_mtcg.Server.Req
             {
                 Console.WriteLine($"Error: {ex}");
                 ResponseHandler.SendErrorResponse(writer, "No user with matching token.");
+
+                return;
             }
 
             try
@@ -256,6 +280,8 @@ namespace ws2023_mtcg.Server.Req
             {
                 Console.WriteLine($"Error: {ex}");
                 ResponseHandler.SendErrorResponse(writer, "User is null. (WHY???)");
+
+                return;
             }
 
             try
@@ -267,6 +293,8 @@ namespace ws2023_mtcg.Server.Req
             {
                 Console.WriteLine($"Error: {ex}");
                 ResponseHandler.SendErrorResponse(writer, "Not enough money.");
+
+                return;
             }
 
             CardRepository cardRepository = new CardRepository();
@@ -280,6 +308,8 @@ namespace ws2023_mtcg.Server.Req
             {
                 Console.WriteLine($"Error: {ex}");
                 ResponseHandler.SendErrorResponse(writer, "No packages available");
+
+                return;
             }
 
             int packageId = cardRepository.RetrieveSmallestId();
@@ -293,15 +323,18 @@ namespace ws2023_mtcg.Server.Req
             {
                 Console.WriteLine($"Error: {ex}");
                 ResponseHandler.SendErrorResponse(writer, "Couldn't retrieve package.");
+
+                return;
             }
 
-            if (package == null)
-                throw new Exception();
 
             StackRepository stackRepository = new StackRepository();
 
             try
             {
+                if (package == null)
+                    throw new Exception();
+
                 foreach (var p in package)
                 {
                     p.Owner = tempUser.Username;
@@ -312,6 +345,8 @@ namespace ws2023_mtcg.Server.Req
             {
                 Console.WriteLine($"Error: {ex}");
                 ResponseHandler.SendErrorResponse(writer, "Coudln't add package to stack");
+
+                return;
             }
 
             try
@@ -321,7 +356,9 @@ namespace ws2023_mtcg.Server.Req
             catch (Exception ex)
             {
                 Console.WriteLine($"Error: {ex}");
-                ResponseHandler.SendErrorResponse(writer, "Coudln't add package to stack");
+                ResponseHandler.SendErrorResponse(writer, "Coudln't delete package from stack");
+
+                return;
             }
 
             tempUser.Coins -= 5;
@@ -334,6 +371,8 @@ namespace ws2023_mtcg.Server.Req
             {
                 Console.WriteLine($"Error: {ex}");
                 ResponseHandler.SendErrorResponse(writer, "Couldn't update user.");
+
+                return;
             }
 
             ResponseHandler.SendResponse(writer, "Package acquired successfully.");
