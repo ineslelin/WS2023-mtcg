@@ -17,6 +17,10 @@ namespace ws2023_mtcg.Models
         public List<Cards> Stack = new List<Cards>();
         public List<Cards> Deck = new List<Cards>();
 
+        public string Name { get; set; }
+        public string Bio { get; set; }
+        public string Image { get; set; }
+
         public User()
         {
             Coins = 20;

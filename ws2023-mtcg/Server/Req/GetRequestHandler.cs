@@ -9,6 +9,8 @@ using ws2023_mtcg.Models;
 using ws2023_mtcg.Server.Repository;
 using ws2023_mtcg.Server.Res;
 using ws2023_mtcg.FightLogic.Enums;
+using System.Text.RegularExpressions;
+using System.Xml.Linq;
 
 namespace ws2023_mtcg.Server.Req
 {
@@ -45,6 +47,11 @@ namespace ws2023_mtcg.Server.Req
             if (route[1] == "/deck")
             {
                 HandleDeckRequest();
+            }
+
+            if (Regex.IsMatch(route[1], @"/users/[a-zA-Z]*"))
+            {
+                HandleUserRequest(route[1]);
             }
         }
 
@@ -95,7 +102,7 @@ namespace ws2023_mtcg.Server.Req
 
             try
             {
-                stack = stackRepository.Read(username).ToList();
+                stack = stackRepository.ReadByOwner(username).ToList();
             }
             catch (Exception ex)
             {
@@ -198,6 +205,75 @@ namespace ws2023_mtcg.Server.Req
             }
 
             ResponseHandler.SendResponse(writer, deckCards, 200);
+        }
+
+        public void HandleUserRequest(string route)
+        {
+            try
+            {
+                TokenValidator.CheckTokenExistence(req);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex}");
+                ResponseHandler.SendErrorResponse(writer, "No token.", 401);
+
+                return;
+            }
+
+            string authHeader = "";
+
+            try
+            {
+                authHeader = TokenValidator.GetAuthHeader(req);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex}");
+                ResponseHandler.SendErrorResponse(writer, "Wrong token.", 401);
+
+                return;
+            }
+
+            string username = "";
+
+            try
+            {
+                username = TokenValidator.SplitToken(authHeader);
+
+                if (!route.Contains(username))
+                {
+                    if(!TokenValidator.CheckAdminToken(authHeader))
+                        throw new Exception();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex}");
+                ResponseHandler.SendErrorResponse(writer, "Wrong token.", 401);
+
+                return;
+            }
+
+            UserProfileRepository userProfileRepository = new UserProfileRepository();
+            string profile = "";
+
+            try
+            {
+                profile = userProfileRepository.Read(username);
+
+                if (profile == null)
+                    throw new Exception();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex}");
+                ResponseHandler.SendErrorResponse(writer, "No user profile found.", 404);
+
+                return;
+            }
+
+            ResponseHandler.SendResponse(writer, profile, 200);
         }
     }
 }

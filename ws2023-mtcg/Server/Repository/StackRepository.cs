@@ -14,7 +14,7 @@ namespace ws2023_mtcg.Server.Repository
     {
         private readonly string _connectionString = "Host=localhost;Database=mtcgdb;Username=admin;Password=1234;Include Error Detail=true";
 
-        public Cards[] Read(string username)
+        public Cards[] ReadByOwner(string username)
         {
             if (username == null)
                 throw new ArgumentNullException("uid can't be null");

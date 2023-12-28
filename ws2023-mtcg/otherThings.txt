@@ -41,6 +41,14 @@ CREATE TABLE IF NOT EXISTS stack (
 
 CREATE TABLE IF NOT EXISTS deck (
     id varchar(128) references stack(id)
+	owner varchar(20)
+);
+
+CREATE TABLE IF NOT EXISTS userprofile (
+	username varchar(20) PRIMARY KEY REFERENCES users(username),
+	displayname varchar(50),
+	bio varchar(250),
+	image varchar(50)
 );
 
 // infos on cards

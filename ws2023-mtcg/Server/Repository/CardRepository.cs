@@ -9,7 +9,7 @@ namespace ws2023_mtcg.Server.Repository
     {
         private readonly string _connectionString = "Host=localhost;Database=mtcgdb;Username=admin;Password=1234;Include Error Detail=true";
 
-        public Cards Read(string id)
+        public Cards ReadById(string id)
         {
             if (id == null)
                 throw new ArgumentNullException("username can't be null");
@@ -54,7 +54,7 @@ namespace ws2023_mtcg.Server.Repository
 
         public void Create(Cards card)
         {
-            if (Read(card.Id) != null)
+            if (ReadById(card.Id) != null)
             {
                 throw new NpgsqlException("card id already exists");
             }
@@ -194,7 +194,7 @@ namespace ws2023_mtcg.Server.Repository
             return false;
         }
 
-        public Cards[] RetrievePackage(int package)
+        public Cards[] ReadByPackage(int package)
         {
             if (package == 0)
                 throw new ArgumentNullException("username can't be null");

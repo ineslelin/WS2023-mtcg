@@ -325,7 +325,7 @@ namespace ws2023_mtcg.Server.Req
 
             try
             {
-                package = cardRepository.RetrievePackage(packageId);
+                package = cardRepository.ReadByPackage(packageId);
             }
             catch (Exception ex)
             {
