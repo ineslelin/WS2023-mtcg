@@ -58,6 +58,11 @@ namespace ws2023_mtcg.Server.Req
             {
                 HandleStatsRequest();
             }
+
+            if (route[1] == "/scoreboard")
+            {
+                HandleScoreboardRequest();
+            }
         }
 
         public void HandleCardsRequest()
@@ -341,6 +346,49 @@ namespace ws2023_mtcg.Server.Req
             string stats = $"ELO: {tempUser.Elo}";
 
             ResponseHandler.SendResponse(writer, stats, 200);
+        }
+
+        public void HandleScoreboardRequest()
+        {
+            try
+            {
+                TokenValidator.CheckTokenExistence(req);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex}");
+                ResponseHandler.SendErrorResponse(writer, "No token.", 401);
+
+                return;
+            }
+
+            string authHeader = "";
+
+            try
+            {
+                authHeader = TokenValidator.GetAuthHeader(req);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex}");
+                ResponseHandler.SendErrorResponse(writer, "Wrong token.", 401);
+
+                return;
+            }
+
+            UserRepository userRepository = new UserRepository();
+
+            User[] users = userRepository.ReadAllByElo();
+            string scoreboard = "";
+            int rank = 0;
+
+            foreach(var u in users)
+            {
+                rank++;
+                scoreboard += $"{rank}: {u.Username} - ELO: {u.Elo}\n";
+            }
+
+            ResponseHandler.SendResponse(writer, scoreboard, 200);
         }
     }
 }

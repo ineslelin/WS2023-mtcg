@@ -147,5 +147,47 @@ namespace ws2023_mtcg.Server.Repository
                 Console.WriteLine($"Npgsql Error: {ex.Message}");
             }
         }
+
+        public User[] ReadAllByElo()
+        {
+            try
+            {
+                using (IDbConnection connection = new NpgsqlConnection(_connectionString))
+                {
+                    using (IDbCommand command = connection.CreateCommand())
+                    {
+                        connection.Open();
+
+                        command.CommandText = @"SELECT username, elo FROM users ORDER BY elo DESC";
+
+                        command.ExecuteNonQuery();
+
+                        using (IDataReader reader = command.ExecuteReader())
+                        {
+                            List<User> users = new List<User>();
+
+                            while (reader.Read())
+                            {
+                                User tempUser = new User()
+                                {
+                                    Username = reader.GetString(0),
+                                    Elo = reader.GetInt32(1)
+                                };
+
+                                users.Add(tempUser);
+                            }
+
+                            return users.ToArray();
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                Console.WriteLine($"Npgsql Error: {ex.Message}");
+            }
+
+            return null;
+        }
     }
 }
