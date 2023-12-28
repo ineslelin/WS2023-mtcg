@@ -53,6 +53,11 @@ namespace ws2023_mtcg.Server.Req
             {
                 HandleUserRequest(route[1]);
             }
+
+            if (route[1] == "/stats")
+            {
+                HandleStatsRequest();
+            }
         }
 
         public void HandleCardsRequest()
@@ -274,6 +279,68 @@ namespace ws2023_mtcg.Server.Req
             }
 
             ResponseHandler.SendResponse(writer, profile, 200);
+        }
+
+        public void HandleStatsRequest()
+        {
+            try
+            {
+                TokenValidator.CheckTokenExistence(req);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex}");
+                ResponseHandler.SendErrorResponse(writer, "No token.", 401);
+
+                return;
+            }
+
+            string authHeader = "";
+
+            try
+            {
+                authHeader = TokenValidator.GetAuthHeader(req);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex}");
+                ResponseHandler.SendErrorResponse(writer, "Wrong token.", 401);
+
+                return;
+            }
+
+            string username = "";
+
+            try
+            {
+                username = TokenValidator.SplitToken(authHeader);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex}");
+                ResponseHandler.SendErrorResponse(writer, "Wrong token.", 401);
+
+                return;
+            }
+
+            UserRepository userRepository = new UserRepository();
+            User tempUser = new User();
+
+            try
+            {
+                tempUser = userRepository.Read(username);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex}");
+                ResponseHandler.SendErrorResponse(writer, "Couldn't get user", 400);
+
+                return;
+            }
+
+            string stats = $"ELO: {tempUser.Elo}";
+
+            ResponseHandler.SendResponse(writer, stats, 200);
         }
     }
 }
