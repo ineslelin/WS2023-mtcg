@@ -8,6 +8,7 @@ using Newtonsoft.Json;
 using ws2023_mtcg.Server.Repository;
 using ws2023_mtcg.Server.Res;
 using System.Net.Sockets;
+using ws2023_mtcg.FightLogic;
 
 namespace ws2023_mtcg.Server.Req
 {
@@ -19,6 +20,9 @@ namespace ws2023_mtcg.Server.Req
         TcpClient client;
         StreamReader reader;
         StreamWriter writer;
+
+        static List<User> lobby = new List<User> ();
+        static string output = "";
 
         public PostRequestHandler(TcpClient client, StreamReader reader, StreamWriter writer, string req)
         {
@@ -57,6 +61,11 @@ namespace ws2023_mtcg.Server.Req
             if (route[1] == "/transactions/packages")
             {
                 HandleTransactionRequest();
+            }
+
+            if (route[1] == "/battles")
+            {
+                HandleBattleRequest();
             }
         }
 
@@ -384,6 +393,99 @@ namespace ws2023_mtcg.Server.Req
             }
 
             ResponseHandler.SendResponse(writer, "Package acquired successfully.", 200);
+        }
+
+        public void HandleBattleRequest()
+        {
+            try
+            {
+                TokenValidator.CheckTokenExistence(req);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex}");
+                ResponseHandler.SendErrorResponse(writer, "No token.", 401);
+
+                return;
+            }
+
+
+            string authHeader = "";
+
+            Monitor.Enter(this);
+            try
+            {
+                authHeader = TokenValidator.GetAuthHeader(req);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex}");
+                ResponseHandler.SendErrorResponse(writer, "Wrong token.", 401);
+
+                return;
+            }
+            Monitor.Exit(this);
+
+            string username = "";
+
+            Monitor.Enter(this);
+            try
+            {
+                username = TokenValidator.SplitToken(authHeader);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex}");
+                ResponseHandler.SendErrorResponse(writer, "Wrong token.", 401);
+
+                return;
+            }
+
+            User? tempUser = new User();
+            UserRepository userRepository = new UserRepository();
+            DeckRepository deckRepository = new DeckRepository();
+
+            try
+            {
+                tempUser = userRepository.Read(username);
+                tempUser.Deck = deckRepository.Read(username).ToList();
+                lobby.Add(tempUser);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex}");
+                ResponseHandler.SendErrorResponse(writer, "No user with matching token.", 401);
+
+                return;
+            }
+            Monitor.Exit(this);
+
+            while(lobby.Count < 2)
+            {
+                Console.WriteLine("Waiting for second user to join...");
+                Thread.Sleep(1000);
+            }
+
+            User player1 = lobby[0];
+            User player2 = lobby[1];
+            lobby.RemoveAt(0);
+            lobby.RemoveAt(0);
+            
+            Battle battle = new Battle(1, player1, player2);
+
+            try
+            {
+                output = battle.Fight();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex}");
+                ResponseHandler.SendErrorResponse(writer, "No user with matching token.", 401);
+
+                return;
+            }
+
+            ResponseHandler.SendResponse(writer, output, 200);
         }
     }
 }
