@@ -425,7 +425,10 @@ namespace ws2023_mtcg.Server.Req
 
                 return;
             }
-            Monitor.Exit(this);
+            finally
+            {
+                Monitor.Exit(this);
+            }
 
             string username = "";
 
@@ -459,27 +462,34 @@ namespace ws2023_mtcg.Server.Req
 
                 return;
             }
-            Monitor.Exit(this);
-
-            while(lobby.Count < 2)
+            finally
             {
-                Console.WriteLine("Waiting for second user to join...");
-                Thread.Sleep(1000);
+                Monitor.Exit(this);
             }
+
+            //while(true)
+            //{
+            //    Console.WriteLine("Waiting for second user to join...");
+            //    Thread.Sleep(1000);
+
+            //    if(lobby.Count % 2 == 0)
+            //    {
+            //        break;
+            //    }
+            //}
 
             User player1 = lobby[0];
             User player2 = lobby[1];
-            lobby.RemoveAt(0);
-            lobby.RemoveAt(0);
 
             try
             {
+                Monitor.Enter(this);
                 output = Battle.Fight(1, player1, player2);
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error: {ex}");
-                ResponseHandler.SendErrorResponse(writer, "No user with matching token.", 401);
+                ResponseHandler.SendErrorResponse(writer, "Something went wrong with the battle.", 400);
 
                 return;
             }
@@ -495,6 +505,10 @@ namespace ws2023_mtcg.Server.Req
                 ResponseHandler.SendErrorResponse(writer, "Couldnt' update player stats", 400);
 
                 return;
+            }
+            finally
+            {
+                Monitor.Exit(this);
             }
 
             ResponseHandler.SendResponse(writer, output, 200);
