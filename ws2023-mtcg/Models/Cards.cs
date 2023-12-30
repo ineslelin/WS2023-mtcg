@@ -22,6 +22,8 @@ namespace ws2023_mtcg.Models
         public double Damage { get; set; }
         public bool IsAlive;
 
+        public string output;
+
         readonly DElementDependency elementDependency = new DElementDependency();
 
         public Cards()
@@ -37,8 +39,8 @@ namespace ws2023_mtcg.Models
                 // elves always win agaisnt dragons
                 if (target.Name == "Dragon")
                 {
-                    Console.WriteLine($"Due to their age-old acquaintace {Name} knows how to evade all of {target.Name}'s attacks! " +
-                        $"{Name} defeats {target.Name}!");
+                    output += $"Due to their age-old acquaintace {Name} knows how to evade all of {target.Name}'s attacks! " +
+                        $"{Name} defeats {target.Name}!";
 
                     target.IsAlive = false;
                     return this;
@@ -47,7 +49,7 @@ namespace ws2023_mtcg.Models
                 // trolls always win to normal enemies
                 if (Element == ElementType.normal && target.Name == "Troll")
                 {
-                    Console.WriteLine($"Regular attacks and spell don't affect {target.Name}! {target.Name} defeats {Name}!");
+                    output += $"Regular attacks and spell don't affect {target.Name}! {target.Name} defeats {Name}!";
 
                     IsAlive = false;
                     return target;
@@ -58,7 +60,7 @@ namespace ws2023_mtcg.Models
                 // goblins always loose to dragons
                 if (target.Name == "Dragon")
                 {
-                    Console.WriteLine($"{Name} is too afraid of {target.Name} to attack! {target.Name} defeats {Name}!");
+                    output += $"{Name} is too afraid of {target.Name} to attack! {target.Name} defeats {Name}!";
 
                     IsAlive = false;
                     return target;
@@ -67,7 +69,7 @@ namespace ws2023_mtcg.Models
                 // trolls always win to normal enemies
                 if (Element == ElementType.normal && target.Name == "Troll")
                 {
-                    Console.WriteLine($"Regular attacks and spell don't affect {target.Name}! {target.Name} defeats {Name}!");
+                    output += $"Regular attacks and spell don't affect {target.Name}! {target.Name} defeats {Name}!";
 
                     IsAlive = false;
                     return target;
@@ -78,7 +80,7 @@ namespace ws2023_mtcg.Models
                 // trolls always win to normal enemies
                 if (target.Element == ElementType.normal)
                 {
-                    Console.WriteLine($"Regular attacks and spell don't affect {Name}! {Name} defeats {target.Name}!");
+                    output += $"Regular attacks and spell don't affect {Name}! {Name} defeats {target.Name}!";
 
                     target.IsAlive = false;
                     return this;
@@ -89,7 +91,7 @@ namespace ws2023_mtcg.Models
                 // dragon always wins against goblin
                 if (Regex.IsMatch(target.Name, @"(Fire|Water|Regular)?Goblin"))
                 {
-                    Console.WriteLine($"{target.Name} is too afraid of {Name} to attack! {Name} defeats {target.Name}!");
+                    output += $"{target.Name} is too afraid of {Name} to attack! {Name} defeats {target.Name}!";
 
                     target.IsAlive = false;
                     return this;
@@ -98,8 +100,8 @@ namespace ws2023_mtcg.Models
                 // elf always defeats dragon
                 if (Regex.IsMatch(target.Name, @"(Fire|Water|Regular)?Elf"))
                 {
-                    Console.WriteLine($"Due to their age-old acquaintace {target.Name} knows how to evade all of {Name}'s attacks! " +
-                        $"{target.Name} defeats {Name}!");
+                    output += $"Due to their age-old acquaintace {target.Name} knows how to evade all of {Name}'s attacks! " +
+                        $"{target.Name} defeats {Name}!";
 
                     IsAlive = false;
                     return target;
@@ -110,7 +112,7 @@ namespace ws2023_mtcg.Models
                 // knights always lose to waterspells
                 if (target.Name == "WaterSpell")
                 {
-                    Console.WriteLine($"{Name} drowned from {target.Name}'s attack! {target.Name} defeats {Name}!");
+                    output += $"{Name} drowned from {target.Name}'s attack! {target.Name} defeats {Name}!";
 
                     IsAlive = false;
                     return target;
@@ -119,7 +121,7 @@ namespace ws2023_mtcg.Models
                 // trolls always win to normal enemies
                 if (target.Name == "Troll")
                 {
-                    Console.WriteLine($"Regular attacks and spell don't affect {target.Name}! {target.Name} defeats {Name}!");
+                    output += $"Regular attacks and spell don't affect {target.Name}! {target.Name} defeats {Name}!";
 
                     IsAlive = false;
                     return target;
@@ -130,8 +132,8 @@ namespace ws2023_mtcg.Models
                 // the kraken is immune to spells
                 if (target.Type == CardType.spell)
                 {
-                    Console.WriteLine($"Spells don't affect {Name}, rendering {target.Name} useless! " +
-                        $"{Name} defeats {target.Name}!");
+                    output += $"Spells don't affect {Name}, rendering {target.Name} useless! " +
+                        $"{Name} defeats {target.Name}!";
 
                     target.IsAlive = false;
                     return this;
@@ -142,7 +144,7 @@ namespace ws2023_mtcg.Models
                 // orks always lose to wizards
                 if (target.Name == "Wizard")
                 {
-                    Console.WriteLine($"{target.Name} took control of {Name}! {target.Name} defeats {Name}!");
+                    output += $"{target.Name} took control of {Name}! {target.Name} defeats {Name}!";
 
                     IsAlive = false;
                     return target;
@@ -151,7 +153,7 @@ namespace ws2023_mtcg.Models
                 // trolls always win to normal enemies
                 if (target.Name == "Troll")
                 {
-                    Console.WriteLine($"Regular attacks and spell don't affect {target.Name}! {target.Name} defeats {Name}!");
+                    output += $"Regular attacks and spell don't affect {target.Name}! {target.Name} defeats {Name}!";
 
                     IsAlive = false;
                     return target;
@@ -162,7 +164,7 @@ namespace ws2023_mtcg.Models
                 // wizards always win against orks
                 if (target.Name == "Ork")
                 {
-                    Console.WriteLine($"{Name} took control of {target.Name}! {Name} defeats {target.Name}!");
+                    output += $"{Name} took control of {target.Name}! {Name} defeats {target.Name}!";
 
                     target.IsAlive = false;
                     return this;
@@ -171,7 +173,7 @@ namespace ws2023_mtcg.Models
                 // wizard always loses to firespells (which actually doenst make sense considering wizards are water types but shush)
                 if (target.Name == "FireSpell")
                 {
-                    Console.WriteLine($"{Name}'s robes are very flammable! {target.Name} defeats {Name}!");
+                    output += $"{Name}'s robes are very flammable! {target.Name} defeats {Name}!";
 
                     IsAlive = false;
                     return target;
@@ -182,7 +184,7 @@ namespace ws2023_mtcg.Models
                 // wizard always loses to firespells (which actually doenst make sense considering wizards are water types but shush)
                 if (target.Name == "Wizard")
                 {
-                    Console.WriteLine($"{target.Name}'s robes are very flammable! {Name} defeats {target.Name}!");
+                    output += $"{target.Name}'s robes are very flammable! {Name} defeats {target.Name}!";
 
                     target.IsAlive = false;
                     return this;
@@ -191,8 +193,8 @@ namespace ws2023_mtcg.Models
                 // kraken is immune to spells
                 if (target.Name == "Kraken")
                 {
-                    Console.WriteLine($"Spells don't affect {target.Name}, rendering {Name} useless! " +
-                        $"{target.Name} defeats {Name}!");
+                    output += $"Spells don't affect {target.Name}, rendering {Name} useless! " +
+                        $"{target.Name} defeats {Name}!";
 
                     IsAlive = false;
                     return target;
@@ -203,7 +205,7 @@ namespace ws2023_mtcg.Models
                 // orks are immune to regular spells
                 if (target.Name == "Ork")
                 {
-                    Console.WriteLine($"{target.Name} defeats {Name}!");
+                    output += $"{target.Name} defeats {Name}!";
 
                     IsAlive = false;
                     return target;
@@ -212,8 +214,8 @@ namespace ws2023_mtcg.Models
                 // kraken is immune to spells
                 if (target.Name == "Kraken")
                 {
-                    Console.WriteLine($"Spells don't affect {target.Name}, rendering {Name} useless! " +
-                        $"{target.Name} defeats {Name}!");
+                    output += $"Spells don't affect {target.Name}, rendering {Name} useless! " +
+                        $"{target.Name} defeats {Name}!";
 
                     IsAlive = false;
                     return target;
@@ -222,7 +224,7 @@ namespace ws2023_mtcg.Models
                 // trolls always win to normal enemies
                 if (Element == ElementType.normal && target.Name == "Troll")
                 {
-                    Console.WriteLine($"Regular attacks and spell don't affect {target.Name}! {target.Name} defeats {Name}!");
+                    output += $"Regular attacks and spell don't affect {target.Name}! {target.Name} defeats {Name}!";
 
                     IsAlive = false;
                     return target;
@@ -233,7 +235,7 @@ namespace ws2023_mtcg.Models
                 // knight always loses against waterspell
                 if (target.Name == "Knight")
                 {
-                    Console.WriteLine($"{target.Name} drowned from {Name}'s attack! {Name} defeats {target.Name}!");
+                    output += $"{target.Name} drowned from {Name}'s attack! {Name} defeats {target.Name}!";
 
                     target.IsAlive = false;
                     return this;
@@ -242,8 +244,8 @@ namespace ws2023_mtcg.Models
                 // kraken is immune to spells
                 if (target.Name == "Kraken")
                 {
-                    Console.WriteLine($"Spells don't affect {target.Name}, rendering {Name} useless! " +
-                        $"{target.Name} defeats {Name}!");
+                    output += $"Spells don't affect {target.Name}, rendering {Name} useless! " +
+                        $"{target.Name} defeats {Name}!";
 
                     IsAlive = false;
                     return target;
@@ -315,8 +317,8 @@ namespace ws2023_mtcg.Models
             switch (target.Type)
             {
                 case CardType.monster when source.Type == CardType.monster:
-                    Console.WriteLine(source.Damage + " vs " + target.Damage + " => " + (source.Damage > target.Damage ? source.Name : target.Name)
-                        + " defeats " + (source.Damage < target.Damage ? source.Name : target.Name) + "!");
+                    output += source.Damage + " vs " + target.Damage + " => " + (source.Damage > target.Damage ? source.Name : target.Name)
+                        + " defeats " + (source.Damage < target.Damage ? source.Name : target.Name) + "!";
                     break;
 
                 case CardType.monster when source.Type == CardType.spell:
@@ -324,21 +326,21 @@ namespace ws2023_mtcg.Models
                 case CardType.spell when source.Type == CardType.spell:
                     if (source.Element == target.Element)
                     {
-                        Console.WriteLine(source.Damage + " vs " + target.Damage + " => " + (source.Damage > target.Damage ? source.Name : target.Name)
-                        + " defeats " + (source.Damage < target.Damage ? source.Name : target.Name) + "!");
+                        output += source.Damage + " vs " + target.Damage + " => " + (source.Damage > target.Damage ? source.Name : target.Name)
+                        + " defeats " + (source.Damage < target.Damage ? source.Name : target.Name) + "!";
                         break;
                     }
 
-                    Console.Write(source.Damage + " vs " + target.Damage + " => ");
+                    output += source.Damage + " vs " + target.Damage + " => ";
 
                     if (target.Element == elementDependency.ElementDependencies[Tuple.Create(source.Element, target.Element)])
                     {
-                        Console.WriteLine(source.Damage / 2 + " vs " + target.Damage * 2 + " => " + (source.Damage / 2 > target.Damage * 2 ? source.Name : target.Name) + " wins!");
+                        output += source.Damage / 2 + " vs " + target.Damage * 2 + " => " + (source.Damage / 2 > target.Damage * 2 ? source.Name : target.Name) + " wins!";
 
                         break;
                     }
 
-                    Console.WriteLine(source.Damage * 2 + " vs " + target.Damage / 2 + " => " + (source.Damage * 2 > target.Damage / 2 ? source.Name : target.Name) + " wins!");
+                    output += source.Damage * 2 + " vs " + target.Damage / 2 + " => " + (source.Damage * 2 > target.Damage / 2 ? source.Name : target.Name) + " wins!";
 
                     break;
             }

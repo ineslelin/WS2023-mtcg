@@ -23,6 +23,7 @@ namespace ws2023_mtcg.Server.Req
 
         static List<User> lobby = new List<User> ();
         static string output = "";
+        static Battle battle;
 
         public PostRequestHandler(TcpClient client, StreamReader reader, StreamWriter writer, string req)
         {
@@ -470,17 +471,28 @@ namespace ws2023_mtcg.Server.Req
             User player2 = lobby[1];
             lobby.RemoveAt(0);
             lobby.RemoveAt(0);
-            
-            Battle battle = new Battle(1, player1, player2);
 
             try
             {
-                output = battle.Fight();
+                output = Battle.Fight(1, player1, player2);
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error: {ex}");
                 ResponseHandler.SendErrorResponse(writer, "No user with matching token.", 401);
+
+                return;
+            }
+
+            try
+            {
+                userRepository.Update(player1);
+                userRepository.Update(player2);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex}");
+                ResponseHandler.SendErrorResponse(writer, "Couldnt' update player stats", 400);
 
                 return;
             }

@@ -9,77 +9,74 @@ namespace ws2023_mtcg.FightLogic
 {
     internal class Battle
     {
-        private int _round;
-        private User _playerOne;
-        private User _playerTwo;
-        string fightOutput;
+        //static private int _round;
+        //static private User _playerOne;
+        //static private User _playerTwo;
+        static string fightOutput;
 
-        public Battle(int round, User playerOne, User playerTwo)
-        {
-            _round = round;
-            _playerOne = playerOne;
-            _playerTwo = playerTwo;
-        }
+        //public Battle(int round, User playerOne, User playerTwo)
+        //{
+        //    _round = round;
+        //    _playerOne = playerOne;
+        //    _playerTwo = playerTwo;
+        //}
 
         // TODO: do the whole giving cards to winner thing, also maybe finally implement elo
-        public string Fight()
+        public static string Fight(int round, User playerOne, User playerTwo)
         {
             int p1WinCount = 0;
             int p2WinCount = 0;
 
             fightOutput = "";
 
-            while (_round < 100)
+            while (round < 100)
             {
                 Console.Clear();
 
                 // also understand how that works, it works and lowkey it makes sense but UNDERSTAND YOUR CODE BRO
-                if (!_playerOne.Deck.Any(card => card.IsAlive) || !_playerTwo.Deck.Any(card => card.IsAlive))
+                if (!playerOne.Deck.Any(card => card.IsAlive) || !playerTwo.Deck.Any(card => card.IsAlive))
                     break;
 
-                int randomP1Card = ChooseRandomCard(_playerOne.Deck);
-                int randomP2Card = ChooseRandomCard(_playerTwo.Deck);
+                int randomP1Card = ChooseRandomCard(playerOne.Deck);
+                int randomP2Card = ChooseRandomCard(playerTwo.Deck);
 
                 // when youre in a writing ugly ass code competition and your opponent is me <3
-                fightOutput += $"\n=====[ROUND {_round + 1}]=====\n" +
-                               $" {_playerOne.Username}: {_playerOne.Deck[randomP1Card].Name} ({_playerOne.Deck[randomP1Card].Damage} damage) vs " +
-                               $"{_playerTwo.Username}: {_playerTwo.Deck[randomP2Card].Name} ({_playerTwo.Deck[randomP2Card].Damage} damage): ";
+                fightOutput += $"\n=====[ROUND {round}]=====\n" +
+                               $" {playerOne.Username}: {playerOne.Deck[randomP1Card].Name} ({playerOne.Deck[randomP1Card].Damage} damage) vs " +
+                               $"{playerTwo.Username}: {playerTwo.Deck[randomP2Card].Name} ({playerTwo.Deck[randomP2Card].Damage} damage): ";
 
-                Cards winner = _playerOne.Deck[randomP1Card].Attack(_playerTwo.Deck[randomP2Card]);
+                Cards winner = playerOne.Deck[randomP1Card].Attack(playerTwo.Deck[randomP2Card]);
 
-                if (winner == _playerOne.Deck[randomP1Card])
+                fightOutput += playerOne.Deck[randomP1Card].output;
+                playerOne.Deck[randomP1Card].output = "";
+
+                if (winner == playerOne.Deck[randomP1Card])
                     p1WinCount++;
                 else
                     p2WinCount++;
 
-                _round++;
+                round++;
             }
 
             if (p1WinCount > p2WinCount)
             {
-                Console.WriteLine("Player 1 wins!");
-                _playerOne.SetWinningELO();
-                _playerTwo.SetLosingELO();
-
-                _playerOne.AddToStack(_playerTwo.Deck);
-                _playerTwo.RemoveFromStack(_playerTwo.Deck);
+                fightOutput += "Player 1 wins!";
+                playerOne.SetWinningELO();
+                playerTwo.SetLosingELO();
             }
             else if (p1WinCount < p2WinCount)
             {
-                Console.WriteLine("Player 2 wins!");
-                _playerOne.SetLosingELO();
-                _playerTwo.SetWinningELO();
-
-                _playerOne.RemoveFromStack(_playerOne.Deck);
-                _playerTwo.AddToStack(_playerOne.Deck);
+                fightOutput += "Player 2 wins!";
+                playerOne.SetLosingELO();
+                playerTwo.SetWinningELO();
             }
             else
-                Console.WriteLine("It's a tie!");
+                fightOutput += "It's a tie!";
 
             return fightOutput;
         }
 
-        private int ChooseRandomCard(List<Cards> deck)
+        private static int ChooseRandomCard(List<Cards> deck)
         {
             Random random = new Random();
             int randomCard;
