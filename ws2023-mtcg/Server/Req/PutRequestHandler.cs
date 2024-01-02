@@ -160,7 +160,7 @@ namespace ws2023_mtcg.Server.Req
                 return;
             }
 
-            ResponseHandler.SendResponse(writer, "Configured deck successfully.", 200);
+            ResponseHandler.SendPlaintextResponse(writer, "Configured deck successfully.", 200);
         }
 
         public void HandleUserRequest(string route)
@@ -263,7 +263,7 @@ namespace ws2023_mtcg.Server.Req
                 return;
             }
 
-            ResponseHandler.SendResponse(writer, "Successfully created or updated profile.", 200);
+            ResponseHandler.SendPlaintextResponse(writer, "Successfully created or updated profile.", 200);
         }
     }
 }

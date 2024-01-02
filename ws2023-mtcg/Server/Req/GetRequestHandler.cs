@@ -124,7 +124,7 @@ namespace ws2023_mtcg.Server.Req
 
             if(!stack.Any())
             {
-                ResponseHandler.SendResponse(writer, "User doesn't have any cards", 204);
+                ResponseHandler.SendPlaintextResponse(writer, "User doesn't have any cards", 204);
             }
 
             string stackCards = "";
@@ -138,7 +138,7 @@ namespace ws2023_mtcg.Server.Req
                               $"Type: {(s.Type == CardType.monster ? "Monster" : "Spell")}\n\n";
             }
 
-            ResponseHandler.SendResponse(writer, stackCards, 200);
+            ResponseHandler.SendPlaintextResponse(writer, stackCards, 200);
         }
 
         public void HandleDeckRequest()
@@ -200,7 +200,7 @@ namespace ws2023_mtcg.Server.Req
 
             if (!deck.Any())
             {
-                ResponseHandler.SendResponse(writer, "User doesn't have a configured deck", 204);
+                ResponseHandler.SendPlaintextResponse(writer, "User doesn't have a configured deck", 204);
             }
 
             string deckCards = "";
@@ -214,7 +214,7 @@ namespace ws2023_mtcg.Server.Req
                               $"Type: {(d.Type == CardType.monster ? "Monster" : "Spell")}\n\n";
             }
 
-            ResponseHandler.SendResponse(writer, deckCards, 200);
+            ResponseHandler.SendPlaintextResponse(writer, deckCards, 200);
         }
 
         public void HandleUserRequest(string route)
@@ -283,7 +283,7 @@ namespace ws2023_mtcg.Server.Req
                 return;
             }
 
-            ResponseHandler.SendResponse(writer, profile, 200);
+            ResponseHandler.SendPlaintextResponse(writer, profile, 200);
         }
 
         public void HandleStatsRequest()
@@ -345,7 +345,7 @@ namespace ws2023_mtcg.Server.Req
 
             string stats = $"ELO: {tempUser.Elo}";
 
-            ResponseHandler.SendResponse(writer, stats, 200);
+            ResponseHandler.SendPlaintextResponse(writer, stats, 200);
         }
 
         public void HandleScoreboardRequest()
@@ -388,7 +388,7 @@ namespace ws2023_mtcg.Server.Req
                 scoreboard += $"{rank}: {u.Username} - ELO: {u.Elo}\n";
             }
 
-            ResponseHandler.SendResponse(writer, scoreboard, 200);
+            ResponseHandler.SendPlaintextResponse(writer, scoreboard, 200);
         }
     }
 }

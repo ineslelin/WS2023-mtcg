@@ -16,6 +16,7 @@ namespace ws2023_mtcg.Server.Req
     {
         string req;
         string data;
+        string response;
 
         TcpClient client;
         StreamReader reader;
@@ -81,7 +82,14 @@ namespace ws2023_mtcg.Server.Req
             catch (JsonException ex)
             {
                 Console.WriteLine($"Error: {ex}");
-                ResponseHandler.SendErrorResponse(writer, "Invalid JSON.", 400);
+
+                response = JsonConvert.SerializeObject(new
+                {
+                    status = "error",
+                    message = "Invalid JSON"
+                });
+
+                ResponseHandler.SendErrorResponse(writer, response, (int)ResponseCode.Error);
 
                 return;
             }
@@ -99,13 +107,32 @@ namespace ws2023_mtcg.Server.Req
                 catch (Exception ex)
                 {
                     Console.WriteLine($"Error: {ex}");
-                    ResponseHandler.SendErrorResponse(writer, "Username already in use.", 409);
+
+                    response = JsonConvert.SerializeObject(new
+                    {
+                        status = "error",
+                        message = "User with same username already registered"
+                    });
+
+                    ResponseHandler.SendErrorResponse(writer, response, (int)ResponseCode.AlreadyExists);
 
                     return;
                 }
 
-                ResponseHandler.SendResponse(writer, "User created.", 201);
             }
+
+            response = JsonConvert.SerializeObject( new
+            {
+                status = "success",
+                message = "User successfully created",
+                user = new UserCredentials 
+                {
+                    Username = tempUser.Username,
+                    Password = tempUser.Password
+                }
+            });
+            
+            ResponseHandler.SendResponse(writer, response, (int)ResponseCode.CreationSuccess);
         }
 
         public void HandleSessionRequest()
@@ -119,7 +146,14 @@ namespace ws2023_mtcg.Server.Req
             catch (JsonException ex)
             {
                 Console.WriteLine($"Error: {ex}");
-                ResponseHandler.SendErrorResponse(writer, "Invalid JSON.", 400);
+
+                response = JsonConvert.SerializeObject(new
+                {
+                    status = "error",
+                    message = "Invalid JSON"
+                });
+
+                ResponseHandler.SendErrorResponse(writer, response, (int)ResponseCode.Error);
 
                 return;
             }
@@ -140,39 +174,54 @@ namespace ws2023_mtcg.Server.Req
                 catch (Exception ex)
                 {
                     Console.WriteLine($"Error: {ex}");
-                    ResponseHandler.SendErrorResponse(writer, "Wrong username or password.", 401);
+
+                    response = JsonConvert.SerializeObject(new
+                    {
+                        status = "error",
+                        message = "Invalid username/password provided"
+                    });
+
+                    ResponseHandler.SendErrorResponse(writer, response, (int)ResponseCode.Unauthorized);
 
                     return;
                 }
 
-                ResponseHandler.SendResponse(writer, $"User logged in. Session-Token: {tempUser.Username}-mtcgToken", 200);
+                response = JsonConvert.SerializeObject(new
+                {
+                    status = "success",
+                    message = "User login successful",
+                    user = new UserCredentials
+                    {
+                        Username = tempUser.Username,
+                        Password = tempUser.Password
+                    },
+                    token = $"{tempUser.Username}-mtcgToken"
+                });
+
+                ResponseHandler.SendResponse(writer, response, (int)ResponseCode.Success);
             }
         }
 
         public void HandlePackageRequest()
         {
-            try
-            {
-                TokenValidator.CheckTokenExistence(req);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error: {ex}");
-                ResponseHandler.SendErrorResponse(writer, "No token.", 401);
-
-                return;
-            }
-
             string authHeader = "";
 
             try
             {
+                TokenValidator.CheckTokenExistence(req);
                 authHeader = TokenValidator.GetAuthHeader(req);
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error: {ex}");
-                ResponseHandler.SendErrorResponse(writer, "Invalid token.", 401);
+
+                response = JsonConvert.SerializeObject(new
+                {
+                    status = "error",
+                    message = "Access token is missing or invalid",
+                });
+
+                ResponseHandler.SendErrorResponse(writer, response, (int)ResponseCode.Unauthorized);
 
                 return;
             }
@@ -185,7 +234,14 @@ namespace ws2023_mtcg.Server.Req
             catch (Exception ex)
             {
                 Console.WriteLine($"Error: {ex}");
-                ResponseHandler.SendErrorResponse(writer, "User is not admin.", 403);
+
+                response = JsonConvert.SerializeObject(new
+                {
+                    status = "error",
+                    message = "Provided user is not \"admin\"",
+                });
+
+                ResponseHandler.SendErrorResponse(writer, response, (int)ResponseCode.Forbidden);
 
                 return;
             }
@@ -199,7 +255,14 @@ namespace ws2023_mtcg.Server.Req
             catch (JsonException ex)
             {
                 Console.WriteLine($"Error: {ex}");
-                ResponseHandler.SendErrorResponse(writer, "Invalid JSON", 400);
+
+                response = JsonConvert.SerializeObject(new
+                {
+                    status = "error",
+                    message = "Invalid JSON"
+                });
+
+                ResponseHandler.SendErrorResponse(writer, response, (int)ResponseCode.Error);
 
                 return;
             }
@@ -222,82 +285,89 @@ namespace ws2023_mtcg.Server.Req
                 catch (Exception ex)
                 {
                     Console.WriteLine($"Error: {ex}");
-                    ResponseHandler.SendErrorResponse(writer, "Card with that id already exists.", 409);
+
+                    response = JsonConvert.SerializeObject(new
+                    {
+                        status = "error",
+                        message = "At least one card in the packages already exists"
+                    });
+
+                    ResponseHandler.SendErrorResponse(writer, response, (int)ResponseCode.AlreadyExists);
 
                     return;
                 }
             }
 
-            ResponseHandler.SendResponse(writer, "Package added.", 201);
+            List<Card> package = new List<Card>();
+
+            foreach (var c in cards)
+            {
+                Card card = new Card
+                {
+                    Id = c.Id,
+                    Name = c.Name,
+                    Damage = c.Damage
+                };
+
+                package.Add(card);
+            }
+
+            response = JsonConvert.SerializeObject(new
+            {
+                status = "success",
+                message = "Package and cards successfully created",
+                package = package
+            });
+
+            ResponseHandler.SendResponse(writer, response, (int)ResponseCode.CreationSuccess);
         }
 
         public void HandleTransactionRequest()
         {
-            try
-            {
-                TokenValidator.CheckTokenExistence(req);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error: {ex}");
-                ResponseHandler.SendErrorResponse(writer, "No token.", 401);
-
-                return;
-            }
-
-            string authHeader = "";
-
-            try
-            {
-                authHeader = TokenValidator.GetAuthHeader(req);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error: {ex}");
-                ResponseHandler.SendErrorResponse(writer, "Wrong token.", 401);
-
-                return;
-            }
-
             string username = "";
 
             try
             {
+                TokenValidator.CheckTokenExistence(req);
+                string authHeader = TokenValidator.GetAuthHeader(req);
                 username = TokenValidator.SplitToken(authHeader);
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error: {ex}");
-                ResponseHandler.SendErrorResponse(writer, "Wrong token.", 401);
+
+                response = JsonConvert.SerializeObject(new
+                {
+                    status = "error",
+                    message = "Access token is missing or invalid",
+                });
+
+                ResponseHandler.SendErrorResponse(writer, response, (int)ResponseCode.Unauthorized);
 
                 return;
             }
 
             User? tempUser = new User();
-
             UserRepository userRepository = new UserRepository();
 
             try
             {
                 tempUser = userRepository.Read(username);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error: {ex}");
-                ResponseHandler.SendErrorResponse(writer, "No user with matching token.", 401);
 
-                return;
-            }
-
-            try
-            {
-                if(tempUser == null)
+                if (tempUser == null)
                     throw new Exception();
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error: {ex}");
-                ResponseHandler.SendErrorResponse(writer, "User is null. (WHY???)", 400);
+
+                response = JsonConvert.SerializeObject(new
+                {
+                    status = "error",
+                    message = "No user with matching credentials found",
+                });
+
+                ResponseHandler.SendErrorResponse(writer, response, (int)ResponseCode.NotFound);
 
                 return;
             }
@@ -309,8 +379,15 @@ namespace ws2023_mtcg.Server.Req
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error: {ex}");
-                ResponseHandler.SendErrorResponse(writer, "Not enough money.", 403);
+                Console.WriteLine($"Error: {ex}"); 
+                
+                response = JsonConvert.SerializeObject(new
+                {
+                    status = "error",
+                    message = "Not enough money for buying a card package",
+                });
+
+                ResponseHandler.SendErrorResponse(writer, response, (int)ResponseCode.Forbidden);
 
                 return;
             }
@@ -325,31 +402,26 @@ namespace ws2023_mtcg.Server.Req
             catch (Exception ex)
             {
                 Console.WriteLine($"Error: {ex}");
-                ResponseHandler.SendErrorResponse(writer, "No packages available", 404);
+
+                response = JsonConvert.SerializeObject(new
+                {
+                    status = "error",
+                    message = "No card package available for buying",
+                });
+
+                ResponseHandler.SendErrorResponse(writer, response, (int)ResponseCode.NotFound);
 
                 return;
             }
 
             int packageId = cardRepository.RetrieveSmallestId();
             Cards[]? package = null;
-
-            try
-            {
-                package = cardRepository.ReadByPackage(packageId);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error: {ex}");
-                ResponseHandler.SendErrorResponse(writer, "Couldn't retrieve package.", 400);
-
-                return;
-            }
-
-
             StackRepository stackRepository = new StackRepository();
 
             try
             {
+                package = cardRepository.ReadByPackage(packageId);
+
                 if (package == null)
                     throw new Exception();
 
@@ -358,89 +430,90 @@ namespace ws2023_mtcg.Server.Req
                     p.Owner = tempUser.Username;
                     stackRepository.Create(p);
                 }
+
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error: {ex}");
-                ResponseHandler.SendErrorResponse(writer, "Coudln't add package to stack", 400);
+
+                response = JsonConvert.SerializeObject(new
+                {
+                    status = "error",
+                    message = "Couldn't add package to user",
+                });
+
+                ResponseHandler.SendErrorResponse(writer, response, (int)ResponseCode.Error);
 
                 return;
             }
 
-            try
-            {
-                cardRepository.Delete(packageId);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error: {ex}");
-                ResponseHandler.SendErrorResponse(writer, "Coudln't delete package from stack", 400);
-
-                return;
-            }
-
-            tempUser.Coins -= 5;
+            cardRepository.Delete(packageId);
 
             try
             {
+                tempUser.Coins -= 5;
                 userRepository.Update(tempUser);
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error: {ex}");
-                ResponseHandler.SendErrorResponse(writer, "Couldn't update user.", 400);
+                Console.WriteLine($"Error: {ex}"); 
+                
+                response = JsonConvert.SerializeObject(new
+                {
+                    status = "error",
+                    message = "Couldn't update user",
+                });
+
+                ResponseHandler.SendErrorResponse(writer, response, (int)ResponseCode.Error);
 
                 return;
             }
 
-            ResponseHandler.SendResponse(writer, "Package acquired successfully.", 200);
+            List<Card> acquiredPackage = new List<Card>();
+
+            foreach (var p in package)
+            {
+                Card card = new Card
+                {
+                    Id = p.Id,
+                    Name = p.Name,
+                    Damage = p.Damage
+                };
+
+                acquiredPackage.Add(card);
+            }
+
+            response = JsonConvert.SerializeObject(new
+            {
+                status = "success",
+                message = "A package has been successfully bought",
+                package = acquiredPackage
+            });
+
+            ResponseHandler.SendResponse(writer, response, (int)ResponseCode.Success);
         }
 
         public void HandleBattleRequest()
         {
+            string username = "";
+
             try
             {
                 TokenValidator.CheckTokenExistence(req);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error: {ex}");
-                ResponseHandler.SendErrorResponse(writer, "No token.", 401);
-
-                return;
-            }
-
-
-            string authHeader = "";
-
-            Monitor.Enter(this);
-            try
-            {
-                authHeader = TokenValidator.GetAuthHeader(req);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error: {ex}");
-                ResponseHandler.SendErrorResponse(writer, "Wrong token.", 401);
-
-                return;
-            }
-            finally
-            {
-                Monitor.Exit(this);
-            }
-
-            string username = "";
-
-            Monitor.Enter(this);
-            try
-            {
+                string authHeader = TokenValidator.GetAuthHeader(req);
                 username = TokenValidator.SplitToken(authHeader);
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error: {ex}");
-                ResponseHandler.SendErrorResponse(writer, "Wrong token.", 401);
+
+                response = JsonConvert.SerializeObject(new
+                {
+                    status = "error",
+                    message = "Access token is missing or invalid",
+                });
+
+                ResponseHandler.SendErrorResponse(writer, response, (int)ResponseCode.Unauthorized);
 
                 return;
             }
@@ -459,7 +532,14 @@ namespace ws2023_mtcg.Server.Req
             catch (Exception ex)
             {
                 Console.WriteLine($"Error: {ex}");
-                ResponseHandler.SendErrorResponse(writer, "No user with matching token.", 401);
+
+                response = JsonConvert.SerializeObject(new
+                {
+                    status = "error",
+                    message = "No user with matching credentials found",
+                });
+
+                ResponseHandler.SendErrorResponse(writer, response, (int)ResponseCode.NotFound);
 
                 return;
             }
@@ -494,7 +574,14 @@ namespace ws2023_mtcg.Server.Req
             catch (Exception ex)
             {
                 Console.WriteLine($"Error: {ex}");
-                ResponseHandler.SendErrorResponse(writer, "Something went wrong with the battle.", 400);
+
+                response = JsonConvert.SerializeObject(new
+                {
+                    status = "error",
+                    message = "Battle failed",
+                });
+
+                ResponseHandler.SendErrorResponse(writer, response, (int)ResponseCode.Error);
 
                 return;
             }
@@ -518,7 +605,14 @@ namespace ws2023_mtcg.Server.Req
             catch (Exception ex)
             {
                 Console.WriteLine($"Error: {ex}");
-                ResponseHandler.SendErrorResponse(writer, "Couldnt' update player stats", 400);
+
+                response = JsonConvert.SerializeObject(new
+                {
+                    status = "error",
+                    message = "Couldn't update user stats",
+                });
+
+                ResponseHandler.SendErrorResponse(writer, response, (int)ResponseCode.Error);
 
                 return;
             }
@@ -527,7 +621,7 @@ namespace ws2023_mtcg.Server.Req
                 Monitor.Exit(this);
             }
 
-            ResponseHandler.SendResponse(writer, output, 200);
+            ResponseHandler.SendPlaintextResponse(writer, output, (int)ResponseCode.Success);
         }
     }
 }
