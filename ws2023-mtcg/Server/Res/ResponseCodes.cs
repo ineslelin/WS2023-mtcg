@@ -10,6 +10,7 @@ namespace ws2023_mtcg.Server.Res
     {
         Success = 200,
         CreationSuccess = 201,
+        NoContent = 204,
         Error = 400,
         Unauthorized = 401,
         Forbidden = 403,

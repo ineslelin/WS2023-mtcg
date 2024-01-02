@@ -11,6 +11,8 @@ using ws2023_mtcg.Server.Res;
 using ws2023_mtcg.FightLogic.Enums;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
+using Newtonsoft.Json;
+using System.Collections;
 
 namespace ws2023_mtcg.Server.Req
 {
@@ -18,6 +20,7 @@ namespace ws2023_mtcg.Server.Req
     {
         string req;
         string data;
+        string response;
 
         TcpClient client;
         StreamReader reader;
@@ -67,42 +70,25 @@ namespace ws2023_mtcg.Server.Req
 
         public void HandleCardsRequest()
         {
-            try
-            {
-                TokenValidator.CheckTokenExistence(req);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error: {ex}");
-                ResponseHandler.SendErrorResponse(writer, "No token.", 401);
-
-                return;
-            }
-
-            string authHeader = "";
-
-            try
-            {
-                authHeader = TokenValidator.GetAuthHeader(req);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error: {ex}");
-                ResponseHandler.SendErrorResponse(writer, "Wrong token.", 401);
-
-                return;
-            }
-
             string username = "";
 
             try
             {
+                TokenValidator.CheckTokenExistence(req);
+                string authHeader = TokenValidator.GetAuthHeader(req);
                 username = TokenValidator.SplitToken(authHeader);
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error: {ex}");
-                ResponseHandler.SendErrorResponse(writer, "Wrong token.", 401);
+
+                response = JsonConvert.SerializeObject(new
+                {
+                    status = "error",
+                    message = "Access token is missing or invalid",
+                });
+
+                ResponseHandler.SendErrorResponse(writer, response, (int)ResponseCode.Unauthorized);
 
                 return;
             }
@@ -117,68 +103,75 @@ namespace ws2023_mtcg.Server.Req
             catch (Exception ex)
             {
                 Console.WriteLine($"Error: {ex}");
-                ResponseHandler.SendErrorResponse(writer, "Error reading stack.", 400);
+
+                response = JsonConvert.SerializeObject(new
+                {
+                    status = "error",
+                    message = "Couldn't read stack",
+                });
+
+                ResponseHandler.SendErrorResponse(writer, response, (int)ResponseCode.Error);
 
                 return;
             }
 
             if(!stack.Any())
             {
-                ResponseHandler.SendPlaintextResponse(writer, "User doesn't have any cards", 204);
+                response = JsonConvert.SerializeObject(new
+                {
+                    status = "error",
+                    message = "User doesn't have any cards",
+                });
+
+                ResponseHandler.SendResponse(writer, response, (int)ResponseCode.NoContent);
+
+                return;
             }
 
-            string stackCards = "";
+            List<Card> cards = new List<Card>();
 
             foreach(var s in stack)
             {
-                stackCards += $"ID: {s.Id}\n" +
-                              $"Name: {s.Name}\n" +
-                              $"Damage: {s.Damage}\n" +
-                              $"Element: {s.Element}\n" +
-                              $"Type: {(s.Type == CardType.monster ? "Monster" : "Spell")}\n\n";
+                Card card = new Card
+                {
+                    Id = s.Id,
+                    Name = s.Name,
+                    Damage = s.Damage
+                };
+
+                cards.Add(card);
             }
 
-            ResponseHandler.SendPlaintextResponse(writer, stackCards, 200);
+            response = JsonConvert.SerializeObject(new
+            {
+                status = "success",
+                stack = cards
+            });
+
+            ResponseHandler.SendResponse(writer, response, (int)ResponseCode.Success);
         }
 
         public void HandleDeckRequest()
         {
-            try
-            {
-                TokenValidator.CheckTokenExistence(req);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error: {ex}");
-                ResponseHandler.SendErrorResponse(writer, "No token.", 401);
-
-                return;
-            }
-
-            string authHeader = "";
-
-            try
-            {
-                authHeader = TokenValidator.GetAuthHeader(req);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error: {ex}");
-                ResponseHandler.SendErrorResponse(writer, "Wrong token.", 401);
-
-                return;
-            }
-
             string username = "";
 
             try
             {
+                TokenValidator.CheckTokenExistence(req);
+                string authHeader = TokenValidator.GetAuthHeader(req);
                 username = TokenValidator.SplitToken(authHeader);
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error: {ex}");
-                ResponseHandler.SendErrorResponse(writer, "Wrong token.", 401);
+
+                response = JsonConvert.SerializeObject(new
+                {
+                    status = "error",
+                    message = "Access token is missing or invalid",
+                });
+
+                ResponseHandler.SendErrorResponse(writer, response, (int)ResponseCode.Unauthorized);
 
                 return;
             }
@@ -193,28 +186,52 @@ namespace ws2023_mtcg.Server.Req
             catch (Exception ex)
             {
                 Console.WriteLine($"Error: {ex}");
-                ResponseHandler.SendErrorResponse(writer, "Error reading deck.", 400);
+
+                response = JsonConvert.SerializeObject(new
+                {
+                    status = "error",
+                    message = "Couldn't read deck",
+                });
+
+                ResponseHandler.SendErrorResponse(writer, response, (int)ResponseCode.Error);
 
                 return;
             }
 
             if (!deck.Any())
             {
-                ResponseHandler.SendPlaintextResponse(writer, "User doesn't have a configured deck", 204);
+                response = JsonConvert.SerializeObject(new
+                {
+                    status = "error",
+                    message = "The request was fine, but the deck doesn't have any cards",
+                });
+
+                ResponseHandler.SendResponse(writer, response, (int)ResponseCode.NoContent);
+
+                return;
             }
 
-            string deckCards = "";
+            List<Card> cards = new List<Card>();
 
             foreach (var d in deck)
             {
-                deckCards += $"ID: {d.Id}\n" +
-                              $"Name: {d.Name}\n" +
-                              $"Damage: {d.Damage}\n" +
-                              $"Element: {d.Element}\n" +
-                              $"Type: {(d.Type == CardType.monster ? "Monster" : "Spell")}\n\n";
+                Card card = new Card
+                {
+                    Id = d.Id,
+                    Name = d.Name,
+                    Damage = d.Damage
+                };
+
+                cards.Add(card);
             }
 
-            ResponseHandler.SendPlaintextResponse(writer, deckCards, 200);
+            response = JsonConvert.SerializeObject(new
+            {
+                status = "success",
+                deck = cards
+            });
+
+            ResponseHandler.SendResponse(writer, response, (int)ResponseCode.Success);
         }
 
         public void HandleUserRequest(string route)
