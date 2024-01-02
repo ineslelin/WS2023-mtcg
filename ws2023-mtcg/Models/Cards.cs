@@ -345,6 +345,11 @@ namespace ws2023_mtcg.Models
                     break;
             }
         }
+
+        public void WinningDamageBuff()
+        {
+            Damage *= 2;
+        }
     }
 }
 

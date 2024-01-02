@@ -448,6 +448,7 @@ namespace ws2023_mtcg.Server.Req
             User? tempUser = new User();
             UserRepository userRepository = new UserRepository();
             DeckRepository deckRepository = new DeckRepository();
+            StackRepository stackRepository = new StackRepository();
 
             try
             {
@@ -467,16 +468,16 @@ namespace ws2023_mtcg.Server.Req
                 Monitor.Exit(this);
             }
 
-            //while(true)
-            //{
-            //    Console.WriteLine("Waiting for second user to join...");
-            //    Thread.Sleep(1000);
+            while(true)
+            {
+                Console.WriteLine("Waiting for second user to join...");
+                Thread.Sleep(1000);
 
-            //    if(lobby.Count % 2 == 0)
-            //    {
-            //        break;
-            //    }
-            //}
+                if (lobby.Count % 2 == 0)
+                {
+                    break;
+                }
+            }
 
             User player1 = lobby[0];
             User player2 = lobby[1];
@@ -484,7 +485,11 @@ namespace ws2023_mtcg.Server.Req
             try
             {
                 Monitor.Enter(this);
-                output = Battle.Fight(1, player1, player2);
+
+                lock(output)
+                {
+                    output = Battle.Fight(1, player1, player2);
+                }
             }
             catch (Exception ex)
             {
@@ -497,6 +502,12 @@ namespace ws2023_mtcg.Server.Req
             try
             {
                 userRepository.Update(player1);
+
+                foreach(var d in player1.Deck)
+                {
+                    stackRepository.Update(d);
+                }
+
                 userRepository.Update(player2);
             }
             catch (Exception ex)

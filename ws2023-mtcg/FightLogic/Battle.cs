@@ -12,7 +12,6 @@ namespace ws2023_mtcg.FightLogic
         //static private int _round;
         //static private User _playerOne;
         //static private User _playerTwo;
-        static string fightOutput;
 
         //public Battle(int round, User playerOne, User playerTwo)
         //{
@@ -21,7 +20,8 @@ namespace ws2023_mtcg.FightLogic
         //    _playerTwo = playerTwo;
         //}
 
-        // TODO: do the whole giving cards to winner thing, also maybe finally implement elo
+        static string fightOutput;
+
         public static string Fight(int round, User playerOne, User playerTwo)
         {
             int p1WinCount = 0;
@@ -31,8 +31,6 @@ namespace ws2023_mtcg.FightLogic
 
             while (round < 100)
             {
-                Console.Clear();
-
                 // also understand how that works, it works and lowkey it makes sense but UNDERSTAND YOUR CODE BRO
                 if (!playerOne.Deck.Any(card => card.IsAlive) || !playerTwo.Deck.Any(card => card.IsAlive))
                     break;
@@ -60,18 +58,35 @@ namespace ws2023_mtcg.FightLogic
 
             if (p1WinCount > p2WinCount)
             {
-                fightOutput += "Player 1 wins!";
+                fightOutput += $"\n\n{playerOne.Username} wins!";
+
+                // unique mandatory feature: a random card receives a permanent buff and user gets money for winning
+                Random random = new Random();
+                int randomCard = random.Next(0, playerOne.Deck.Count);
+
+                playerOne.Deck[randomCard].WinningDamageBuff();
+
+                playerOne.Coins += 15;
+
                 playerOne.SetWinningELO();
                 playerTwo.SetLosingELO();
             }
             else if (p1WinCount < p2WinCount)
             {
-                fightOutput += "Player 2 wins!";
+                fightOutput += $"\n\n{playerTwo.Username} wins!";
+
+                Random random = new Random();
+                int randomCard = random.Next(0, playerTwo.Deck.Count);
+
+                playerTwo.Deck[randomCard].WinningDamageBuff();
+
+                playerTwo.Coins += 15;
+
                 playerOne.SetLosingELO();
                 playerTwo.SetWinningELO();
             }
             else
-                fightOutput += "It's a tie!";
+                fightOutput += "\n\nIt's a tie!";
 
             return fightOutput;
         }

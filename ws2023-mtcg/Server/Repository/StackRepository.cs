@@ -95,7 +95,29 @@ namespace ws2023_mtcg.Server.Repository
 
         public void Update(Cards card)
         {
-            
+            if (card == null)
+                throw new ArgumentException("id can't be null");
+
+            try
+            {
+                using (IDbConnection connection = new NpgsqlConnection(_connectionString))
+                {
+                    using (IDbCommand command = connection.CreateCommand())
+                    {
+                        connection.Open();
+
+                        command.CommandText = @"UPDATE stack SET damage=@damage WHERE id=@id";
+
+                        DbCommands.AddParameterWithValue(command, "id", DbType.String, card.Id);
+                        DbCommands.AddParameterWithValue(command, "damage", DbType.Int32, card.Damage);
+                        command.ExecuteNonQuery();
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                Console.WriteLine($"Npgsql Error: {ex.Message}");
+            }
         }
 
         public void Delete(Cards card)

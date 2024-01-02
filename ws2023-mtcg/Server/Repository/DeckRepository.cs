@@ -92,7 +92,7 @@ namespace ws2023_mtcg.Server.Repository
 
         public void Update(Cards card)
         {
-
+            
         }
 
         public void Delete(Cards card)
