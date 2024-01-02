@@ -509,6 +509,11 @@ namespace ws2023_mtcg.Server.Req
                 }
 
                 userRepository.Update(player2);
+
+                foreach (var d in player2.Deck)
+                {
+                    stackRepository.Update(d);
+                }
             }
             catch (Exception ex)
             {
