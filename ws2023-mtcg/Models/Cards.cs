@@ -346,9 +346,14 @@ namespace ws2023_mtcg.Models
             }
         }
 
-        public void WinningDamageBuff()
+        public double MegaBuff()
         {
-            Damage *= 2;
+            return Damage * 2;
+        }
+
+        public double ResetMegaBuff()
+        {
+            return Damage / 2;
         }
     }
 }

@@ -34,11 +34,13 @@ namespace ws2023_mtcg.Models
         public void SetWinningELO()
         {
             Elo += 3;
+            Wins++;
         }
 
         public void SetLosingELO()
         {
             Elo -= 5;
+            Losses++;
         }
 
         public void AddToStack(List<Cards> wonCards)

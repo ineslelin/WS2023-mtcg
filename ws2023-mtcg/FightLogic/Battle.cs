@@ -38,6 +38,21 @@ namespace ws2023_mtcg.FightLogic
                 int randomP1Card = ChooseRandomCard(playerOne.Deck);
                 int randomP2Card = ChooseRandomCard(playerTwo.Deck);
 
+                bool P1Mega = false;
+                bool P2Mega = false;
+
+                if (MegaCard())
+                {
+                    P1Mega = true;
+                    playerOne.Deck[randomP1Card].Damage = playerOne.Deck[randomP1Card].MegaBuff();
+                }
+
+                if (MegaCard())
+                {
+                    P2Mega = true;
+                    playerTwo.Deck[randomP2Card].Damage = playerTwo.Deck[randomP2Card].MegaBuff();
+                }
+
                 // when youre in a writing ugly ass code competition and your opponent is me <3
                 fightOutput += $"\n=====[ROUND {round}]=====\n" +
                                $" {playerOne.Username}: {playerOne.Deck[randomP1Card].Name} ({playerOne.Deck[randomP1Card].Damage} damage) vs " +
@@ -47,6 +62,18 @@ namespace ws2023_mtcg.FightLogic
 
                 fightOutput += playerOne.Deck[randomP1Card].output;
                 playerOne.Deck[randomP1Card].output = "";
+
+                if(P1Mega)
+                {
+                    P1Mega = false;
+                    playerOne.Deck[randomP1Card].Damage = playerOne.Deck[randomP1Card].ResetMegaBuff();
+                }
+
+                if (P2Mega)
+                {
+                    P2Mega = false;
+                    playerTwo.Deck[randomP2Card].Damage = playerTwo.Deck[randomP2Card].ResetMegaBuff();
+                }
 
                 if (winner == playerOne.Deck[randomP1Card])
                     p1WinCount++;
@@ -60,12 +87,6 @@ namespace ws2023_mtcg.FightLogic
             {
                 fightOutput += $"\n\n{playerOne.Username} wins!";
 
-                // unique mandatory feature: a random card receives a permanent buff and user gets money for winning
-                Random random = new Random();
-                int randomCard = random.Next(0, playerOne.Deck.Count);
-
-                playerOne.Deck[randomCard].WinningDamageBuff();
-
                 playerOne.Coins += 15;
 
                 playerOne.SetWinningELO();
@@ -74,11 +95,6 @@ namespace ws2023_mtcg.FightLogic
             else if (p1WinCount < p2WinCount)
             {
                 fightOutput += $"\n\n{playerTwo.Username} wins!";
-
-                Random random = new Random();
-                int randomCard = random.Next(0, playerTwo.Deck.Count);
-
-                playerTwo.Deck[randomCard].WinningDamageBuff();
 
                 playerTwo.Coins += 15;
 
@@ -103,6 +119,17 @@ namespace ws2023_mtcg.FightLogic
             while (!deck[randomCard].IsAlive);
 
             return randomCard;
+        }
+
+        private static bool MegaCard()
+        {
+            Random random = new Random();
+            int randomValue = random.Next(0, 1000);
+
+            if(randomValue >= 990)
+                return true;
+
+            return false;
         }
     }
 }

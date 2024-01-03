@@ -66,6 +66,11 @@ namespace ws2023_mtcg.Server.Req
             {
                 HandleScoreboardRequest();
             }
+
+            if (route[1] == "/tradings")
+            {
+                HandleTradingRequest();
+            }
         }
 
         public void HandleCardsRequest()
@@ -429,6 +434,75 @@ namespace ws2023_mtcg.Server.Req
             {
                 status = "success",
                 scoreboard = stats
+            });
+
+            ResponseHandler.SendResponse(writer, response, (int)ResponseCode.Success);
+        }
+
+        public void HandleTradingRequest()
+        {
+            string username = "";
+
+            try
+            {
+                TokenValidator.CheckTokenExistence(req);
+                string authHeader = TokenValidator.GetAuthHeader(req);
+                username = TokenValidator.SplitToken(authHeader);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex}");
+
+                response = JsonConvert.SerializeObject(new
+                {
+                    status = "error",
+                    message = "Access token is missing or invalid",
+                });
+
+                ResponseHandler.SendErrorResponse(writer, response, (int)ResponseCode.Unauthorized);
+
+                return;
+            }
+
+            TradingRepository tradingRepository = new TradingRepository();
+            TradingDeal[] tradingDeals = null;
+
+            try
+            {
+                tradingDeals = tradingRepository.Read();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex}");
+
+                response = JsonConvert.SerializeObject(new
+                {
+                    status = "error",
+                    message = "Couldn't fetch trading deals",
+                });
+
+                ResponseHandler.SendErrorResponse(writer, response, (int)ResponseCode.Error);
+
+                return;
+            }
+
+            if (tradingDeals.Length == 0)
+            {
+                response = JsonConvert.SerializeObject(new
+                {
+                    status = "error",
+                    message = "The request was fine, but there are no trading deals available",
+                });
+
+                ResponseHandler.SendResponse(writer, response, (int)ResponseCode.NoContent);
+
+                return;
+            }
+
+            response = JsonConvert.SerializeObject(new
+            {
+                status = "success",
+                trades = tradingDeals
             });
 
             ResponseHandler.SendResponse(writer, response, (int)ResponseCode.Success);

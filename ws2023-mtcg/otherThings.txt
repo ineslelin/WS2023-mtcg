@@ -53,6 +53,14 @@ CREATE TABLE IF NOT EXISTS userprofile (
 	image varchar(50)
 );
 
+CREATE TABLE IF NOT EXISTS trading (
+	id varchar(128) UNIQUE PRIMARY KEY,
+	cardid varchar(128) UNIQUE references stack(id),
+	username varchar(20),
+	cardtype int,
+	damage int
+);
+
 // infos on cards
 element is saved as an integer bc the program is using an enum
 	fire = 0
