@@ -120,5 +120,47 @@ namespace ws2023_mtcg.Server.Repository
                 Console.WriteLine($"Npgsql Error: {ex.Message}");
             }
         }
+
+        public Cards ReadById(string id)
+        {
+            if (id == null)
+                throw new ArgumentNullException("uid can't be null");
+
+            try
+            {
+                using (IDbConnection connection = new NpgsqlConnection(_connectionString))
+                {
+                    using (IDbCommand command = connection.CreateCommand())
+                    {
+                        connection.Open();
+
+                        command.CommandText = @"SELECT * FROM deck WHERE id=@id";
+
+                        DbCommands.AddParameterWithValue(command, "id", DbType.String, id);
+                        command.ExecuteNonQuery();
+
+                        using (IDataReader reader = command.ExecuteReader())
+                        {
+                            if(reader.Read())
+                            {
+                                return new Cards
+                                {
+                                    Id = reader.GetString(0),
+                                    Owner = reader.GetString(1),
+                                };
+                            }
+
+                            return null;
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                Console.WriteLine($"Npgsql Error: {ex.Message}");
+            }
+
+            return null;
+        }
     }
 }

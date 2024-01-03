@@ -15,7 +15,109 @@ namespace ws2023_mtcg.Server.Repository
     {
         private readonly string _connectionString = "Host=localhost;Database=mtcgdb;Username=admin;Password=1234;Include Error Detail=true";
 
-        public TradingDeal[] Read()
+        public TradingDeal Read(string id)
+        {
+            try
+            {
+                using (IDbConnection connection = new NpgsqlConnection(_connectionString))
+                {
+                    using (IDbCommand command = connection.CreateCommand())
+                    {
+                        connection.Open();
+
+                        command.CommandText = @"SELECT * FROM trading WHERE id=@id";
+
+                        DbCommands.AddParameterWithValue(command, "id", DbType.String, id);
+                        command.ExecuteNonQuery();
+
+                        using (IDataReader reader = command.ExecuteReader())
+                        {
+                            List<TradingDeal> trades = new List<TradingDeal>();
+
+                            if(reader.Read())
+                            {
+                                return new TradingDeal()
+                                {
+                                    Id = id,
+                                    CardToTrade = reader.GetString(1),
+                                    Type = (CardType)reader.GetInt32(3),
+                                    MinimumDamage = reader.GetInt32(4),
+                                };
+                            }
+
+                            return new TradingDeal() { Id = null };
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                Console.WriteLine($"Npgsql Error: {ex.Message}");
+            }
+
+            return new TradingDeal() { Id = null };
+        }
+
+
+        public void Create(TradingDeal deal, string username)
+        {
+            try
+            {
+                using (IDbConnection connection = new NpgsqlConnection(_connectionString))
+                {
+                    using (IDbCommand command = connection.CreateCommand())
+                    {
+                        connection.Open();
+
+                        command.CommandText = @"INSERT INTO trading (id, cardid, username, cardtype, damage)
+                                                VALUES (@id, @cardid, @username, @cardtype, @damage)";
+
+                        DbCommands.AddParameterWithValue(command, "id", DbType.String, deal.Id);
+                        DbCommands.AddParameterWithValue(command, "cardid", DbType.String, deal.CardToTrade);
+                        DbCommands.AddParameterWithValue(command, "username", DbType.String, username);
+                        DbCommands.AddParameterWithValue(command, "cardtype", DbType.Int32, (int)deal.Type);
+                        DbCommands.AddParameterWithValue(command, "damage", DbType.Double, deal.MinimumDamage);
+                        command.ExecuteNonQuery();
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                Console.WriteLine($"Npgsql Error: {ex.Message}");
+            }
+        }
+
+        public void Update(Cards card)
+        {
+
+        }
+
+        public void Delete(string username)
+        {
+            if (username == null)
+                throw new ArgumentException("id can't be null");
+
+            try
+            {
+                using (IDbConnection connection = new NpgsqlConnection(_connectionString))
+                {
+                    using (IDbCommand command = connection.CreateCommand())
+                    {
+                        connection.Open();
+
+                        command.CommandText = @"DELETE FROM deck WHERE owner=@owner";
+
+                        DbCommands.AddParameterWithValue(command, "owner", DbType.String, username);
+                        command.ExecuteNonQuery();
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                Console.WriteLine($"Npgsql Error: {ex.Message}");
+            }
+        }
+        public TradingDeal[] AllTradingDeals()
         {
             try
             {
@@ -56,62 +158,6 @@ namespace ws2023_mtcg.Server.Repository
             }
 
             return null;
-        }
-
-        public void Create(Cards card)
-        {
-            try
-            {
-                using (IDbConnection connection = new NpgsqlConnection(_connectionString))
-                {
-                    using (IDbCommand command = connection.CreateCommand())
-                    {
-                        connection.Open();
-
-                        command.CommandText = @"INSERT INTO deck (id, owner)
-                                                VALUES (@id, @owner)";
-
-                        DbCommands.AddParameterWithValue(command, "id", DbType.String, card.Id);
-                        DbCommands.AddParameterWithValue(command, "owner", DbType.String, card.Owner);
-                        command.ExecuteNonQuery();
-                    }
-                }
-            }
-            catch (NpgsqlException ex)
-            {
-                Console.WriteLine($"Npgsql Error: {ex.Message}");
-            }
-        }
-
-        public void Update(Cards card)
-        {
-
-        }
-
-        public void Delete(string username)
-        {
-            if (username == null)
-                throw new ArgumentException("id can't be null");
-
-            try
-            {
-                using (IDbConnection connection = new NpgsqlConnection(_connectionString))
-                {
-                    using (IDbCommand command = connection.CreateCommand())
-                    {
-                        connection.Open();
-
-                        command.CommandText = @"DELETE FROM deck WHERE owner=@owner";
-
-                        DbCommands.AddParameterWithValue(command, "owner", DbType.String, username);
-                        command.ExecuteNonQuery();
-                    }
-                }
-            }
-            catch (NpgsqlException ex)
-            {
-                Console.WriteLine($"Npgsql Error: {ex.Message}");
-            }
         }
     }
 }

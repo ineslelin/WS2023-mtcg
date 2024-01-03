@@ -469,7 +469,7 @@ namespace ws2023_mtcg.Server.Req
 
             try
             {
-                tradingDeals = tradingRepository.Read();
+                tradingDeals = tradingRepository.AllTradingDeals();
             }
             catch (Exception ex)
             {

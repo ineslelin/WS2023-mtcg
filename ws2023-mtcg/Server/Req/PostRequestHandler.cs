@@ -69,6 +69,12 @@ namespace ws2023_mtcg.Server.Req
             {
                 HandleBattleRequest();
             }
+
+            if (route[1] == "/tradings")
+            {
+                data = serverCommands.RetrieveData();
+                HandleTradingRequest();
+            }
         }
 
         public void HandleUserRequest()
@@ -622,6 +628,111 @@ namespace ws2023_mtcg.Server.Req
             }
 
             ResponseHandler.SendPlaintextResponse(writer, output, (int)ResponseCode.Success);
+        }
+
+        public void HandleTradingRequest()
+        {
+            string username = "";
+
+            try
+            {
+                TokenValidator.CheckTokenExistence(req);
+                string authHeader = TokenValidator.GetAuthHeader(req);
+                username = TokenValidator.SplitToken(authHeader);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex}");
+
+                response = JsonConvert.SerializeObject(new
+                {
+                    status = "error",
+                    message = "Access token is missing or invalid",
+                });
+
+                ResponseHandler.SendErrorResponse(writer, response, (int)ResponseCode.Unauthorized);
+
+                return;
+            }
+
+            TradingDeal deal = new TradingDeal();
+
+            try
+            {
+                deal = JsonConvert.DeserializeObject<TradingDeal>(data);
+            }
+            catch (JsonException ex)
+            {
+                Console.WriteLine($"Error: {ex}");
+
+                response = JsonConvert.SerializeObject(new
+                {
+                    status = "error",
+                    message = "Invalid JSON"
+                });
+
+                ResponseHandler.SendErrorResponse(writer, response, (int)ResponseCode.Error);
+
+                return;
+            }
+
+            TradingRepository tradingRepository = new TradingRepository();
+            StackRepository stackRepository = new StackRepository();
+            DeckRepository deckRepository = new DeckRepository();
+
+            TradingDeal temp = new TradingDeal();
+
+            try
+            {
+                temp = tradingRepository.Read(deal.Id);
+
+                if (temp.Id != null)
+                    throw new Exception();
+            }
+            catch (JsonException ex)
+            {
+                Console.WriteLine($"Error: {ex}");
+
+                response = JsonConvert.SerializeObject(new
+                {
+                    status = "error",
+                    message = "A deal with this deal ID already exists."
+                });
+
+                ResponseHandler.SendErrorResponse(writer, response, (int)ResponseCode.AlreadyExists);
+
+                return;
+            }
+
+            try
+            {
+                if (deckRepository.ReadById(deal.CardToTrade) != null || stackRepository.ReadById(deal.CardToTrade) == null)
+                    throw new Exception();
+            }
+            catch (JsonException ex)
+            {
+                Console.WriteLine($"Error: {ex}");
+
+                response = JsonConvert.SerializeObject(new
+                {
+                    status = "error",
+                    message = "The deal contains a card that is not owned by the user or locked in the deck."
+                });
+
+                ResponseHandler.SendErrorResponse(writer, response, (int)ResponseCode.Forbidden);
+
+                return;
+            }
+
+            tradingRepository.Create(deal, username);
+
+            response = JsonConvert.SerializeObject(new
+            {
+                status = "success",
+                deal = deal
+            });
+
+            ResponseHandler.SendErrorResponse(writer, response, (int)ResponseCode.CreationSuccess);
         }
     }
 }
