@@ -84,10 +84,8 @@ namespace ws2023_mtcg.Server
 
             if (req.ToString().Contains("DELETE"))
             {
-                DeleteRequestHandler deleteRequestHandler = new DeleteRequestHandler();
+                DeleteRequestHandler deleteRequestHandler = new DeleteRequestHandler(client, reader, writer, req.ToString());
             }
-
-            // ResponseHandler.SendResponse(writer, data);
 
             client.Close();
 
