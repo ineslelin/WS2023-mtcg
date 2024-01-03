@@ -95,9 +95,30 @@ namespace ws2023_mtcg.Server.Repository
             
         }
 
-        public void Delete(Cards card)
+        public void Delete(string username)
         {
+            if (username == null)
+                throw new ArgumentException("id can't be null");
 
+            try
+            {
+                using (IDbConnection connection = new NpgsqlConnection(_connectionString))
+                {
+                    using (IDbCommand command = connection.CreateCommand())
+                    {
+                        connection.Open();
+
+                        command.CommandText = @"DELETE FROM deck WHERE owner=@owner";
+
+                        DbCommands.AddParameterWithValue(command, "owner", DbType.String, username);
+                        command.ExecuteNonQuery();
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                Console.WriteLine($"Npgsql Error: {ex.Message}");
+            }
         }
     }
 }
