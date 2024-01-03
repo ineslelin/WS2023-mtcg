@@ -47,9 +47,9 @@ namespace ws2023_mtcg.Server.Req
                 HandleCardsRequest();
             }
 
-            if (route[1] == "/deck")
+            if (route[1].Contains("/deck"))
             {
-                HandleDeckRequest();
+                HandleDeckRequest(route[1]);
             }
 
             if (Regex.IsMatch(route[1], @"/users/[a-zA-Z]*"))
@@ -151,7 +151,7 @@ namespace ws2023_mtcg.Server.Req
             ResponseHandler.SendResponse(writer, response, (int)ResponseCode.Success);
         }
 
-        public void HandleDeckRequest()
+        public void HandleDeckRequest(string route)
         {
             string username = "";
 
@@ -223,6 +223,18 @@ namespace ws2023_mtcg.Server.Req
                 };
 
                 cards.Add(card);
+            }
+
+            if (route == "/deck?format=plain")
+            {
+                foreach (var d in cards)
+                {
+                    response += $"ID: {d.Id}\n" +
+                                $"Name: {d.Name}\n" +
+                                $"Damage: {d.Damage}\n\n";
+                }
+
+                ResponseHandler.SendResponse(writer, response, (int)ResponseCode.Success);
             }
 
             response = JsonConvert.SerializeObject(new
