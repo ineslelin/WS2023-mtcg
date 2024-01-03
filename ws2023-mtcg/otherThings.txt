@@ -19,7 +19,9 @@ CREATE TABLE IF NOT EXISTS users (
 	username VARCHAR(20) UNIQUE NOT NULL,
 	password VARCHAR(255) NOT NULL,
 	coins int,
-	elo int
+	elo int,
+	wins int,
+	losses int
 );
 
 CREATE TABLE IF NOT EXISTS cards (

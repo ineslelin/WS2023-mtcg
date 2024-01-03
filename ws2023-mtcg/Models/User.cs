@@ -13,6 +13,8 @@ namespace ws2023_mtcg.Models
         public string Password;
         public int Coins { get; set; }
         public int Elo { get; set; }
+        public int Wins { get; set; }
+        public int Losses { get; set; }
 
         public List<Cards> Stack = new List<Cards>();
         public List<Cards> Deck = new List<Cards>();
@@ -25,6 +27,8 @@ namespace ws2023_mtcg.Models
         {
             Coins = 20;
             Elo = 100;
+            Wins = 0;
+            Losses = 0;
         }
 
         public void SetWinningELO()

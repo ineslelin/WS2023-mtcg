@@ -28,6 +28,13 @@ namespace ws2023_mtcg.Server.Res
         public int Losses;
     }
 
+    struct UserScoreboard
+    {
+        public int Rank;
+        public string Name;
+        public int Elo;
+    }
+
     struct Card
     {
         public string Id;

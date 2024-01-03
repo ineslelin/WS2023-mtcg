@@ -236,36 +236,12 @@ namespace ws2023_mtcg.Server.Req
 
         public void HandleUserRequest(string route)
         {
-            try
-            {
-                TokenValidator.CheckTokenExistence(req);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error: {ex}");
-                ResponseHandler.SendErrorResponse(writer, "No token.", 401);
-
-                return;
-            }
-
-            string authHeader = "";
-
-            try
-            {
-                authHeader = TokenValidator.GetAuthHeader(req);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error: {ex}");
-                ResponseHandler.SendErrorResponse(writer, "Wrong token.", 401);
-
-                return;
-            }
-
             string username = "";
 
             try
             {
+                TokenValidator.CheckTokenExistence(req);
+                string authHeader = TokenValidator.GetAuthHeader(req);
                 username = TokenValidator.SplitToken(authHeader);
 
                 if (!route.Contains(username))
@@ -277,13 +253,20 @@ namespace ws2023_mtcg.Server.Req
             catch (Exception ex)
             {
                 Console.WriteLine($"Error: {ex}");
-                ResponseHandler.SendErrorResponse(writer, "Wrong token.", 401);
+
+                response = JsonConvert.SerializeObject(new
+                {
+                    status = "error",
+                    message = "Access token is missing or invalid",
+                });
+
+                ResponseHandler.SendErrorResponse(writer, response, (int)ResponseCode.Unauthorized);
 
                 return;
             }
 
             UserProfileRepository userProfileRepository = new UserProfileRepository();
-            string profile = "";
+            User profile = new User();
 
             try
             {
@@ -295,52 +278,53 @@ namespace ws2023_mtcg.Server.Req
             catch (Exception ex)
             {
                 Console.WriteLine($"Error: {ex}");
-                ResponseHandler.SendErrorResponse(writer, "No user profile found.", 404);
+
+                response = JsonConvert.SerializeObject(new
+                {
+                    status = "error",
+                    message = "User not found.",
+                });
+
+                ResponseHandler.SendErrorResponse(writer, response, (int)ResponseCode.NotFound);
 
                 return;
             }
 
-            ResponseHandler.SendPlaintextResponse(writer, profile, 200);
+            response = JsonConvert.SerializeObject(new
+            {
+                status = "success",
+                user = new UserData
+                {
+                    Name = profile.Name,
+                    Bio = profile.Bio,
+                    Image = profile.Image,
+                }
+            });
+
+            ResponseHandler.SendResponse(writer, response, (int)ResponseCode.Success);
         }
 
         public void HandleStatsRequest()
         {
-            try
-            {
-                TokenValidator.CheckTokenExistence(req);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error: {ex}");
-                ResponseHandler.SendErrorResponse(writer, "No token.", 401);
-
-                return;
-            }
-
-            string authHeader = "";
-
-            try
-            {
-                authHeader = TokenValidator.GetAuthHeader(req);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error: {ex}");
-                ResponseHandler.SendErrorResponse(writer, "Wrong token.", 401);
-
-                return;
-            }
-
             string username = "";
 
             try
             {
+                TokenValidator.CheckTokenExistence(req);
+                string authHeader = TokenValidator.GetAuthHeader(req);
                 username = TokenValidator.SplitToken(authHeader);
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error: {ex}");
-                ResponseHandler.SendErrorResponse(writer, "Wrong token.", 401);
+
+                response = JsonConvert.SerializeObject(new
+                {
+                    status = "error",
+                    message = "Access token is missing or invalid",
+                });
+
+                ResponseHandler.SendErrorResponse(writer, response, (int)ResponseCode.Unauthorized);
 
                 return;
             }
@@ -351,44 +335,61 @@ namespace ws2023_mtcg.Server.Req
             try
             {
                 tempUser = userRepository.Read(username);
+
+                if (tempUser == null)
+                    throw new Exception();
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error: {ex}");
-                ResponseHandler.SendErrorResponse(writer, "Couldn't get user", 400);
+
+                response = JsonConvert.SerializeObject(new
+                {
+                    status = "error",
+                    message = "User not found.",
+                });
+
+                ResponseHandler.SendErrorResponse(writer, response, (int)ResponseCode.NotFound);
 
                 return;
             }
 
-            string stats = $"ELO: {tempUser.Elo}";
+            response = JsonConvert.SerializeObject(new
+            {
+                status = "success",
+                stats = new UserStats
+                {
+                    Name = tempUser.Username,
+                    Elo = tempUser.Elo,
+                    Wins = tempUser.Wins,
+                    Losses = tempUser.Losses,
+                }
+            });
 
-            ResponseHandler.SendPlaintextResponse(writer, stats, 200);
+            ResponseHandler.SendResponse(writer, response, (int)ResponseCode.Success);
         }
 
         public void HandleScoreboardRequest()
         {
+            string username = "";
+
             try
             {
                 TokenValidator.CheckTokenExistence(req);
+                string authHeader = TokenValidator.GetAuthHeader(req);
+                username = TokenValidator.SplitToken(authHeader);
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error: {ex}");
-                ResponseHandler.SendErrorResponse(writer, "No token.", 401);
 
-                return;
-            }
+                response = JsonConvert.SerializeObject(new
+                {
+                    status = "error",
+                    message = "Access token is missing or invalid",
+                });
 
-            string authHeader = "";
-
-            try
-            {
-                authHeader = TokenValidator.GetAuthHeader(req);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error: {ex}");
-                ResponseHandler.SendErrorResponse(writer, "Wrong token.", 401);
+                ResponseHandler.SendErrorResponse(writer, response, (int)ResponseCode.Unauthorized);
 
                 return;
             }
@@ -396,16 +397,29 @@ namespace ws2023_mtcg.Server.Req
             UserRepository userRepository = new UserRepository();
 
             User[] users = userRepository.ReadAllByElo();
-            string scoreboard = "";
-            int rank = 0;
+            int rank = 1;
+
+            List<UserScoreboard> stats = new List<UserScoreboard>();
 
             foreach(var u in users)
             {
-                rank++;
-                scoreboard += $"{rank}: {u.Username} - ELO: {u.Elo}\n";
+                UserScoreboard temp = new UserScoreboard
+                {
+                    Rank = rank++,
+                    Name = u.Username,
+                    Elo = u.Elo
+                };
+
+                stats.Add(temp);
             }
 
-            ResponseHandler.SendPlaintextResponse(writer, scoreboard, 200);
+            response = JsonConvert.SerializeObject(new
+            {
+                status = "success",
+                scoreboard = stats
+            });
+
+            ResponseHandler.SendResponse(writer, response, (int)ResponseCode.Success);
         }
     }
 }

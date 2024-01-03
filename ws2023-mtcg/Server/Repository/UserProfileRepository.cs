@@ -13,7 +13,7 @@ namespace ws2023_mtcg.Server.Repository
     {
         private readonly string _connectionString = "Host=localhost;Database=mtcgdb;Username=admin;Password=1234;Include Error Detail=true";
 
-        public string Read(string username)
+        public User Read(string username)
         {
             if (username == null)
                 throw new ArgumentNullException("username can't be null");
@@ -34,11 +34,13 @@ namespace ws2023_mtcg.Server.Repository
                         {
                             if (reader.Read())
                             {
-                                string profile = $"Name: {reader.GetString(0)}\n" +
-                                                 $"Bio: {reader.GetString(1)}\n" +
-                                                 $"Image: {reader.GetString(2)}";
-
-                                return profile;
+                                return new User
+                                {
+                                    Username = username,
+                                    Name = reader.GetString(0),
+                                    Bio = reader.GetString(1),
+                                    Image = reader.GetString(2)
+                                };
                             }
 
                             return null;
