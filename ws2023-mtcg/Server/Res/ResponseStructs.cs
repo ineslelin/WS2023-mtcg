@@ -47,6 +47,7 @@ namespace ws2023_mtcg.Server.Res
     {
         public string Id;
         public string CardToTrade;
+        public string Username;
         public CardType Type;
         public double MinimumDamage;
     }

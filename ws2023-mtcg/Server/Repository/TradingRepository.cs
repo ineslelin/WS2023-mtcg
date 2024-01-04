@@ -25,21 +25,19 @@ namespace ws2023_mtcg.Server.Repository
                     {
                         connection.Open();
 
-                        command.CommandText = @"SELECT * FROM trading WHERE id=@id";
+                        command.CommandText = @"SELECT id, cardid, username, cardtype, damage FROM trading WHERE id=@id";
 
                         DbCommands.AddParameterWithValue(command, "id", DbType.String, id);
-                        command.ExecuteNonQuery();
 
                         using (IDataReader reader = command.ExecuteReader())
                         {
-                            List<TradingDeal> trades = new List<TradingDeal>();
-
                             if(reader.Read())
                             {
                                 return new TradingDeal()
                                 {
-                                    Id = id,
+                                    Id = reader.GetString(0),
                                     CardToTrade = reader.GetString(1),
+                                    Username = reader.GetString(2),
                                     Type = (CardType)reader.GetInt32(3),
                                     MinimumDamage = reader.GetInt32(4),
                                 };
@@ -92,9 +90,9 @@ namespace ws2023_mtcg.Server.Repository
 
         }
 
-        public void Delete(string username)
+        public void Delete(string id)
         {
-            if (username == null)
+            if (id == null)
                 throw new ArgumentException("id can't be null");
 
             try
@@ -105,9 +103,9 @@ namespace ws2023_mtcg.Server.Repository
                     {
                         connection.Open();
 
-                        command.CommandText = @"DELETE FROM deck WHERE owner=@owner";
+                        command.CommandText = @"DELETE FROM trading WHERE id=@id";
 
-                        DbCommands.AddParameterWithValue(command, "owner", DbType.String, username);
+                        DbCommands.AddParameterWithValue(command, "id", DbType.String, id);
                         command.ExecuteNonQuery();
                     }
                 }
