@@ -106,10 +106,10 @@ namespace ws2023_mtcg.Server.Repository
                     {
                         connection.Open();
 
-                        command.CommandText = @"UPDATE stack SET damage=@damage WHERE id=@id";
+                        command.CommandText = @"UPDATE stack SET owner=@owner WHERE id=@id";
 
                         DbCommands.AddParameterWithValue(command, "id", DbType.String, card.Id);
-                        DbCommands.AddParameterWithValue(command, "damage", DbType.Int32, card.Damage);
+                        DbCommands.AddParameterWithValue(command, "owner", DbType.String, card.Owner);
                         command.ExecuteNonQuery();
                     }
                 }
@@ -138,7 +138,7 @@ namespace ws2023_mtcg.Server.Repository
                     {
                         connection.Open();
 
-                        command.CommandText = @"SELECT * FROM stack WHERE id=@id";
+                        command.CommandText = @"SELECT id, name, damage, element, cardtype, owner FROM stack WHERE id=@id";
 
                         DbCommands.AddParameterWithValue(command, "id", DbType.String, id);
 

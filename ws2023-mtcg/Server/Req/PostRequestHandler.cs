@@ -9,6 +9,7 @@ using ws2023_mtcg.Server.Repository;
 using ws2023_mtcg.Server.Res;
 using System.Net.Sockets;
 using ws2023_mtcg.FightLogic;
+using System.Text.RegularExpressions;
 
 namespace ws2023_mtcg.Server.Req
 {
@@ -65,15 +66,22 @@ namespace ws2023_mtcg.Server.Req
                 HandleTransactionRequest();
             }
 
-            if (route[1] == "/battles")
-            {
-                HandleBattleRequest();
-            }
+            //if (route[1] == "/battles")
+            //{
+            //    HandleBattleRequest();
+            //}
 
             if (route[1] == "/tradings")
             {
                 data = serverCommands.RetrieveData();
                 HandleTradingRequest();
+            }
+
+            if (Regex.IsMatch(route[1], @"/tradings/[a-zA-Z0-9-]*"))
+            {
+                string[] id = route[1].Split("/");
+                data = serverCommands.RetrieveData();
+                HandleTransactionRequest(id[2]);
             }
         }
 
@@ -689,7 +697,7 @@ namespace ws2023_mtcg.Server.Req
                 if (temp.Id != null)
                     throw new Exception();
             }
-            catch (JsonException ex)
+            catch (Exception ex)
             {
                 Console.WriteLine($"Error: {ex}");
 
@@ -709,7 +717,7 @@ namespace ws2023_mtcg.Server.Req
                 if (deckRepository.ReadById(deal.CardToTrade) != null || stackRepository.ReadById(deal.CardToTrade) == null)
                     throw new Exception();
             }
-            catch (JsonException ex)
+            catch (Exception ex)
             {
                 Console.WriteLine($"Error: {ex}");
 
@@ -733,6 +741,192 @@ namespace ws2023_mtcg.Server.Req
             });
 
             ResponseHandler.SendErrorResponse(writer, response, (int)ResponseCode.CreationSuccess);
+        }
+
+        public void HandleTransactionRequest(string id)
+        {
+            string username = "";
+
+            try
+            {
+                TokenValidator.CheckTokenExistence(req);
+                string authHeader = TokenValidator.GetAuthHeader(req);
+                username = TokenValidator.SplitToken(authHeader);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex}");
+
+                response = JsonConvert.SerializeObject(new
+                {
+                    status = "error",
+                    message = "Access token is missing or invalid",
+                });
+
+                ResponseHandler.SendErrorResponse(writer, response, (int)ResponseCode.Unauthorized);
+
+                return;
+            }
+
+            // this is the card the user offers
+            Cards offer = new Cards();
+            offer.Id = data;
+            // this is the card that is up for selling
+            TradingDeal deal = new TradingDeal();
+
+            //string jsonId = "";
+
+            //try
+            //{
+            //    jsonId = JsonConvert.DeserializeObject<string>(data);
+            //    offer.Id = jsonId;
+            //}
+            //catch (JsonException ex)
+            //{
+            //    Console.WriteLine($"Error: {ex}");
+
+            //    response = JsonConvert.SerializeObject(new
+            //    {
+            //        status = "error",
+            //        message = "Invalid JSON"
+            //    });
+
+            //    ResponseHandler.SendErrorResponse(writer, response, (int)ResponseCode.Error);
+
+            //    return;
+            //}
+
+            TradingRepository tradingRepository = new TradingRepository();
+
+            try
+            {
+                deal = tradingRepository.Read(id);
+
+                if (deal.Id == null)
+                    throw new Exception();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex}");
+
+                response = JsonConvert.SerializeObject(new
+                {
+                    status = "error",
+                    message = "The provided deal ID was not found."
+                });
+
+                ResponseHandler.SendErrorResponse(writer, response, (int)ResponseCode.NotFound);
+
+                return;
+            }
+
+            try
+            {
+                if (deal.Username == username)
+                    throw new Exception();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex}");
+
+                response = JsonConvert.SerializeObject(new
+                {
+                    status = "error",
+                    message = "You can't trade with yourself"
+                });
+
+                ResponseHandler.SendErrorResponse(writer, response, (int)ResponseCode.Error);
+
+                return;
+            }
+
+            StackRepository stackRepository = new StackRepository();
+            DeckRepository deckRepository = new DeckRepository();
+
+            try
+            {
+                if(deckRepository.ReadById(offer.Id) != null)
+                    throw new Exception();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex}");
+
+                response = JsonConvert.SerializeObject(new
+                {
+                    status = "error",
+                    message = "The offered card is locked in the deck"
+                });
+
+                ResponseHandler.SendErrorResponse(writer, response, (int)ResponseCode.Forbidden);
+
+                return;
+            }
+
+            try
+            {
+                offer = stackRepository.ReadById(offer.Id);
+
+                if (offer == null)
+                    throw new Exception();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex}");
+
+                response = JsonConvert.SerializeObject(new
+                {
+                    status = "error",
+                    message = "The offered card doesn't belong to you"
+                });
+
+                ResponseHandler.SendErrorResponse(writer, response, (int)ResponseCode.Forbidden);
+
+                return;
+            }
+
+            try
+            {
+                if (offer.Type != deal.Type || offer.Damage < deal.MinimumDamage)
+                    throw new Exception();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex}");
+
+                response = JsonConvert.SerializeObject(new
+                {
+                    status = "error",
+                    message = "The offered card doesn't meet the requirements"
+                });
+
+                ResponseHandler.SendErrorResponse(writer, response, (int)ResponseCode.Forbidden);
+
+                return;
+            }
+
+            Cards cardDeal = new Cards()
+            {
+                Id = deal.CardToTrade
+            };
+
+            cardDeal = stackRepository.ReadById(cardDeal.Id);
+            cardDeal.Owner = username;
+
+            offer.Owner = deal.Username;
+
+            stackRepository.Update(cardDeal);
+            stackRepository.Update(offer);
+
+            tradingRepository.Delete(deal.Id);
+
+            response = JsonConvert.SerializeObject(new
+            {
+                status = "success",
+                message = "Trading deal successfully executed."
+            });
+
+            ResponseHandler.SendErrorResponse(writer, response, (int)ResponseCode.Success);
         }
     }
 }
