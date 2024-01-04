@@ -1,0 +1,14 @@
+﻿- test for cards from mock db
+	1. test if monster is monster card
+	2. test if spell is spell card
+	3. test if fire is fire card
+	4. test if water is water card
+	5. test if reg is reg card
+- test for specialties in fight
+	6. test if ex. kraken wins against spell cards
+- tests for during or after fight
+	7. test if elo is correct after fight
+	8. test if winner receives coins
+	9. test for element dependencies
+   10. test for elementfights
+   11. test for damagefights
