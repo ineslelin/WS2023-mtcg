@@ -33,7 +33,6 @@ namespace ws2023_mtcg.FightLogic
 
             while (round < 100)
             {
-                // also understand how that works, it works and lowkey it makes sense but UNDERSTAND YOUR CODE BRO
                 if (!playerOne.Deck.Any(card => card.IsAlive) || !playerTwo.Deck.Any(card => card.IsAlive))
                     break;
 
@@ -82,16 +81,30 @@ namespace ws2023_mtcg.FightLogic
                 }
 
                 if (winner == playerOne.Deck[randomP1Card])
+                {
+                    //playerTwo.Deck[randomP2Card].IsAlive = true;
+                    //playerOne.Deck.Add(playerTwo.Deck[randomP2Card]);
+                    //playerTwo.Deck.Remove(playerTwo.Deck[randomP2Card]);
+
                     p1WinCount++;
+                }
                 else
+                {
+                    //playerOne.Deck[randomP1Card].IsAlive = true;
+                    //playerTwo.Deck.Add(playerOne.Deck[randomP1Card]);
+                    //playerOne.Deck.Remove(playerOne.Deck[randomP1Card]);
+
                     p2WinCount++;
+                }
 
                 round++;
             }
 
+            fightOutput += "\n=====[BATTLE END]=====\n";
+
             if (p1WinCount > p2WinCount)
             {
-                fightOutput += $"\n\n{playerOne.Username} wins!";
+                fightOutput += $"{playerOne.Username} wins!\n";
 
                 if(!eloUpdated)
                 {
@@ -110,7 +123,7 @@ namespace ws2023_mtcg.FightLogic
             }
             else if (p1WinCount < p2WinCount)
             {
-                fightOutput += $"\n\n{playerTwo.Username} wins!";
+                fightOutput += $"{playerTwo.Username} wins!\n";
 
                 if(!eloUpdated)
                 {
@@ -129,8 +142,7 @@ namespace ws2023_mtcg.FightLogic
             }
             else
             {
-                Console.WriteLine($"p1WinCount: {p1WinCount}, p2WinCount: {p2WinCount}");
-                fightOutput += "\n\nIt's a tie!";
+                fightOutput += "It's a tie!\n";
                 return fightOutput;
             }
         }

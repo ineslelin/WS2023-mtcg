@@ -23,6 +23,7 @@ namespace ws2023_mtcg.Server.Res
                           $"{content}";
 
             writer.Write(response);
+            writer.Flush();
         }
 
         public static void SendResponse(StreamWriter writer, string content, int code)

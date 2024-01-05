@@ -604,6 +604,11 @@ namespace ws2023_mtcg.Server.Req
 
                 return;
             }
+            finally
+            {
+                Monitor.Exit(this);
+                battleHandled = false;
+            }
 
             try
             {
@@ -623,11 +628,6 @@ namespace ws2023_mtcg.Server.Req
                 ResponseHandler.SendErrorResponse(writer, response, (int)ResponseCode.Error);
 
                 return;
-            }
-            finally
-            {
-                Monitor.Exit(this);
-                battleHandled = false;
             }
 
             ResponseHandler.SendPlaintextResponse(writer, output, (int)ResponseCode.Success);
@@ -770,28 +770,6 @@ namespace ws2023_mtcg.Server.Req
             offer.Id = data;
             // this is the card that is up for selling
             TradingDeal deal = new TradingDeal();
-
-            //string jsonId = "";
-
-            //try
-            //{
-            //    jsonId = JsonConvert.DeserializeObject<string>(data);
-            //    offer.Id = jsonId;
-            //}
-            //catch (JsonException ex)
-            //{
-            //    Console.WriteLine($"Error: {ex}");
-
-            //    response = JsonConvert.SerializeObject(new
-            //    {
-            //        status = "error",
-            //        message = "Invalid JSON"
-            //    });
-
-            //    ResponseHandler.SendErrorResponse(writer, response, (int)ResponseCode.Error);
-
-            //    return;
-            //}
 
             TradingRepository tradingRepository = new TradingRepository();
 
