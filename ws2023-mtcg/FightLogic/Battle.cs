@@ -20,12 +20,14 @@ namespace ws2023_mtcg.FightLogic
         //    _playerTwo = playerTwo;
         //}
 
-        static string fightOutput;
+        string fightOutput;
+        bool eloUpdated = false;
 
-        public static string Fight(int round, User playerOne, User playerTwo)
+        public string Fight(int round, User playerOne, User playerTwo)
         {
             int p1WinCount = 0;
             int p2WinCount = 0;
+            eloUpdated = false;
 
             fightOutput = "";
 
@@ -45,12 +47,14 @@ namespace ws2023_mtcg.FightLogic
                 {
                     P1Mega = true;
                     playerOne.Deck[randomP1Card].Damage = playerOne.Deck[randomP1Card].MegaBuff();
+                    fightOutput += $"{playerOne.Deck[randomP1Card].Name} received a Mega Buff!\n";
                 }
 
                 if (MegaCard())
                 {
                     P2Mega = true;
                     playerTwo.Deck[randomP2Card].Damage = playerTwo.Deck[randomP2Card].MegaBuff();
+                    fightOutput += $"{playerTwo.Deck[randomP2Card].Name} received a Mega Buff!\n";
                 }
 
                 // when youre in a writing ugly ass code competition and your opponent is me <3
@@ -62,6 +66,8 @@ namespace ws2023_mtcg.FightLogic
 
                 fightOutput += playerOne.Deck[randomP1Card].output;
                 playerOne.Deck[randomP1Card].output = "";
+
+                Console.WriteLine($"{playerOne.Deck[randomP1Card].IsAlive} {playerTwo.Deck[randomP2Card].IsAlive}");
 
                 if(P1Mega)
                 {
@@ -87,24 +93,46 @@ namespace ws2023_mtcg.FightLogic
             {
                 fightOutput += $"\n\n{playerOne.Username} wins!";
 
-                playerOne.Coins += 15;
+                if(!eloUpdated)
+                {
+                    playerOne.Coins += 15;
 
-                playerOne.SetWinningELO();
-                playerTwo.SetLosingELO();
+                    playerOne.Elo += 3;
+                    playerOne.Wins += 1;
+
+                    playerTwo.Elo -= 5;
+                    playerTwo.Losses += 1;
+
+                    eloUpdated = true;
+                }
+
+                return fightOutput;
             }
             else if (p1WinCount < p2WinCount)
             {
                 fightOutput += $"\n\n{playerTwo.Username} wins!";
 
-                playerTwo.Coins += 15;
+                if(!eloUpdated)
+                {
+                    playerTwo.Coins += 15;
 
-                playerOne.SetLosingELO();
-                playerTwo.SetWinningELO();
+                    playerTwo.Elo += 3;
+                    playerTwo.Wins += 1;
+
+                    playerOne.Elo -= 5;
+                    playerOne.Losses += 1;
+
+                    eloUpdated = true;
+                }
+                
+                return fightOutput;
             }
             else
+            {
+                Console.WriteLine($"p1WinCount: {p1WinCount}, p2WinCount: {p2WinCount}");
                 fightOutput += "\n\nIt's a tie!";
-
-            return fightOutput;
+                return fightOutput;
+            }
         }
 
         private static int ChooseRandomCard(List<Cards> deck)

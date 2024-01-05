@@ -111,11 +111,13 @@ namespace ws2023_mtcg.Server.Repository
                     {
                         connection.Open();
 
-                        command.CommandText = @"UPDATE users SET coins=@coins, elo=@elo WHERE username=@username";
+                        command.CommandText = @"UPDATE users SET coins=@coins, elo=@elo, wins=@wins, losses=@losses WHERE username=@username";
 
                         DbCommands.AddParameterWithValue(command, "username", DbType.String, user.Username);
                         DbCommands.AddParameterWithValue(command, "coins", DbType.Int32, user.Coins);
                         DbCommands.AddParameterWithValue(command, "elo", DbType.Int32, user.Elo);
+                        DbCommands.AddParameterWithValue(command, "wins", DbType.Int32, user.Wins);
+                        DbCommands.AddParameterWithValue(command, "losses", DbType.Int32, user.Losses);
                         command.ExecuteNonQuery();
                     }
                 }

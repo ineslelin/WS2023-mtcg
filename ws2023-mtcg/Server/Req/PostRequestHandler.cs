@@ -25,7 +25,8 @@ namespace ws2023_mtcg.Server.Req
 
         static List<User> lobby = new List<User> ();
         static string output = "";
-        static Battle battle;
+        bool battleHandled = false;
+        ManualResetEvent waitForPlayers = new ManualResetEvent(false);
 
         public PostRequestHandler(TcpClient client, StreamReader reader, StreamWriter writer, string req)
         {
@@ -66,10 +67,10 @@ namespace ws2023_mtcg.Server.Req
                 HandleTransactionRequest();
             }
 
-            //if (route[1] == "/battles")
-            //{
-            //    HandleBattleRequest();
-            //}
+            if (route[1] == "/battles")
+            {
+                HandleBattleRequest();
+            }
 
             if (route[1] == "/tradings")
             {
@@ -535,13 +536,25 @@ namespace ws2023_mtcg.Server.Req
             User? tempUser = new User();
             UserRepository userRepository = new UserRepository();
             DeckRepository deckRepository = new DeckRepository();
-            StackRepository stackRepository = new StackRepository();
 
             try
             {
                 tempUser = userRepository.Read(username);
                 tempUser.Deck = deckRepository.Read(username).ToList();
-                lobby.Add(tempUser);
+
+                lock(lobby)
+                {
+                    lobby.Add(tempUser);
+
+                    if (lobby.Count == 2)
+                    {
+                        waitForPlayers.Set();
+                    }
+                }
+
+
+                waitForPlayers.Reset();
+                battleHandled = false;
             }
             catch (Exception ex)
             {
@@ -557,21 +570,8 @@ namespace ws2023_mtcg.Server.Req
 
                 return;
             }
-            finally
-            {
-                Monitor.Exit(this);
-            }
 
-            while(true)
-            {
-                Console.WriteLine("Waiting for second user to join...");
-                Thread.Sleep(1000);
-
-                if (lobby.Count % 2 == 0)
-                {
-                    break;
-                }
-            }
+            while (lobby.Count != 2);
 
             User player1 = lobby[0];
             User player2 = lobby[1];
@@ -580,9 +580,14 @@ namespace ws2023_mtcg.Server.Req
             {
                 Monitor.Enter(this);
 
-                lock(output)
+                if(!battleHandled)
                 {
-                    output = Battle.Fight(1, player1, player2);
+                    lock(this)
+                    {
+                        Battle battle = new Battle();
+                        output = battle.Fight(1, player1, player2);
+                        battleHandled = true;
+                    }
                 }
             }
             catch (Exception ex)
@@ -603,18 +608,7 @@ namespace ws2023_mtcg.Server.Req
             try
             {
                 userRepository.Update(player1);
-
-                foreach(var d in player1.Deck)
-                {
-                    stackRepository.Update(d);
-                }
-
                 userRepository.Update(player2);
-
-                foreach (var d in player2.Deck)
-                {
-                    stackRepository.Update(d);
-                }
             }
             catch (Exception ex)
             {
@@ -633,9 +627,12 @@ namespace ws2023_mtcg.Server.Req
             finally
             {
                 Monitor.Exit(this);
+                battleHandled = false;
             }
 
             ResponseHandler.SendPlaintextResponse(writer, output, (int)ResponseCode.Success);
+
+            lobby.Clear();
         }
 
         public void HandleTradingRequest()

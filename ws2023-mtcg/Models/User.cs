@@ -31,17 +31,17 @@ namespace ws2023_mtcg.Models
             Losses = 0;
         }
 
-        public void SetWinningELO()
-        {
-            Elo += 3;
-            Wins++;
-        }
+        //public void SetWinningELO()
+        //{
+        //    Elo += 3;
+        //    Wins++;
+        //}
 
-        public void SetLosingELO()
-        {
-            Elo -= 5;
-            Losses++;
-        }
+        //public void SetLosingELO()
+        //{
+        //    Elo -= 5;
+        //    Losses++;
+        //}
 
         public void AddToStack(List<Cards> wonCards)
         {
