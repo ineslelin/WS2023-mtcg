@@ -43,7 +43,7 @@ namespace ws2023_mtcg.Server.Res
         public double Damage;
     }
 
-    struct TradingDeal
+    public struct TradingDeal
     {
         public string Id;
         public string CardToTrade;

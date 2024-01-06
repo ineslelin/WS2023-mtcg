@@ -5,11 +5,19 @@ using ws2023_mtcg.Models;
 
 namespace ws2023_mtcg.Server.Repository
 {
-    internal class CardRepository
+    public interface ICardRepository<T>
+    {
+        T Read(string value);
+        void Create(T t);
+        void Update(T t);
+        void Delete(int value);
+    }
+
+    internal class CardRepository : ICardRepository<Cards>
     {
         private readonly string _connectionString = "Host=localhost;Database=mtcgdb;Username=admin;Password=1234;Include Error Detail=true";
 
-        public Cards ReadById(string id)
+        public Cards Read(string id)
         {
             if (id == null)
                 throw new ArgumentNullException("username can't be null");
@@ -54,7 +62,7 @@ namespace ws2023_mtcg.Server.Repository
 
         public void Create(Cards card)
         {
-            if (ReadById(card.Id) != null)
+            if (Read(card.Id) != null)
             {
                 throw new NpgsqlException("card id already exists");
             }

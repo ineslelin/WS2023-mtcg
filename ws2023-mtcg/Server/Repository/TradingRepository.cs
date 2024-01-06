@@ -11,7 +11,15 @@ using ws2023_mtcg.Server.Res;
 
 namespace ws2023_mtcg.Server.Repository
 {
-    internal class TradingRepository
+    public interface ITradingRepository<T>
+    {
+        T Read(string value);
+        void Create(T t, string value);
+        //void Update(T t);
+        void Delete(string value);
+    }
+
+    internal class TradingRepository : ITradingRepository<TradingDeal>
     {
         private readonly string _connectionString = "Host=localhost;Database=mtcgdb;Username=admin;Password=1234;Include Error Detail=true";
 
@@ -85,10 +93,10 @@ namespace ws2023_mtcg.Server.Repository
             }
         }
 
-        public void Update(Cards card)
-        {
+        //public void Update(Cards card)
+        //{
 
-        }
+        //}
 
         public void Delete(string id)
         {

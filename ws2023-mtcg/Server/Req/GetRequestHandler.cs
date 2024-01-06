@@ -103,7 +103,7 @@ namespace ws2023_mtcg.Server.Req
 
             try
             {
-                stack = stackRepository.ReadByOwner(username).ToList();
+                stack = stackRepository.Read(username).ToList();
             }
             catch (Exception ex)
             {

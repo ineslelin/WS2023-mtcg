@@ -10,7 +10,16 @@ using System.Linq.Expressions;
 
 namespace ws2023_mtcg.Server.Repository
 {
-    public class UserRepository
+    // this is not a very pretty solution but it works for the unit tests
+    public interface IUserRepository<T>
+    {
+        T Read(string value);
+        void Create(T t);
+        void Update(T t);
+        void Delete(T t);
+    }
+
+    public class UserRepository : IUserRepository<User>
     {
         private readonly string _connectionString = "Host=localhost;Database=mtcgdb;Username=admin;Password=1234;Include Error Detail=true";
 

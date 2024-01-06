@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 
 namespace ws2023_mtcg.Server.Repository
 {
-    internal interface IRepository<T, T2, T3>
+    public interface IRepository<T>
     {
-        T2 Read(T3 value);
-        void Create(T t);
-        void Update(T t);
-        void Delete(T t);
+        T Read(string value);
+        //void Create(T2 t);
+        //void Update(T t);
+        //void Delete(T t);
     }
 }

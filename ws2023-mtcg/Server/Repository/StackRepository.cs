@@ -10,11 +10,19 @@ using ws2023_mtcg.Models;
 
 namespace ws2023_mtcg.Server.Repository
 {
-    internal class StackRepository
+    public interface IStackRepository<T>
+    {
+        T[] Read(string value);
+        void Create(T t);
+        void Update(T t);
+        void Delete(T t);
+    }
+
+    internal class StackRepository : IStackRepository<Cards>
     {
         private readonly string _connectionString = "Host=localhost;Database=mtcgdb;Username=admin;Password=1234;Include Error Detail=true";
 
-        public Cards[] ReadByOwner(string username)
+        public Cards[] Read(string username)
         {
             if (username == null)
                 throw new ArgumentNullException("uid can't be null");
