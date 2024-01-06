@@ -6,5 +6,6 @@ namespace ws2023_mtcg.FightLogic.Enums
     {
         monster = 0,
         spell = 1,
+        curse = 2,
     }
 }

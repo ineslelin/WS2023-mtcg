@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ws2023_mtcg.Models;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace ws2023_mtcg.FightLogic
 {
@@ -88,7 +89,7 @@ namespace ws2023_mtcg.FightLogic
 
                     p1WinCount++;
                 }
-                else
+                else if(winner == playerTwo.Deck[randomP2Card])
                 {
                     //playerOne.Deck[randomP1Card].IsAlive = true;
                     //playerTwo.Deck.Add(playerOne.Deck[randomP1Card]);
@@ -116,6 +117,9 @@ namespace ws2023_mtcg.FightLogic
                     playerTwo.Elo -= 5;
                     playerTwo.Losses += 1;
 
+                    playerOne.Deck = Cards.ResetCurse(playerOne.Deck);
+                    playerTwo.Deck = Cards.ResetCurse(playerTwo.Deck);
+
                     eloUpdated = true;
                 }
 
@@ -134,6 +138,9 @@ namespace ws2023_mtcg.FightLogic
 
                     playerOne.Elo -= 5;
                     playerOne.Losses += 1;
+
+                    playerOne.Deck = Cards.ResetCurse(playerOne.Deck);
+                    playerTwo.Deck = Cards.ResetCurse(playerTwo.Deck);
 
                     eloUpdated = true;
                 }

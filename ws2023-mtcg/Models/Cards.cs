@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Tracing;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -21,6 +22,7 @@ namespace ws2023_mtcg.Models
 
         public double Damage { get; set; }
         public bool IsAlive;
+        public bool IsCursed;
 
         public string output;
 
@@ -29,12 +31,13 @@ namespace ws2023_mtcg.Models
         public Cards()
         {
             IsAlive = true;
+            IsCursed = false;
         }
 
         public Cards Attack(Cards target)
         {
             // the collapse of shame pt.2: my push to github is lost :(
-            if (Regex.IsMatch(Name, @"(Fire|Regular|Water)?Elf"))
+            if (Regex.IsMatch(Name, @"(Fire|Regular|Water|Electric|Grass|Ice)?Elf"))
             {
                 // elves always win agaisnt dragons
                 if (target.Name == "Dragon")
@@ -55,7 +58,7 @@ namespace ws2023_mtcg.Models
                     return target;
                 }
             }
-            if (Regex.IsMatch(Name, @"(Fire|Regular|Water)?Goblin"))
+            if (Regex.IsMatch(Name, @"(Fire|Regular|Water|Electric|Grass|Ice)?Goblin"))
             {
                 // goblins always loose to dragons
                 if (target.Name == "Dragon")
@@ -75,7 +78,7 @@ namespace ws2023_mtcg.Models
                     return target;
                 }
             }
-            if (Regex.IsMatch(Name, @"(Fire|Regular|Water)?Troll"))
+            if (Regex.IsMatch(Name, @"(Fire|Regular|Water|Electric|Grass|Ice)?Troll"))
             {
                 // trolls always win to normal enemies
                 if (target.Element == ElementType.normal)
@@ -89,7 +92,7 @@ namespace ws2023_mtcg.Models
             if (Name == "Dragon")
             {
                 // dragon always wins against goblin
-                if (Regex.IsMatch(target.Name, @"(Fire|Water|Regular)?Goblin"))
+                if (Regex.IsMatch(target.Name, @"(Fire|Water|Regular|Electric|Grass|Ice)?Goblin"))
                 {
                     output += $"{target.Name} is too afraid of {Name} to attack! {Name} defeats {target.Name}!";
 
@@ -98,7 +101,7 @@ namespace ws2023_mtcg.Models
                 }
 
                 // elf always defeats dragon
-                if (Regex.IsMatch(target.Name, @"(Fire|Water|Regular)?Elf"))
+                if (Regex.IsMatch(target.Name, @"(Fire|Water|Regular|Electric|Grass|Ice)?Elf"))
                 {
                     output += $"Due to their age-old acquaintace {target.Name} knows how to evade all of {Name}'s attacks! " +
                         $"{target.Name} defeats {Name}!";
@@ -251,10 +254,49 @@ namespace ws2023_mtcg.Models
                     return target;
                 }
             }
+            if (Name == "ElectricSpell")
+            {
+                if (target.Name == "Kraken")
+                {
+                    output += $"Spells don't affect {target.Name}, rendering {Name} useless! " +
+                        $"{target.Name} defeats {Name}!";
+
+                    IsAlive = false;
+                    return target;
+                }
+            }
+            if (Name == "IceSpell")
+            {
+                if (target.Name == "Kraken")
+                {
+                    output += $"Spells don't affect {target.Name}, rendering {Name} useless! " +
+                        $"{target.Name} defeats {Name}!";
+
+                    IsAlive = false;
+                    return target;
+                }
+            }
+            if (Name == "GrassSpell")
+            {
+                if (target.Name == "Kraken")
+                {
+                    output += $"Spells don't affect {target.Name}, rendering {Name} useless! " +
+                        $"{target.Name} defeats {Name}!";
+
+                    IsAlive = false;
+                    return target;
+                }
+            }
+
 
             // non special case battles
             if (Type == CardType.monster && target.Type == CardType.monster)
                 return DamageFight(this, target);
+
+            if (((Type == CardType.monster || Type == CardType.spell) && target.Type == CardType.curse) ||
+                (Type == CardType.curse && (target.Type == CardType.monster || target.Type == CardType.spell)) ||
+                (Type == CardType.curse && target.Type == CardType.curse))
+                return CurseFight(this, target);
 
             return ElementFight(this, target);
         }
@@ -312,6 +354,30 @@ namespace ws2023_mtcg.Models
             return source;
         }
 
+        public Cards CurseFight(Cards source, Cards target)
+        {
+            if(source.Type == CardType.curse && target.Type != CardType.curse)
+            {
+                target.Damage /= 2;
+                target.IsCursed = true;
+
+                // card is deactivated after use
+                source.IsAlive = false;
+            }
+
+            if (target.Type == CardType.curse && source.Type != CardType.curse)
+            {
+                source.Damage /= 2;
+                source.IsCursed = true;
+
+                target.IsAlive = false;
+            }
+
+            AnnounceWinner(source, target);
+
+            return null;
+        }
+
         public void AnnounceWinner(Cards source, Cards target)
         {
             switch (target.Type)
@@ -343,6 +409,20 @@ namespace ws2023_mtcg.Models
                     output += source.Damage * 2 + " vs " + target.Damage / 2 + " => " + (source.Damage * 2 > target.Damage / 2 ? source.Name : target.Name) + " wins!";
 
                     break;
+
+                case CardType.monster when source.Type == CardType.curse:
+                case CardType.spell when source.Type == CardType.curse:
+                    output += $"{source.Name} cursed {target.Name} and halved it's damage! There's no winners this round!";
+                    break;
+
+                case CardType.curse when source.Type == CardType.monster:
+                case CardType.curse when source.Type == CardType.spell:
+                    output += $"{target.Name} cursed {source.Name} and halved it's damage! There's no winners this round!";
+                    break;
+
+                case CardType.curse when source.Type == CardType.curse:
+                    output += "Since both cards are curse cards nothing happened! There's no winners this round!";
+                    break;
             }
         }
 
@@ -354,6 +434,18 @@ namespace ws2023_mtcg.Models
         public double ResetMegaBuff()
         {
             return Damage / 2;
+        }
+        public static List<Cards> ResetCurse(List<Cards> deck)
+        {
+            foreach(var d in deck)
+            {
+                if(d.IsCursed == true)
+                {
+                    d.Damage *= 2;
+                }
+            }
+
+            return deck;
         }
     }
 }
