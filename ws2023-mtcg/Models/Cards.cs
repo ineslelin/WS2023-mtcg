@@ -36,59 +36,35 @@ namespace ws2023_mtcg.Models
 
         public Cards Attack(Cards target)
         {
-            // the collapse of shame pt.2: my push to github is lost :(
-            if (Regex.IsMatch(Name, @"(Fire|Regular|Water|Electric|Grass|Ice)?Elf"))
+            this.IsAlive = true;
+            target.IsAlive = true;
+
+            if(this.Element == ElementType.normal && Regex.IsMatch(target.Name, @"(Fire|Regular|Water|Electric|Grass|Ice)?Troll"))
+            {
+                output += $"Regular attacks and spell don't affect {target.Name}! {target.Name} defeats {Name}!";
+
+                IsAlive = false;
+                return target;
+            }
+
+            if (Regex.IsMatch(Name, @"(Fire|Regular|Water|Electric|Grass|Ice)?Troll") && target.Element == ElementType.normal)
+            {
+                output += $"Regular attacks and spell don't affect {Name}! {Name} defeats {target.Name}!";
+
+                IsAlive = false;
+                return this;
+            }
+
+            if (Regex.IsMatch(Name, @"(Fire|Regular|Water|Electric|Grass|Ice)?Elf") && target.Name == "Dragon")
             {
                 // elves always win agaisnt dragons
-                if (target.Name == "Dragon")
-                {
-                    output += $"Due to their age-old acquaintace {Name} knows how to evade all of {target.Name}'s attacks! " +
-                        $"{Name} defeats {target.Name}!";
+                output += $"Due to their age-old acquaintace {Name} knows how to evade all of {target.Name}'s attacks! " +
+                    $"{Name} defeats {target.Name}!";
 
-                    target.IsAlive = false;
-                    return this;
-                }
-
-                // trolls always win to normal enemies
-                if (Element == ElementType.normal && target.Name == "Troll")
-                {
-                    output += $"Regular attacks and spell don't affect {target.Name}! {target.Name} defeats {Name}!";
-
-                    IsAlive = false;
-                    return target;
-                }
+                target.IsAlive = false;
+                return this;
             }
-            if (Regex.IsMatch(Name, @"(Fire|Regular|Water|Electric|Grass|Ice)?Goblin"))
-            {
-                // goblins always loose to dragons
-                if (target.Name == "Dragon")
-                {
-                    output += $"{Name} is too afraid of {target.Name} to attack! {target.Name} defeats {Name}!";
 
-                    IsAlive = false;
-                    return target;
-                }
-
-                // trolls always win to normal enemies
-                if (Element == ElementType.normal && target.Name == "Troll")
-                {
-                    output += $"Regular attacks and spell don't affect {target.Name}! {target.Name} defeats {Name}!";
-
-                    IsAlive = false;
-                    return target;
-                }
-            }
-            if (Regex.IsMatch(Name, @"(Fire|Regular|Water|Electric|Grass|Ice)?Troll"))
-            {
-                // trolls always win to normal enemies
-                if (target.Element == ElementType.normal)
-                {
-                    output += $"Regular attacks and spell don't affect {Name}! {Name} defeats {target.Name}!";
-
-                    target.IsAlive = false;
-                    return this;
-                }
-            }
             if (Name == "Dragon")
             {
                 // dragon always wins against goblin
@@ -110,58 +86,55 @@ namespace ws2023_mtcg.Models
                     return target;
                 }
             }
-            if (Name == "Knight")
+
+            if (Regex.IsMatch(Name, @"(Fire|Regular|Water|Electric|Grass|Ice)?Goblin") && target.Name == "Dragon")
+            {
+                // goblins always loose to dragons
+                output += $"{Name} is too afraid of {target.Name} to attack! {target.Name} defeats {Name}!";
+
+                IsAlive = false;
+                return target;
+            }
+
+            if (Name == "Knight" && target.Name == "WaterSpell")
             {
                 // knights always lose to waterspells
-                if (target.Name == "WaterSpell")
-                {
-                    output += $"{Name} drowned from {target.Name}'s attack! {target.Name} defeats {Name}!";
+                output += $"{Name} drowned from {target.Name}'s attack! {target.Name} defeats {Name}!";
 
-                    IsAlive = false;
-                    return target;
-                }
-
-                // trolls always win to normal enemies
-                if (target.Name == "Troll")
-                {
-                    output += $"Regular attacks and spell don't affect {target.Name}! {target.Name} defeats {Name}!";
-
-                    IsAlive = false;
-                    return target;
-                }
+                IsAlive = false;
+                return target;
             }
-            if (Name == "Kraken")
+
+            if (Name == "Kraken" && target.Type == CardType.spell)
             {
                 // the kraken is immune to spells
-                if (target.Type == CardType.spell)
-                {
-                    output += $"Spells don't affect {Name}, rendering {target.Name} useless! " +
+                output += $"Spells don't affect {Name}, rendering {target.Name} useless! " +
                         $"{Name} defeats {target.Name}!";
 
-                    target.IsAlive = false;
-                    return this;
-                }
+                target.IsAlive = false;
+                return this;
             }
-            if (Name == "Ork")
+
+            if (Name == "Ork")  
             {
-                // orks always lose to wizards
-                if (target.Name == "Wizard")
+                if(target.Name == "Wizard")
                 {
+                    // orks always lose to wizards
                     output += $"{target.Name} took control of {Name}! {target.Name} defeats {Name}!";
 
                     IsAlive = false;
                     return target;
                 }
 
-                // trolls always win to normal enemies
-                if (target.Name == "Troll")
+                if (target.Name == "RegularSpell")
                 {
-                    output += $"Regular attacks and spell don't affect {target.Name}! {target.Name} defeats {Name}!";
+                    output += $"{Name} defeats {target.Name}!";
 
-                    IsAlive = false;
-                    return target;
+                    target.IsAlive = false;
+                    return this;
                 }
             }
+
             if (Name == "Wizard")
             {
                 // wizards always win against orks
@@ -182,38 +155,9 @@ namespace ws2023_mtcg.Models
                     return target;
                 }
             }
-            if (Name == "FireSpell")
+
+            if (Type == CardType.spell)
             {
-                // wizard always loses to firespells (which actually doenst make sense considering wizards are water types but shush)
-                if (target.Name == "Wizard")
-                {
-                    output += $"{target.Name}'s robes are very flammable! {Name} defeats {target.Name}!";
-
-                    target.IsAlive = false;
-                    return this;
-                }
-
-                // kraken is immune to spells
-                if (target.Name == "Kraken")
-                {
-                    output += $"Spells don't affect {target.Name}, rendering {Name} useless! " +
-                        $"{target.Name} defeats {Name}!";
-
-                    IsAlive = false;
-                    return target;
-                }
-            }
-            if (Name == "RegularSpell")
-            {
-                // orks are immune to regular spells
-                if (target.Name == "Ork")
-                {
-                    output += $"{target.Name} defeats {Name}!";
-
-                    IsAlive = false;
-                    return target;
-                }
-
                 // kraken is immune to spells
                 if (target.Name == "Kraken")
                 {
@@ -224,67 +168,40 @@ namespace ws2023_mtcg.Models
                     return target;
                 }
 
-                // trolls always win to normal enemies
-                if (Element == ElementType.normal && target.Name == "Troll")
+                if (Name == "FireSpell")
                 {
-                    output += $"Regular attacks and spell don't affect {target.Name}! {target.Name} defeats {Name}!";
+                    // wizard always loses to firespells (which actually doenst make sense considering wizards are water types but shush)
+                    if (target.Name == "Wizard")
+                    {
+                        output += $"{target.Name}'s robes are very flammable! {Name} defeats {target.Name}!";
 
-                    IsAlive = false;
-                    return target;
-                }
-            }
-            if (Name == "WaterSpell")
-            {
-                // knight always loses against waterspell
-                if (target.Name == "Knight")
-                {
-                    output += $"{target.Name} drowned from {Name}'s attack! {Name} defeats {target.Name}!";
-
-                    target.IsAlive = false;
-                    return this;
+                        target.IsAlive = false;
+                        return this;
+                    }
                 }
 
-                // kraken is immune to spells
-                if (target.Name == "Kraken")
+                if (Name == "RegularSpell")
                 {
-                    output += $"Spells don't affect {target.Name}, rendering {Name} useless! " +
-                        $"{target.Name} defeats {Name}!";
+                    // orks are immune to regular spells
+                    if (target.Name == "Ork")
+                    {
+                        output += $"{target.Name} defeats {Name}!";
 
-                    IsAlive = false;
-                    return target;
+                        IsAlive = false;
+                        return target;
+                    }
                 }
-            }
-            if (Name == "ElectricSpell")
-            {
-                if (target.Name == "Kraken")
-                {
-                    output += $"Spells don't affect {target.Name}, rendering {Name} useless! " +
-                        $"{target.Name} defeats {Name}!";
 
-                    IsAlive = false;
-                    return target;
-                }
-            }
-            if (Name == "IceSpell")
-            {
-                if (target.Name == "Kraken")
+                if (Name == "WaterSpell")
                 {
-                    output += $"Spells don't affect {target.Name}, rendering {Name} useless! " +
-                        $"{target.Name} defeats {Name}!";
+                    // knight always loses against waterspell
+                    if (target.Name == "Knight")
+                    {
+                        output += $"{target.Name} drowned from {Name}'s attack! {Name} defeats {target.Name}!";
 
-                    IsAlive = false;
-                    return target;
-                }
-            }
-            if (Name == "GrassSpell")
-            {
-                if (target.Name == "Kraken")
-                {
-                    output += $"Spells don't affect {target.Name}, rendering {Name} useless! " +
-                        $"{target.Name} defeats {Name}!";
-
-                    IsAlive = false;
-                    return target;
+                        target.IsAlive = false;
+                        return this;
+                    }
                 }
             }
 
