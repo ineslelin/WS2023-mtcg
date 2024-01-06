@@ -29,7 +29,8 @@ CREATE TABLE IF NOT EXISTS cards (
 	name varchar(32),
 	damage double precision,
 	element int,
-	cardtype int
+	cardtype int,
+	package int
 );
 
 CREATE TABLE IF NOT EXISTS stack (
@@ -42,7 +43,7 @@ CREATE TABLE IF NOT EXISTS stack (
 );
 
 CREATE TABLE IF NOT EXISTS deck (
-    id varchar(128) references stack(id)
+    id varchar(128) references stack(id),
 	owner varchar(20)
 );
 
