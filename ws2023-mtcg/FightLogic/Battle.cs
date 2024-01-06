@@ -32,7 +32,7 @@ namespace ws2023_mtcg.FightLogic
 
             fightOutput = "";
 
-            while (round < 100)
+            while (round <= 100)
             {
                 if (!playerOne.Deck.Any(card => card.IsAlive) || !playerTwo.Deck.Any(card => card.IsAlive))
                     break;
@@ -47,14 +47,14 @@ namespace ws2023_mtcg.FightLogic
                 {
                     P1Mega = true;
                     playerOne.Deck[randomP1Card].Damage = playerOne.Deck[randomP1Card].MegaBuff();
-                    fightOutput += $"{playerOne.Deck[randomP1Card].Name} received a Mega Buff!\n";
+                    fightOutput += $"\n{playerOne.Deck[randomP1Card].Name} received a Mega Buff!\n";
                 }
 
                 if (MegaCard())
                 {
                     P2Mega = true;
                     playerTwo.Deck[randomP2Card].Damage = playerTwo.Deck[randomP2Card].MegaBuff();
-                    fightOutput += $"{playerTwo.Deck[randomP2Card].Name} received a Mega Buff!\n";
+                    fightOutput += $"\n{playerTwo.Deck[randomP2Card].Name} received a Mega Buff!\n";
                 }
 
                 // when youre in a writing ugly ass code competition and your opponent is me <3

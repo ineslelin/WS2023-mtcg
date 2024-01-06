@@ -10,5 +10,6 @@ namespace ws2023_mtcg.FightLogic.Enums
         electric = 3,
         grass = 4,
         ice = 5,
+        curse = 6,
     }
 }
