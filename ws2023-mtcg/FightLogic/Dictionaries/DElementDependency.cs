@@ -36,23 +36,29 @@ namespace ws2023_mtcg.FightLogic.Dictionaries
             { new Tuple<ElementType, ElementType>(ElementType.water, ElementType.grass), ElementType.water },
             { new Tuple<ElementType, ElementType>(ElementType.grass, ElementType.water), ElementType.water },
 
-            // ELECTRIC EFFECTIVE AGAINST ICE AND WATER
+            // ELECTRIC EFFECTIVE AGAINST FIRE, ICE AND WATER
             { new Tuple<ElementType, ElementType>(ElementType.electric, ElementType.ice), ElementType.electric },
             { new Tuple<ElementType, ElementType>(ElementType.ice, ElementType.electric), ElementType.electric },
             { new Tuple<ElementType, ElementType>(ElementType.electric, ElementType.water), ElementType.electric },
             { new Tuple<ElementType, ElementType>(ElementType.water, ElementType.electric), ElementType.electric },
+            { new Tuple<ElementType, ElementType>(ElementType.electric, ElementType.fire), ElementType.electric },
+            { new Tuple<ElementType, ElementType>(ElementType.fire, ElementType.electric), ElementType.electric },
 
-            // ICE EFFECTIVE AGAINST GRASS AND NORMAL
+            // ICE EFFECTIVE AGAINST WATER, GRASS AND NORMAL
             { new Tuple<ElementType, ElementType>(ElementType.ice, ElementType.grass), ElementType.ice },
             { new Tuple<ElementType, ElementType>(ElementType.grass, ElementType.ice), ElementType.ice },
             { new Tuple<ElementType, ElementType>(ElementType.normal, ElementType.ice), ElementType.ice },
             { new Tuple<ElementType, ElementType>(ElementType.ice, ElementType.normal), ElementType.ice },
+            { new Tuple<ElementType, ElementType>(ElementType.water, ElementType.ice), ElementType.ice },
+            { new Tuple<ElementType, ElementType>(ElementType.ice, ElementType.water), ElementType.ice },
 
-            // GRASS IS EFFECTIVE AGAINST FIRE AND ELECTRIC
+            // GRASS IS EFFECTIVE AGAINST FIRE, NORMAL AND ELECTRIC
             { new Tuple<ElementType, ElementType>(ElementType.electric, ElementType.grass), ElementType.grass },
             { new Tuple<ElementType, ElementType>(ElementType.grass, ElementType.electric), ElementType.grass },
             { new Tuple<ElementType, ElementType>(ElementType.fire, ElementType.grass), ElementType.grass },
             { new Tuple<ElementType, ElementType>(ElementType.grass, ElementType.fire), ElementType.grass },
+            { new Tuple<ElementType, ElementType>(ElementType.normal, ElementType.grass), ElementType.grass },
+            { new Tuple<ElementType, ElementType>(ElementType.grass, ElementType.normal), ElementType.grass },
         };
     }
 
