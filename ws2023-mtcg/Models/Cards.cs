@@ -11,7 +11,7 @@ using ws2023_mtcg.FightLogic.Enums;
 
 namespace ws2023_mtcg.Models
 {
-    internal class Cards
+    public class Cards
     {
         public string Id;
         public string Name { get; set; }

@@ -10,7 +10,7 @@ using System.Linq.Expressions;
 
 namespace ws2023_mtcg.Server.Repository
 {
-    internal class UserRepository
+    public class UserRepository
     {
         private readonly string _connectionString = "Host=localhost;Database=mtcgdb;Username=admin;Password=1234;Include Error Detail=true";
 

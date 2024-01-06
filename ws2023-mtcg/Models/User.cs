@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ws2023_mtcg.Models
 {
-    internal class User
+    public class User
     {
         public int id;
         public string Username { get; set; }
