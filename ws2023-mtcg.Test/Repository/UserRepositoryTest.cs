@@ -70,57 +70,5 @@ namespace ws2023_mtcg.Test.Repository
             userRepositoryMock.Verify(repo => repo.Create(It.IsAny<User>()), Times.Once);
             userRepositoryMock.Verify(repo => repo.Create(newUser), Times.Once);
         }
-
-        // ??? doesnt work????
-        //[Test]
-        //public void Update_UpdateUserData()
-        //{
-        //    var userRepositoryMock = new Mock<IUserRepository<User>>();
-        //    var userRepository = userRepositoryMock.Object;
-        //    userRepositoryMock.Setup(repo => repo.Read("ExistingUser"))
-        //        .Returns(new User
-        //            {
-        //                Username = "ExistingUser",
-        //                Password = "ExistingPassword",
-        //                Coins = 20,
-        //                Elo = 100,
-        //                Wins = 0,
-        //                Losses = 0
-        //            });
-
-
-        //    var updatedUser = new User
-        //    {
-        //        Username = "ExistingUser",
-        //        Password = "ExistingPassword",
-        //        Coins = 23,
-        //        Elo = 349,
-        //        Wins = 34,
-        //        Losses = 5
-        //    };
-
-        //    userRepository.Update(updatedUser);
-        //    var actual = userRepository.Read(updatedUser.Username);
-
-        //    userRepositoryMock.Verify(repo => repo.Update(It.IsAny<User>()), Times.Once);
-        //    userRepositoryMock.Verify(repo => repo.Update(updatedUser), Times.Once);
-
-        //    Assert.That(actual, Is.Not.Null);
-
-        //    Assert.Multiple(() =>
-        //    {
-        //        Assert.That(actual.Username, Is.EqualTo(updatedUser.Username));
-        //        Assert.That(actual.Password, Is.EqualTo(updatedUser.Password));
-        //        Assert.That(actual.Coins, Is.EqualTo(updatedUser.Coins));
-        //        Assert.That(actual.Elo, Is.EqualTo(updatedUser.Elo));
-        //        Assert.That(actual.Wins, Is.EqualTo(updatedUser.Wins));
-        //        Assert.That(actual.Losses, Is.EqualTo(updatedUser.Losses));
-        //    });
-        //}
-
-        //public void Delete_DeleteUserDataFromRepository()
-        //{
-
-        //}
     }
 }

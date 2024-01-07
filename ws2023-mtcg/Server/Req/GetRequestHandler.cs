@@ -73,7 +73,7 @@ namespace ws2023_mtcg.Server.Req
             }
         }
 
-        public void HandleCardsRequest()
+        private void HandleCardsRequest()
         {
             string username = "";
 
@@ -98,7 +98,7 @@ namespace ws2023_mtcg.Server.Req
                 return;
             }
 
-            StackRepository stackRepository = new StackRepository();
+            StackRepository stackRepository = new StackRepository("Host=localhost;Database=mtcgdb;Username=admin;Password=1234;Include Error Detail=true");
             List<Cards> stack = new List<Cards>();
 
             try
@@ -156,7 +156,7 @@ namespace ws2023_mtcg.Server.Req
             ResponseHandler.SendResponse(writer, response, (int)ResponseCode.Success);
         }
 
-        public void HandleDeckRequest(string route)
+        private void HandleDeckRequest(string route)
         {
             string username = "";
 
@@ -181,7 +181,7 @@ namespace ws2023_mtcg.Server.Req
                 return;
             }
 
-            DeckRepository deckRepository = new DeckRepository();
+            DeckRepository deckRepository = new DeckRepository("Host=localhost;Database=mtcgdb;Username=admin;Password=1234;Include Error Detail=true");
             List<Cards> deck = new List<Cards>();
 
             try
@@ -251,7 +251,7 @@ namespace ws2023_mtcg.Server.Req
             ResponseHandler.SendResponse(writer, response, (int)ResponseCode.Success);
         }
 
-        public void HandleUserRequest(string route)
+        private void HandleUserRequest(string route)
         {
             string username = "";
 
@@ -282,7 +282,7 @@ namespace ws2023_mtcg.Server.Req
                 return;
             }
 
-            UserProfileRepository userProfileRepository = new UserProfileRepository();
+            UserProfileRepository userProfileRepository = new UserProfileRepository("Host=localhost;Database=mtcgdb;Username=admin;Password=1234;Include Error Detail=true");
             User profile = new User();
 
             try
@@ -321,7 +321,7 @@ namespace ws2023_mtcg.Server.Req
             ResponseHandler.SendResponse(writer, response, (int)ResponseCode.Success);
         }
 
-        public void HandleStatsRequest()
+        private void HandleStatsRequest()
         {
             string username = "";
 
@@ -346,7 +346,7 @@ namespace ws2023_mtcg.Server.Req
                 return;
             }
 
-            UserRepository userRepository = new UserRepository();
+            UserRepository userRepository = new UserRepository("Host=localhost;Database=mtcgdb;Username=admin;Password=1234;Include Error Detail=true");
             User tempUser = new User();
 
             try
@@ -386,7 +386,7 @@ namespace ws2023_mtcg.Server.Req
             ResponseHandler.SendResponse(writer, response, (int)ResponseCode.Success);
         }
 
-        public void HandleScoreboardRequest()
+        private void HandleScoreboardRequest()
         {
             string username = "";
 
@@ -411,7 +411,7 @@ namespace ws2023_mtcg.Server.Req
                 return;
             }
 
-            UserRepository userRepository = new UserRepository();
+            UserRepository userRepository = new UserRepository("Host=localhost;Database=mtcgdb;Username=admin;Password=1234;Include Error Detail=true");
 
             User[] users = userRepository.ReadAllByElo();
             int rank = 1;
@@ -439,7 +439,7 @@ namespace ws2023_mtcg.Server.Req
             ResponseHandler.SendResponse(writer, response, (int)ResponseCode.Success);
         }
 
-        public void HandleTradingRequest()
+        private void HandleTradingRequest()
         {
             string username = "";
 
@@ -464,7 +464,7 @@ namespace ws2023_mtcg.Server.Req
                 return;
             }
 
-            TradingRepository tradingRepository = new TradingRepository();
+            TradingRepository tradingRepository = new TradingRepository("Host=localhost;Database=mtcgdb;Username=admin;Password=1234;Include Error Detail=true");
             TradingDeal[] tradingDeals = null;
 
             try

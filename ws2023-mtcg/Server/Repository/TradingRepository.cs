@@ -21,7 +21,12 @@ namespace ws2023_mtcg.Server.Repository
 
     internal class TradingRepository : ITradingRepository<TradingDeal>
     {
-        private readonly string _connectionString = "Host=localhost;Database=mtcgdb;Username=admin;Password=1234;Include Error Detail=true";
+        private readonly string _connectionString;
+
+        public TradingRepository(string connectionstring)
+        {
+            _connectionString = connectionstring;
+        }
 
         public TradingDeal Read(string id)
         {

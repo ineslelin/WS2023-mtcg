@@ -11,7 +11,12 @@ namespace ws2023_mtcg.Server.Repository
 {
     internal class UserProfileRepository
     {
-        private readonly string _connectionString = "Host=localhost;Database=mtcgdb;Username=admin;Password=1234;Include Error Detail=true";
+        private readonly string _connectionString;
+
+        public UserProfileRepository(string connectionString)
+        {
+            _connectionString = connectionString;
+        }
 
         public User Read(string username)
         {

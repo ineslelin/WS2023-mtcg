@@ -340,7 +340,8 @@ namespace ws2023_mtcg.Test
 
             var WaterSpell = new Cards()
             {
-                Name = "WaterSpell"
+                Name = "WaterSpell",
+                Type = CardType.spell
             };
 
             var actual = Knight.Attack(WaterSpell);
@@ -430,6 +431,40 @@ namespace ws2023_mtcg.Test
 
             actual =Ork.Attack(RegularSpell);
             Assert.That(actual, Is.EqualTo(Ork));
+        }
+
+        [Test]
+        public void CheckCurseBattle()
+        {
+            var Curse = new Cards()
+            {
+                Name = "Curse",
+                Type = CardType.curse,
+                Element = ElementType.curse
+            };
+
+            var Monster = new Cards()
+            {
+                Name = "Monster",
+                Type = CardType.monster,
+                Damage = 10
+            };
+
+            var Spell = new Cards()
+            {
+                Name = "Spell",
+                Type = CardType.spell,
+                Damage = 10
+            };
+
+            var actual = Curse.Attack(Monster);
+            Assert.That(actual, Is.EqualTo(null));
+
+            actual = Curse.Attack(Spell);
+            Assert.That(actual, Is.EqualTo(null));
+
+            actual = Curse.Attack(Curse);
+            Assert.That(actual, Is.EqualTo(null));
         }
     }
 }

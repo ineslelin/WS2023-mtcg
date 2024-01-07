@@ -12,6 +12,8 @@ namespace ws2023_mtcg.Server.Repository
 {
     public interface IStackRepository<T>
     {
+        string connectionstring { get; }
+
         T[] Read(string value);
         void Create(T t);
         void Update(T t);
@@ -20,7 +22,13 @@ namespace ws2023_mtcg.Server.Repository
 
     internal class StackRepository : IStackRepository<Cards>
     {
-        private readonly string _connectionString = "Host=localhost;Database=mtcgdb;Username=admin;Password=1234;Include Error Detail=true";
+        private readonly string _connectionString;
+        public string connectionstring => _connectionString;
+
+        public StackRepository(string connectionstring)
+        {
+            _connectionString = connectionstring;
+        }
 
         public Cards[] Read(string username)
         {
@@ -35,7 +43,7 @@ namespace ws2023_mtcg.Server.Repository
                     {
                         connection.Open();
 
-                        command.CommandText = @"SELECT * FROM stack";
+                        command.CommandText = @"SELECT * FROM stack WHERE owner=@owner";
 
                         DbCommands.AddParameterWithValue(command, "owner", DbType.String, username);
                         command.ExecuteNonQuery();

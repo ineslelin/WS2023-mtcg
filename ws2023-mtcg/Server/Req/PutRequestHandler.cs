@@ -52,7 +52,7 @@ namespace ws2023_mtcg.Server.Req
             }
         }
 
-        public void HandleDeckRequest() 
+        private void HandleDeckRequest() 
         {
             string username = "";
 
@@ -121,7 +121,7 @@ namespace ws2023_mtcg.Server.Req
                 return;
             }
 
-            StackRepository stackRepository = new StackRepository();
+            StackRepository stackRepository = new StackRepository("Host=localhost;Database=mtcgdb;Username=admin;Password=1234;Include Error Detail=true");
 
             try
             {
@@ -148,7 +148,7 @@ namespace ws2023_mtcg.Server.Req
                 return;
             }
 
-            DeckRepository deckRepository = new DeckRepository();
+            DeckRepository deckRepository = new DeckRepository("Host=localhost;Database=mtcgdb;Username=admin;Password=1234;Include Error Detail=true");
 
             try
             {
@@ -161,6 +161,8 @@ namespace ws2023_mtcg.Server.Req
             }
             catch (Exception ex)
             {
+                Console.WriteLine($"Error: {ex}");
+
                 response = JsonConvert.SerializeObject(new
                 {
                     status = "error",
@@ -195,7 +197,7 @@ namespace ws2023_mtcg.Server.Req
             ResponseHandler.SendResponse(writer, response, (int)ResponseCode.Success);
         }
 
-        public void HandleUserRequest(string route)
+        private void HandleUserRequest(string route)
         {
             string username = "";
 
@@ -226,7 +228,7 @@ namespace ws2023_mtcg.Server.Req
                 return;
             }
 
-            UserRepository userRepository = new UserRepository(); 
+            UserRepository userRepository = new UserRepository("Host=localhost;Database=mtcgdb;Username=admin;Password=1234;Include Error Detail=true"); 
             User tempUser = new User();
 
             try
@@ -273,7 +275,7 @@ namespace ws2023_mtcg.Server.Req
                 return;
             }
 
-            UserProfileRepository userProfileRepository = new UserProfileRepository();
+            UserProfileRepository userProfileRepository = new UserProfileRepository("Host=localhost;Database=mtcgdb;Username=admin;Password=1234;Include Error Detail=true");
 
             try
             {

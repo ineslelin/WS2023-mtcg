@@ -86,7 +86,7 @@ namespace ws2023_mtcg.Server.Req
             }
         }
 
-        public void HandleUserRequest()
+        private void HandleUserRequest()
         {
             User? tempUser = new User();
 
@@ -111,7 +111,7 @@ namespace ws2023_mtcg.Server.Req
 
             if (tempUser != null)
             {
-                UserRepository userRepository = new UserRepository();
+                UserRepository userRepository = new UserRepository("Host=localhost;Database=mtcgdb;Username=admin;Password=1234;Include Error Detail=true");
 
                 tempUser.Password = PasswordSecurity.EncryptPassword(tempUser.Password);
 
@@ -150,7 +150,7 @@ namespace ws2023_mtcg.Server.Req
             ResponseHandler.SendResponse(writer, response, (int)ResponseCode.CreationSuccess);
         }
 
-        public void HandleSessionRequest()
+        private void HandleSessionRequest()
         {
             User? tempUser = new User();
 
@@ -175,7 +175,7 @@ namespace ws2023_mtcg.Server.Req
 
             if (tempUser != null)
             {
-                UserRepository userRepository = new UserRepository();
+                UserRepository userRepository = new UserRepository("Host=localhost;Database=mtcgdb;Username=admin;Password=1234;Include Error Detail=true");
 
                 tempUser.Password = PasswordSecurity.EncryptPassword(tempUser.Password);
 
@@ -217,7 +217,7 @@ namespace ws2023_mtcg.Server.Req
             }
         }
 
-        public void HandlePackageRequest()
+        private void HandlePackageRequest()
         {
             string authHeader = "";
 
@@ -282,7 +282,7 @@ namespace ws2023_mtcg.Server.Req
                 return;
             }
 
-            CardRepository cardRepository = new CardRepository();
+            CardRepository cardRepository = new CardRepository("Host=localhost;Database=mtcgdb;Username=admin;Password=1234;Include Error Detail=true");
 
             if(cards != null && cards.Count > 0)
             {
@@ -337,7 +337,7 @@ namespace ws2023_mtcg.Server.Req
             ResponseHandler.SendResponse(writer, response, (int)ResponseCode.CreationSuccess);
         }
 
-        public void HandleTransactionRequest()
+        private void HandleTransactionRequest()
         {
             string username = "";
 
@@ -363,7 +363,7 @@ namespace ws2023_mtcg.Server.Req
             }
 
             User? tempUser = new User();
-            UserRepository userRepository = new UserRepository();
+            UserRepository userRepository = new UserRepository("Host=localhost;Database=mtcgdb;Username=admin;Password=1234;Include Error Detail=true");
 
             try
             {
@@ -407,7 +407,7 @@ namespace ws2023_mtcg.Server.Req
                 return;
             }
 
-            CardRepository cardRepository = new CardRepository();
+            CardRepository cardRepository = new CardRepository("Host=localhost;Database=mtcgdb;Username=admin;Password=1234;Include Error Detail=true");
 
             try
             {
@@ -431,7 +431,7 @@ namespace ws2023_mtcg.Server.Req
 
             int packageId = cardRepository.RetrieveSmallestId();
             Cards[]? package = null;
-            StackRepository stackRepository = new StackRepository();
+            StackRepository stackRepository = new StackRepository("Host=localhost;Database=mtcgdb;Username=admin;Password=1234;Include Error Detail=true");
 
             try
             {
@@ -508,7 +508,7 @@ namespace ws2023_mtcg.Server.Req
             ResponseHandler.SendResponse(writer, response, (int)ResponseCode.Success);
         }
 
-        public void HandleBattleRequest()
+        private void HandleBattleRequest()
         {
             string username = "";
 
@@ -534,8 +534,8 @@ namespace ws2023_mtcg.Server.Req
             }
 
             User? tempUser = new User();
-            UserRepository userRepository = new UserRepository();
-            DeckRepository deckRepository = new DeckRepository();
+            UserRepository userRepository = new UserRepository("Host=localhost;Database=mtcgdb;Username=admin;Password=1234;Include Error Detail=true");
+            DeckRepository deckRepository = new DeckRepository("Host=localhost;Database=mtcgdb;Username=admin;Password=1234;Include Error Detail=true");
 
             try
             {
@@ -635,7 +635,7 @@ namespace ws2023_mtcg.Server.Req
             lobby.Clear();
         }
 
-        public void HandleTradingRequest()
+        private void HandleTradingRequest()
         {
             string username = "";
 
@@ -681,9 +681,9 @@ namespace ws2023_mtcg.Server.Req
                 return;
             }
 
-            TradingRepository tradingRepository = new TradingRepository();
-            StackRepository stackRepository = new StackRepository();
-            DeckRepository deckRepository = new DeckRepository();
+            TradingRepository tradingRepository = new TradingRepository("Host=localhost;Database=mtcgdb;Username=admin;Password=1234;Include Error Detail=true");
+            StackRepository stackRepository = new StackRepository("Host=localhost;Database=mtcgdb;Username=admin;Password=1234;Include Error Detail=true");
+            DeckRepository deckRepository = new DeckRepository("Host=localhost;Database=mtcgdb;Username=admin;Password=1234;Include Error Detail=true");
 
             TradingDeal temp = new TradingDeal();
 
@@ -737,10 +737,10 @@ namespace ws2023_mtcg.Server.Req
                 deal = deal
             });
 
-            ResponseHandler.SendErrorResponse(writer, response, (int)ResponseCode.CreationSuccess);
+            ResponseHandler.SendResponse(writer, response, (int)ResponseCode.CreationSuccess);
         }
 
-        public void HandleTransactionRequest(string id)
+        private void HandleTransactionRequest(string id)
         {
             string username = "";
 
@@ -771,7 +771,7 @@ namespace ws2023_mtcg.Server.Req
             // this is the card that is up for selling
             TradingDeal deal = new TradingDeal();
 
-            TradingRepository tradingRepository = new TradingRepository();
+            TradingRepository tradingRepository = new TradingRepository("Host=localhost;Database=mtcgdb;Username=admin;Password=1234;Include Error Detail=true");
 
             try
             {
@@ -815,8 +815,8 @@ namespace ws2023_mtcg.Server.Req
                 return;
             }
 
-            StackRepository stackRepository = new StackRepository();
-            DeckRepository deckRepository = new DeckRepository();
+            StackRepository stackRepository = new StackRepository("Host=localhost;Database=mtcgdb;Username=admin;Password=1234;Include Error Detail=true");
+            DeckRepository deckRepository = new DeckRepository("Host=localhost;Database=mtcgdb;Username=admin;Password=1234;Include Error Detail=true");
 
             try
             {
@@ -901,7 +901,7 @@ namespace ws2023_mtcg.Server.Req
                 message = "Trading deal successfully executed."
             });
 
-            ResponseHandler.SendErrorResponse(writer, response, (int)ResponseCode.Success);
+            ResponseHandler.SendResponse(writer, response, (int)ResponseCode.Success);
         }
     }
 }

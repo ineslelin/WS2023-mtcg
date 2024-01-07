@@ -12,7 +12,12 @@ namespace ws2023_mtcg.Server.Repository
 {
     internal class DeckRepository
     {
-        private readonly string _connectionString = "Host=localhost;Database=mtcgdb;Username=admin;Password=1234;Include Error Detail=true";
+        private readonly string _connectionString;
+
+        public DeckRepository(string connectionstring)
+        {
+            _connectionString = connectionstring;
+        }
 
         public Cards[] Read(string username)
         {

@@ -12,7 +12,7 @@ using ws2023_mtcg.Server.Res;
 
 namespace ws2023_mtcg.Server
 {
-    internal class HttpServer
+    public class HttpServer
     {
         private readonly int port;
         private readonly IPAddress host = IPAddress.Loopback;

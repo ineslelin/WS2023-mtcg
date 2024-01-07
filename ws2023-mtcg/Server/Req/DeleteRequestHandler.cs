@@ -45,7 +45,7 @@ namespace ws2023_mtcg.Server.Req
             }
         }
 
-        public void HandleTradingRequest(string id)
+        private void HandleTradingRequest(string id)
         {
             string username = "";
 
@@ -70,7 +70,7 @@ namespace ws2023_mtcg.Server.Req
                 return;
             }
 
-            TradingRepository tradingRepository = new TradingRepository();
+            TradingRepository tradingRepository = new TradingRepository("Host=localhost;Database=mtcgdb;Username=admin;Password=1234;Include Error Detail=true");
             TradingDeal deal = new TradingDeal();
 
             try
@@ -95,7 +95,7 @@ namespace ws2023_mtcg.Server.Req
                 return;
             }
 
-            StackRepository stackRepository = new StackRepository();
+            StackRepository stackRepository = new StackRepository("Host=localhost;Database=mtcgdb;Username=admin;Password=1234;Include Error Detail=true");
 
             try
             {
@@ -125,7 +125,7 @@ namespace ws2023_mtcg.Server.Req
                 message = "Trading deal successfully deleted",
             });
 
-            ResponseHandler.SendErrorResponse(writer, response, (int)ResponseCode.Success);
+            ResponseHandler.SendResponse(writer, response, (int)ResponseCode.Success);
         }
     }
 }

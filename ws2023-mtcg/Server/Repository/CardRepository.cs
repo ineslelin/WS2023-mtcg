@@ -7,6 +7,8 @@ namespace ws2023_mtcg.Server.Repository
 {
     public interface ICardRepository<T>
     {
+        string connectionstring { get; }
+
         T Read(string value);
         void Create(T t);
         void Update(T t);
@@ -15,7 +17,13 @@ namespace ws2023_mtcg.Server.Repository
 
     internal class CardRepository : ICardRepository<Cards>
     {
-        private readonly string _connectionString = "Host=localhost;Database=mtcgdb;Username=admin;Password=1234;Include Error Detail=true";
+        private readonly string _connectionString;
+        public string connectionstring => _connectionString;
+
+        public CardRepository(string connectionstring)
+        {
+            _connectionString = connectionstring;
+        }
 
         public Cards Read(string id)
         {
