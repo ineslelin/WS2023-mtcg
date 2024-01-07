@@ -151,6 +151,7 @@ namespace ws2023_mtcg.Server.Repository
                                 {
                                     Id = reader.GetString(0),
                                     CardToTrade = reader.GetString(1),
+                                    Username = reader.GetString(2),
                                     Type = (CardType)reader.GetInt32(3),
                                     MinimumDamage = reader.GetInt32(4),
                                 };

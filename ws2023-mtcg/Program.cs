@@ -10,7 +10,8 @@ namespace ws2023_mtcg
     {
         static void Main(string[] args)
         {
-            // 10001 as port bc they use that in the curl scripts
+            DatabaseHandler.Start();
+
             HttpServer server = new HttpServer(10001);
             server.Start();
 
