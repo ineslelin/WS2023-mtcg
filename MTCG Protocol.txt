@@ -1,0 +1,158 @@
++------------------------------------+
+| MTCG PROTOCOL - INES LEONA LINTNER |
++------------------------------------+
+
+----- DESIGN -----
+The MTCG is a server with a database connection (Postgres) that handles HTTP Requests.
+On startup, the server is started on port 10001 and a thread is dispatched that handles
+each individual client, making the server concurrent. 
+After a client has connected, their request is parsed and based on the type of request
+the corresponding handler class is called (GET => GetRequestHandler, POST => PostRequestHandler, etc.).
+There the route is parsed and based on the route the request is handled. Afterwards the client
+receives a response containing a json body (or a plaintext body in case of GET /deck?format=plain and
+the battle function).
+Instead of one persisting database connection throughout the runtime of the server the
+connection is established anytime a method of the database handler classes is called
+and destroyed after the method has finished. 
+The fight logic is split between the battle and the cards classes. Upon the beginning of
+a fight, the mehtod Fight() in the battle class is called, after checking certain conditions
+(Megabuff + if all cards in the deck are alive) and two cards have been randomly chosen
+to fight each other, the Attack() function of one player is called, which returns the winner.
+Attack checks all special conditions first, if one of them is met the winner is returned. 
+If none of the special conditions are met the game continues to check the type of card and
+calls DamageFight(), ElementFight() or CurseFight() accordingly. As soon as one player has no
+alive cards left the fight method finishes and the fightoutput string is returned (which is then
+added to the http response).
+
+----- LESSONS LEARNED -----
+1. Using TcpListener and TcpClient to create a server.
+2. Handling HTTP requests
+3. Working with cURL
+4. Working with JSON
+5. Write unit tests
+6. Creating a database and writing SQL queries
+7. Better time management
+
+----- UNIT TESTING DECISIONS -----
+The unit tests mainly focus on the battle mechanic as it is especially prone
+to having little errors in it's logic that go undetected.
+
+- CheckElementDependency_[ELEMENT]
+	checks if all element dependencies work
+- CheckMonsterMonsterFight
+	checks if two monster cards fight based on
+	damage and not based on elements
+- CheckSpecialty_[CARD]v[CARD]
+	checks if fights that have special conditions
+	happen the way theyre supposed to
+- CheckIfCard[ELEMENT]Type
+	checks if the cardtype that is added to a mock
+	database is returned as the correct element
+- CheckIfCard[TYPE]Card
+	same as elementtype, checks if card type is
+	returned correctly
+- Create_Add[_]ToRepository
+	checks if for example user is added correctly
+	to the database
+- Read_Return[_]
+	checks if correct data is returned
+
+----- UNIQUE FEATURE -----
+The unique feature has two parts: for one the Mega Buff, 
+but also the winner receiving 15 coins after the battle. 
+The Mega Buff has a 1 in 100 (in the code actually 10 in 1000) 
+chance of happening and doubles the damage a card can deal. 
+The buff only lasts for the duration of the round and is not 
+exempt from specialty attacks, which means that if the card is, 
+for example, a Spell card of any type and the opponent’s card 
+is a Kraken, the buffed card still loses since spells are 
+ineffective against the Kraken.
+
+----- USED COMMANDS -----
+docker run --name mtcgdb -e POSTGRES_USER=admin -e POSTGRES_PASSWORD=1234 -p 5432:5432 -v pgdata:/var/lib/postgresql/data postgres
+
+----- TRACKED TIME -----
++----------+-------+------------------------------------------------+
+|     DATE |  TIME |                                                |
++----------+-------+------------------------------------------------+
+| 16.09.23 | 00:15 | Project Setup                                  |
+| 21.09.23 | 01:30 |                                                |
+| 22.09.23 | 00:30 |                                                |
++----------+-------+------------------------------------------------+
+| 22.09.23 | 00:30 | Battle Logic                                   |
+| 01.10.23 | 00:30 |                                                |
+| 04.10.23 | 01:30 |                                                |
+| 13.10.23 | 01:00 |                                                |
+| 14.10.23 | 03:20 |                                                |
+| 15.10.23 | 01:00 |                                                |
++----------+-------+------------------------------------------------+
+| 17.10.23 | 00:50 | Server                                         |
++----------+-------+------------------------------------------------+
+| 18.10.23 | 01:50 | Battle Logic                                   |
+| 20.10.23 | 00:25 |                                                |
+| 27.10.23 | 01:15 |                                                |
++----------+-------+------------------------------------------------+
+| 29.10.23 | 00:30 | Server                                         |
+| 01.11.23 | 02:30 |                                                |
++----------+-------+------------------------------------------------+
+| 01.11.23 | 02:45 | Battle Logic                                   |
+| 02.11.23 | 01:30 |                                                |
++----------+-------+------------------------------------------------+
+| 04.11.23 | 04:45 | Server                                         |
++----------+-------+------------------------------------------------+
+| 05.11.23 | 00:45 | Battle Logic                                   |
+| 06.11.23 | 02:25 |                                                |
++----------+-------+------------------------------------------------+
+| 11.11.23 | 03:40 | Server                                         |
+| 05.12.23 | 00:40 |                                                |
++----------+-------+------------------------------------------------+
+| 08.12.23 | 03:30 | Database                                       |
+| 12.12.23 | 01:00 |                                                |
+| 13.12.23 | 03:00 |                                                |
+| 16.12.23 | 02:00 |                                                |
+| 17.12.23 | 01:20 |                                                |
++----------+-------+------------------------------------------------+
+| 19.12.23 | 02:00 | Server                                         |
+| 21.12.23 | 01:00 |                                                |
+| 22.12.23 | 01:30 |                                                |
+| 23.12.23 | 05:00 |                                                |
+| 25.12.23 | 04:00 |                                                |
+| 26.12.23 | 03:25 |                                                |
+| 27.12.23 | 03:30 |                                                |
+| 28.12.23 | 02:25 |                                                |
+| 29.12.23 | 01:10 |                                                |
+| 30.12.23 | 01:00 |                                                |
+| 02.01.24 | 03:30 |                                                |
+| 03.01.24 | 05:00 |                                                |
+| 04.01.24 | 03:15 |                                                |
+| 05.01.24 | 02:30 |                                                |
++----------+-------+------------------------------------------------+
+| 06.01.24 | 08:30 | Unit Tests                                     |
+| 07.01.24 | 03:15 |                                                |
++----------+-------+------------------------------------------------+
+| 07.01.24 | 01:30 | Protocol                                       |
++----------+-------+------------------------------------------------+
+| 07.01.24 | 00:40 | Small Additions + Polishes                     |
++----------+-------+------------------------------------------------+
+|   TIME   | 98:15 |                                                |
++----------+-------+------------------------------------------------+
+
+----- LINK TO GIT -----
+https://github.com/ineslelin/ws2023-mtcg
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
