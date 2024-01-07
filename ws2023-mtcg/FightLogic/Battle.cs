@@ -10,17 +10,6 @@ namespace ws2023_mtcg.FightLogic
 {
     internal class Battle
     {
-        //static private int _round;
-        //static private User _playerOne;
-        //static private User _playerTwo;
-
-        //public Battle(int round, User playerOne, User playerTwo)
-        //{
-        //    _round = round;
-        //    _playerOne = playerOne;
-        //    _playerTwo = playerTwo;
-        //}
-
         string fightOutput;
         bool eloUpdated = false;
 
@@ -34,15 +23,18 @@ namespace ws2023_mtcg.FightLogic
 
             while (round <= 100)
             {
+                // if one player's cards are all dead => break out of loop
                 if (!playerOne.Deck.Any(card => card.IsAlive) || !playerTwo.Deck.Any(card => card.IsAlive))
                     break;
 
+                // do while loop that iterates until an alive card is found
                 int randomP1Card = ChooseRandomCard(playerOne.Deck);
                 int randomP2Card = ChooseRandomCard(playerTwo.Deck);
 
                 bool P1Mega = false;
                 bool P2Mega = false;
 
+                // mega buff, mandatory unique feature
                 if (MegaCard())
                 {
                     P1Mega = true;
@@ -57,7 +49,6 @@ namespace ws2023_mtcg.FightLogic
                     fightOutput += $"\n{playerTwo.Deck[randomP2Card].Name} received a Mega Buff!\n";
                 }
 
-                // when youre in a writing ugly ass code competition and your opponent is me <3
                 fightOutput += $"\n=====[ROUND {round}]=====\n" +
                                $" {playerOne.Username}: {playerOne.Deck[randomP1Card].Name} ({playerOne.Deck[randomP1Card].Damage} damage) vs " +
                                $"{playerTwo.Username}: {playerTwo.Deck[randomP2Card].Name} ({playerTwo.Deck[randomP2Card].Damage} damage): ";
@@ -67,8 +58,7 @@ namespace ws2023_mtcg.FightLogic
                 fightOutput += playerOne.Deck[randomP1Card].output;
                 playerOne.Deck[randomP1Card].output = "";
 
-                Console.WriteLine($"{playerOne.Deck[randomP1Card].IsAlive} {playerTwo.Deck[randomP2Card].IsAlive}");
-
+                // resets buff
                 if(P1Mega)
                 {
                     P1Mega = false;

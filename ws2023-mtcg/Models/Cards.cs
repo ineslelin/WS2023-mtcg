@@ -228,10 +228,17 @@ namespace ws2023_mtcg.Models
                 return source;
             }
 
-            source.IsAlive = false;
-            AnnounceWinner(source, target);
+            if(target.Damage > source.Damage)
+            {
+                source.IsAlive = false;
+                AnnounceWinner(source, target);
 
-            return target;
+                return target;
+            }
+
+            // tie
+            output += "There's no winners this round!";
+            return null;
         }
 
         public Cards ElementFight(Cards source, Cards target)
@@ -251,10 +258,17 @@ namespace ws2023_mtcg.Models
                     return source;
                 }
 
-                source.IsAlive = false;
-                AnnounceWinner(source, target);
+                if(source.Damage / 2 < target.Damage * 2)
+                {
+                    source.IsAlive = false;
+                    AnnounceWinner(source, target);
 
-                return target;
+                    return target;
+                }
+
+                // tie
+                output += "There's no winners this round!";
+                return null;
             }
 
             if (target.Damage / 2 > source.Damage * 2)
@@ -265,10 +279,17 @@ namespace ws2023_mtcg.Models
                 return target;
             }
 
-            target.IsAlive = false;
-            AnnounceWinner(source, target);
+            if(target.Damage / 2 < source.Damage * 2)
+            {
+                target.IsAlive = false;
+                AnnounceWinner(source, target);
 
-            return source;
+                return source;
+            }
+
+            // tie
+            output += "There's no winners this round!";
+            return null;
         }
 
         public Cards CurseFight(Cards source, Cards target)

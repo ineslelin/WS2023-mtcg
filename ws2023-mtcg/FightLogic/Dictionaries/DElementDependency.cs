@@ -14,8 +14,6 @@ namespace ws2023_mtcg.FightLogic.Dictionaries
 
         }
 
-        // do those dependencies make sense? no
-        // do i care? no, whomp whomp
         public Dictionary<Tuple<ElementType, ElementType>, ElementType> ElementDependencies = new Dictionary<Tuple<ElementType, ElementType>, ElementType>()
         {
             // FIRE EFFECTIVE AGAINST NORMAL AND ICE
