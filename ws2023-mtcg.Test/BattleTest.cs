@@ -468,5 +468,29 @@ namespace ws2023_mtcg.Test
             actual = Curse.Attack(Curse);
             Assert.That(actual, Is.EqualTo(null));
         }
+
+        [Test]
+        public void CheckBattleTie()
+        {
+            var A = new Cards()
+            {
+                Name = "A",
+                Type = CardType.monster,
+                Element = ElementType.fire,
+                Damage = 10
+            };
+
+            var B = new Cards()
+            {
+                Name = "B",
+                Type = CardType.monster,
+                Element = ElementType.fire,
+                Damage = 10
+            };
+
+            var actual = A.Attack(B);
+
+            Assert.That(actual, Is.EqualTo(null));  
+        }
     }
 }
