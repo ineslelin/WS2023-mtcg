@@ -255,6 +255,7 @@ namespace ws2023_mtcg.Test
             {
                 Name = "A",
                 Type = CardType.monster,
+                Element = ElementType.fire,
                 Damage = 15
             };
 
@@ -262,6 +263,7 @@ namespace ws2023_mtcg.Test
             {
                 Name = "B",
                 Type = CardType.monster,
+                Element = ElementType.water,
                 Damage = 10
             };
 

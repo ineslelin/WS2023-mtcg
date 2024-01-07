@@ -380,8 +380,12 @@ namespace ws2023_mtcg.Server.Req
                     Elo = tempUser.Elo,
                     Wins = tempUser.Wins,
                     Losses = tempUser.Losses,
-                }
+                },
+                    winToLoseRatio = $"You won {tempUser.Wins} times and lost {tempUser.Losses} times, " +
+                                 $"meaning you win {((tempUser.Wins + tempUser.Losses == 0) ? 0 : (tempUser.Wins * 100.0 / (tempUser.Wins + tempUser.Losses)))}% of fights and " +
+                                 $"lose {((tempUser.Wins + tempUser.Losses == 0) ? 0 : (tempUser.Losses * 100.0 / (tempUser.Wins + tempUser.Losses)))}% of fights."
             });
+
 
             ResponseHandler.SendResponse(writer, response, (int)ResponseCode.Success);
         }
