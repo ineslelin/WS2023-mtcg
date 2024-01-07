@@ -56,6 +56,8 @@ to having little errors in it's logic that go undetected.
 	to the database
 - Read_Return[_]
 	checks if correct data is returned
+- CheckBattleTie
+	check if a tie is possible
 
 ----- UNIQUE FEATURE -----
 The unique feature has two parts: for one the Mega Buff, 
