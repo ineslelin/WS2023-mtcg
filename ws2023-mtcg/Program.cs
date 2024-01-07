@@ -10,6 +10,9 @@ namespace ws2023_mtcg
     {
         static void Main(string[] args)
         {
+            // DATABASE NAME: mtcgdb
+            // USERNAME: admin
+            // PASSWORD: 1234
             DatabaseHandler.Start();
 
             HttpServer server = new HttpServer(10001);
