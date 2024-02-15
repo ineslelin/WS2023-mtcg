@@ -1,6 +1,6 @@
-+------------------------------------+
-| MTCG PROTOCOL - INES LEONA LINTNER |
-+------------------------------------+
++---------------+
+| MTCG PROTOCOL |
++---------------+
 
 ----- DESIGN -----
 The MTCG is a server with a database connection (Postgres) that handles HTTP Requests.
